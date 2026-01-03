@@ -276,69 +276,78 @@ class ProjectProvider with ChangeNotifier {
     importFromJson(nextState);
   }
 
-  void addElement(ReadmeElementType type) {
-    _recordHistory();
-    ReadmeElement newElement;
+  ReadmeElement _createElementByType(ReadmeElementType type) {
     switch (type) {
       case ReadmeElementType.heading:
-        newElement = HeadingElement();
-        break;
+        return HeadingElement();
       case ReadmeElementType.paragraph:
-        newElement = ParagraphElement();
-        break;
+        return ParagraphElement();
       case ReadmeElementType.image:
-        newElement = ImageElement();
-        break;
+        return ImageElement();
       case ReadmeElementType.linkButton:
-        newElement = LinkButtonElement();
-        break;
+        return LinkButtonElement();
       case ReadmeElementType.codeBlock:
-        newElement = CodeBlockElement();
-        break;
+        return CodeBlockElement();
       case ReadmeElementType.list:
-        newElement = ListElement();
-        break;
+        return ListElement();
       case ReadmeElementType.badge:
-        newElement = BadgeElement();
-        break;
+        return BadgeElement();
       case ReadmeElementType.table:
-        newElement = TableElement();
-        break;
+        return TableElement();
       case ReadmeElementType.icon:
-        newElement = IconElement();
-        break;
+        return IconElement();
       case ReadmeElementType.embed:
-        newElement = EmbedElement();
-        break;
+        return EmbedElement();
       case ReadmeElementType.githubStats:
-        newElement = GitHubStatsElement();
-        break;
+        return GitHubStatsElement();
       case ReadmeElementType.contributors:
-        newElement = ContributorsElement();
-        break;
+        return ContributorsElement();
       case ReadmeElementType.mermaid:
-        newElement = MermaidElement();
-        break;
+        return MermaidElement();
       case ReadmeElementType.toc:
-        newElement = TOCElement();
-        break;
+        return TOCElement();
       case ReadmeElementType.socials:
-        newElement = SocialsElement();
-        break;
+        return SocialsElement();
       case ReadmeElementType.blockquote:
-        newElement = BlockquoteElement();
-        break;
+        return BlockquoteElement();
       case ReadmeElementType.divider:
-        newElement = DividerElement();
-        break;
+        return DividerElement();
       case ReadmeElementType.collapsible:
-        newElement = CollapsibleElement();
-        break;
+        return CollapsibleElement();
     }
-    _elements.add(newElement);
+  }
+
+  void addElement(ReadmeElementType type) {
+    insertElement(_elements.length, type);
+  }
+
+  void insertElement(int index, ReadmeElementType type) {
+    _recordHistory();
+    final newElement = _createElementByType(type);
+    if (index < 0) index = 0;
+    if (index > _elements.length) index = _elements.length;
+    _elements.insert(index, newElement);
     _selectedElementId = newElement.id;
     _saveState();
     notifyListeners();
+  }
+
+  void insertSnippet(int index, Snippet snippet) {
+    _recordHistory();
+    try {
+      final Map<String, dynamic> json = jsonDecode(snippet.elementJson);
+      json.remove('id');
+      final newElement = ReadmeElement.fromJson(json);
+
+      if (index < 0) index = 0;
+      if (index > _elements.length) index = _elements.length;
+      _elements.insert(index, newElement);
+      _selectedElementId = newElement.id;
+      _saveState();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error adding snippet: $e');
+    }
   }
 
   void removeElement(String id) {

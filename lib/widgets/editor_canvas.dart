@@ -102,9 +102,18 @@ class EditorCanvas extends StatelessWidget {
 
                                         return KeyedSubtree(
                                           key: ValueKey(element.id),
-                                          child: CanvasItem(
-                                            element: element,
-                                            isSelected: isSelected,
+                                          child: DropZone(
+                                            onDrop: (data) {
+                                              if (data is ReadmeElementType) {
+                                                provider.insertElement(index, data);
+                                              } else if (data is Snippet) {
+                                                provider.insertSnippet(index, data);
+                                              }
+                                            },
+                                            child: CanvasItem(
+                                              element: element,
+                                              isSelected: isSelected,
+                                            ),
                                           ),
                                         );
                                       },
@@ -238,4 +247,60 @@ class GridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class DropZone extends StatefulWidget {
+  final Widget child;
+  final Function(Object data) onDrop;
+
+  const DropZone({super.key, required this.child, required this.onDrop});
+
+  @override
+  State<DropZone> createState() => _DropZoneState();
+}
+
+class _DropZoneState extends State<DropZone> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<Object>(
+      onWillAcceptWithDetails: (details) {
+        final accepts = details.data is ReadmeElementType || details.data is Snippet;
+        if (accepts) {
+          setState(() => _isHovered = true);
+        }
+        return accepts;
+      },
+      onLeave: (_) => setState(() => _isHovered = false),
+      onAcceptWithDetails: (details) {
+        setState(() => _isHovered = false);
+        widget.onDrop(details.data);
+      },
+      builder: (context, candidateData, rejectedData) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_isHovered)
+              Container(
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.primary.withAlpha(100),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+              ),
+            widget.child,
+          ],
+        );
+      },
+    );
+  }
 }

@@ -1,0 +1,1030 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/readme_element.dart';
+import '../providers/project_provider.dart';
+import '../utils/dev_icons.dart';
+import '../services/github_service.dart';
+import 'giphy_picker_dialog.dart';
+
+class ElementSettingsForm extends StatefulWidget {
+  final ReadmeElement element;
+
+  const ElementSettingsForm({super.key, required this.element});
+
+  @override
+  State<ElementSettingsForm> createState() => _ElementSettingsFormState();
+}
+
+class _ElementSettingsFormState extends State<ElementSettingsForm> {
+  late TextEditingController _textController;
+  late TextEditingController _urlController;
+  late TextEditingController _altTextController;
+  late TextEditingController _codeController;
+  late TextEditingController _languageController;
+  late TextEditingController _labelController;
+  late TextEditingController _imageUrlController;
+  late TextEditingController _targetUrlController;
+  late TextEditingController _widthController;
+  late TextEditingController _nameController;
+  late TextEditingController _typeNameController;
+
+  String _currentElementId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initControllers();
+    _updateControllersFromElement();
+    _currentElementId = widget.element.id;
+  }
+
+  void _initControllers() {
+    _textController = TextEditingController();
+    _urlController = TextEditingController();
+    _altTextController = TextEditingController();
+    _codeController = TextEditingController();
+    _languageController = TextEditingController();
+    _labelController = TextEditingController();
+    _imageUrlController = TextEditingController();
+    _targetUrlController = TextEditingController();
+    _widthController = TextEditingController();
+    _nameController = TextEditingController();
+    _typeNameController = TextEditingController();
+
+    _textController.addListener(() => _onTextChanged());
+    _urlController.addListener(() => _onUrlChanged());
+    _altTextController.addListener(() => _onAltTextChanged());
+    _codeController.addListener(() => _onCodeChanged());
+    _languageController.addListener(() => _onLanguageChanged());
+    _labelController.addListener(() => _onLabelChanged());
+    _imageUrlController.addListener(() => _onImageUrlChanged());
+    _targetUrlController.addListener(() => _onTargetUrlChanged());
+    _widthController.addListener(() => _onWidthChanged());
+    _nameController.addListener(() => _onNameChanged());
+    _typeNameController.addListener(() => _onTypeNameChanged());
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _urlController.dispose();
+    _altTextController.dispose();
+    _codeController.dispose();
+    _languageController.dispose();
+    _labelController.dispose();
+    _imageUrlController.dispose();
+    _targetUrlController.dispose();
+    _widthController.dispose();
+    _nameController.dispose();
+    _typeNameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(ElementSettingsForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.element.id != _currentElementId) {
+      _currentElementId = widget.element.id;
+      _updateControllersFromElement();
+    } else {
+      // Check for external updates (e.g. from Dropdown)
+      _syncControllersIfChanged();
+    }
+  }
+
+  void _updateControllersFromElement() {
+    final e = widget.element;
+    if (e is HeadingElement) _textController.text = e.text;
+    if (e is ParagraphElement) _textController.text = e.text;
+    if (e is MermaidElement) _codeController.text = e.code;
+    if (e is TOCElement) _textController.text = e.title;
+    if (e is ImageElement) {
+      _urlController.text = e.url;
+      _altTextController.text = e.altText;
+      _widthController.text = e.width?.toString() ?? '';
+    }
+    if (e is LinkButtonElement) {
+      _textController.text = e.text;
+      _urlController.text = e.url;
+    }
+    if (e is CodeBlockElement) {
+      _codeController.text = e.code;
+      _languageController.text = e.language;
+    }
+    if (e is BadgeElement) {
+      _labelController.text = e.label;
+      _imageUrlController.text = e.imageUrl;
+      _targetUrlController.text = e.targetUrl;
+    }
+    if (e is IconElement) {
+      _nameController.text = e.name;
+      _urlController.text = e.url;
+      _widthController.text = e.size.toString();
+    }
+    if (e is EmbedElement) {
+      _urlController.text = e.url;
+      _typeNameController.text = e.typeName;
+    }
+    if (e is GitHubStatsElement) {
+      _textController.text = e.repoName;
+    }
+    if (e is ContributorsElement) {
+      _textController.text = e.repoName;
+    }
+  }
+
+  void _syncControllersIfChanged() {
+    final e = widget.element;
+    if (e is HeadingElement) _syncText(_textController, e.text);
+    if (e is ParagraphElement) _syncText(_textController, e.text);
+    if (e is ImageElement) {
+      _syncText(_urlController, e.url);
+      _syncText(_altTextController, e.altText);
+      _syncText(_widthController, e.width?.toString() ?? '');
+    }
+    if (e is LinkButtonElement) {
+      _syncText(_textController, e.text);
+      _syncText(_urlController, e.url);
+    }
+    if (e is CodeBlockElement) {
+      _syncText(_codeController, e.code);
+      _syncText(_languageController, e.language);
+    }
+    if (e is BadgeElement) {
+      _syncText(_labelController, e.label);
+      _syncText(_imageUrlController, e.imageUrl);
+      _syncText(_targetUrlController, e.targetUrl);
+    }
+    if (e is IconElement) {
+      _syncText(_nameController, e.name);
+      _syncText(_urlController, e.url);
+      _syncText(_widthController, e.size.toString());
+    }
+    if (e is EmbedElement) {
+      _syncText(_urlController, e.url);
+      _syncText(_typeNameController, e.typeName);
+    }
+    if (e is GitHubStatsElement) {
+      _syncText(_textController, e.repoName);
+    }
+    if (e is ContributorsElement) {
+      _syncText(_textController, e.repoName);
+    }
+  }
+
+  void _syncText(TextEditingController controller, String value) {
+    if (controller.text != value) {
+      controller.text = value;
+      // Move cursor to end to avoid jumping to start
+      controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+    }
+  }
+
+  void _wrapSelection(TextEditingController controller, String wrapper) {
+    final text = controller.text;
+    final selection = controller.selection;
+
+    if (selection.isValid && selection.start != selection.end) {
+      final newText = text.replaceRange(selection.start, selection.end, '$wrapper${selection.textInside(text)}$wrapper');
+      controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection(
+          baseOffset: selection.start + wrapper.length,
+          extentOffset: selection.end + wrapper.length,
+        ),
+      );
+    } else {
+      final start = selection.isValid ? selection.start : text.length;
+      final newText = text.replaceRange(start, start, '$wrapper$wrapper');
+      controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: start + wrapper.length),
+      );
+    }
+    // Trigger update manually as setting value programmatically might not trigger listener depending on implementation,
+    // but usually it does NOT trigger listener in Flutter unless user types.
+    // Wait, controller.addListener IS triggered by setting .text or .value.
+    // So we don't need manual update.
+  }
+
+  void _notifyUpdate() {
+    Provider.of<ProjectProvider>(context, listen: false).updateElement();
+  }
+
+  void _onTextChanged() {
+    final e = widget.element;
+    if (e is HeadingElement && e.text != _textController.text) {
+      e.text = _textController.text;
+      _notifyUpdate();
+    } else if (e is ParagraphElement && e.text != _textController.text) {
+      e.text = _textController.text;
+      _notifyUpdate();
+    } else if (e is LinkButtonElement && e.text != _textController.text) {
+      e.text = _textController.text;
+      _notifyUpdate();
+    } else if (e is GitHubStatsElement && e.repoName != _textController.text) {
+      e.repoName = _textController.text;
+      _notifyUpdate();
+    } else if (e is ContributorsElement && e.repoName != _textController.text) {
+      e.repoName = _textController.text;
+      _notifyUpdate();
+    } else if (e is TOCElement && e.title != _textController.text) {
+      e.title = _textController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onUrlChanged() {
+    final e = widget.element;
+    if (e is ImageElement && e.url != _urlController.text) {
+      e.url = _urlController.text;
+      _notifyUpdate();
+    } else if (e is LinkButtonElement && e.url != _urlController.text) {
+      e.url = _urlController.text;
+      _notifyUpdate();
+    } else if (e is IconElement && e.url != _urlController.text) {
+      e.url = _urlController.text;
+      _notifyUpdate();
+    } else if (e is EmbedElement && e.url != _urlController.text) {
+      e.url = _urlController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onAltTextChanged() {
+    final e = widget.element;
+    if (e is ImageElement && e.altText != _altTextController.text) {
+      e.altText = _altTextController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onCodeChanged() {
+    final e = widget.element;
+    if (e is CodeBlockElement && e.code != _codeController.text) {
+      e.code = _codeController.text;
+      _notifyUpdate();
+    } else if (e is MermaidElement && e.code != _codeController.text) {
+      e.code = _codeController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onLanguageChanged() {
+    final e = widget.element;
+    if (e is CodeBlockElement && e.language != _languageController.text) {
+      e.language = _languageController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onLabelChanged() {
+    final e = widget.element;
+    if (e is BadgeElement && e.label != _labelController.text) {
+      e.label = _labelController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onImageUrlChanged() {
+    final e = widget.element;
+    if (e is BadgeElement && e.imageUrl != _imageUrlController.text) {
+      e.imageUrl = _imageUrlController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onTargetUrlChanged() {
+    final e = widget.element;
+    if (e is BadgeElement && e.targetUrl != _targetUrlController.text) {
+      e.targetUrl = _targetUrlController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onNameChanged() {
+    final e = widget.element;
+    if (e is IconElement && e.name != _nameController.text) {
+      e.name = _nameController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onTypeNameChanged() {
+    final e = widget.element;
+    if (e is EmbedElement && e.typeName != _typeNameController.text) {
+      e.typeName = _typeNameController.text;
+      _notifyUpdate();
+    }
+  }
+
+  void _onWidthChanged() {
+    final e = widget.element;
+    if (e is ImageElement) {
+      final val = double.tryParse(_widthController.text);
+      if (e.width != val) {
+        e.width = val;
+        _notifyUpdate();
+      }
+    } else if (e is IconElement) {
+      final val = double.tryParse(_widthController.text);
+      if (val != null && e.size != val) {
+        e.size = val;
+        _notifyUpdate();
+      }
+    }
+  }
+
+  String? _validateUrl(String? value) {
+    if (value == null || value.isEmpty) return null;
+    if (value.startsWith('#')) return null; // Anchor
+    if (value.startsWith('/')) return null; // Relative path
+    final uri = Uri.tryParse(value);
+    if (uri == null || !uri.hasScheme) {
+      return 'Invalid URL (must start with http:// or https://)';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final element = widget.element;
+    final provider = Provider.of<ProjectProvider>(context, listen: false);
+
+    if (element is HeadingElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Heading Text'),
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<int>(
+            initialValue: element.level,
+            decoration: const InputDecoration(labelText: 'Level'),
+            items: const [
+              DropdownMenuItem(value: 1, child: Text('H1')),
+              DropdownMenuItem(value: 2, child: Text('H2')),
+              DropdownMenuItem(value: 3, child: Text('H3')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                element.level = value;
+                _notifyUpdate();
+              }
+            },
+          ),
+        ],
+      );
+    } else if (element is ParagraphElement) {
+      return Column(
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.format_bold),
+                onPressed: () => _wrapSelection(_textController, '**'),
+                tooltip: 'Bold',
+              ),
+              IconButton(
+                icon: const Icon(Icons.format_italic),
+                onPressed: () => _wrapSelection(_textController, '*'),
+                tooltip: 'Italic',
+              ),
+              IconButton(
+                icon: const Icon(Icons.code),
+                onPressed: () => _wrapSelection(_textController, '`'),
+                tooltip: 'Inline Code',
+              ),
+            ],
+          ),
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Text'),
+            maxLines: 5,
+          ),
+        ],
+      );
+    } else if (element is ImageElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _urlController,
+            decoration: const InputDecoration(labelText: 'Image URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Upload'),
+                  onPressed: () async {
+                    final result = await FilePicker.platform.pickFiles(
+                      type: FileType.image,
+                      withData: true, // Important for web
+                    );
+
+                    if (result != null && result.files.isNotEmpty) {
+                      final file = result.files.first;
+                      if (file.bytes != null) {
+                        setState(() {
+                          element.localData = file.bytes;
+                          // We set a placeholder URL or keep it empty, but we need to indicate it's local.
+                          // Let's set URL to filename for reference in Markdown
+                          element.url = './${file.name}';
+                          _urlController.text = element.url;
+                        });
+                        _notifyUpdate();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Image uploaded. Remember to add this file to your repo!')),
+                          );
+                        }
+                      }
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.gif),
+                  label: const Text('GIPHY'),
+                  onPressed: () async {
+                    final url = await showDialog<String>(
+                      context: context,
+                      builder: (context) => const GiphyPickerDialog(),
+                    );
+                    if (url != null) {
+                      setState(() {
+                        element.url = url;
+                        _urlController.text = url;
+                        element.localData = null; // Clear local data if any
+                      });
+                      _notifyUpdate();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _altTextController,
+            decoration: const InputDecoration(labelText: 'Alt Text'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _widthController,
+            decoration: const InputDecoration(labelText: 'Width (optional)'),
+          ),
+        ],
+      );
+    } else if (element is LinkButtonElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Button Text'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _urlController,
+            decoration: const InputDecoration(labelText: 'URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          if (provider.elements.whereType<HeadingElement>().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Or link to section'),
+              items: provider.elements.whereType<HeadingElement>().map((h) {
+                final anchor = '#${h.text.toLowerCase().replaceAll(' ', '-')}';
+                return DropdownMenuItem(
+                  value: anchor,
+                  child: Text(h.text),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  element.url = value;
+                  _notifyUpdate();
+                }
+              },
+            ),
+          ],
+        ],
+      );
+    } else if (element is CodeBlockElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _languageController,
+            decoration: const InputDecoration(labelText: 'Language'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _codeController,
+            decoration: const InputDecoration(labelText: 'Code'),
+            maxLines: 10,
+          ),
+        ],
+      );
+    } else if (element is ListElement) {
+      return Column(
+        children: [
+          SwitchListTile(
+            title: const Text('Ordered List'),
+            value: element.isOrdered,
+            onChanged: (value) {
+              setState(() {
+                element.isOrdered = value;
+              });
+              _notifyUpdate();
+            },
+          ),
+          ...element.items.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      key: ValueKey(index), // Use index as key to preserve focus
+                      initialValue: item,
+                      decoration: InputDecoration(labelText: 'Item ${index + 1}'),
+                      onChanged: (value) {
+                        element.items[index] = value;
+                        _notifyUpdate();
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      element.items.removeAt(index);
+                      _notifyUpdate();
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
+          ElevatedButton(
+            onPressed: () {
+              element.items.add('New Item');
+              _notifyUpdate();
+            },
+            child: const Text('Add Item'),
+          ),
+        ],
+      );
+    } else if (element is BadgeElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _labelController,
+            decoration: const InputDecoration(labelText: 'Label'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _imageUrlController,
+            decoration: const InputDecoration(labelText: 'Image URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _targetUrlController,
+            decoration: const InputDecoration(labelText: 'Target URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          if (provider.elements.whereType<HeadingElement>().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Or link to section'),
+              items: provider.elements.whereType<HeadingElement>().map((h) {
+                final anchor = '#${h.text.toLowerCase().replaceAll(' ', '-')}';
+                return DropdownMenuItem(
+                  value: anchor,
+                  child: Text(h.text),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  element.targetUrl = value;
+                  _notifyUpdate();
+                }
+              },
+            ),
+          ],
+        ],
+      );
+    } else if (element is IconElement) {
+      return Column(
+        children: [
+          Autocomplete<String>(
+            initialValue: TextEditingValue(text: element.name),
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return const Iterable<String>.empty();
+              }
+              return DevIcons.icons.keys.where((String option) {
+                return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+              });
+            },
+            onSelected: (String selection) {
+              element.name = selection;
+              element.url = DevIcons.icons[selection]!;
+              _nameController.text = selection;
+              _urlController.text = element.url;
+              _notifyUpdate();
+            },
+            fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+              // Sync local controller if needed, but Autocomplete manages its own.
+              // We need to listen to it to update element name if user types something custom.
+              return TextFormField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                decoration: const InputDecoration(labelText: 'Search Icon Name'),
+                onFieldSubmitted: (String value) {
+                  onFieldSubmitted();
+                },
+                onChanged: (val) {
+                   element.name = val;
+                   // If it matches a key exactly, update URL
+                   if (DevIcons.icons.containsKey(val)) {
+                     element.url = DevIcons.icons[val]!;
+                     _urlController.text = element.url;
+                   }
+                   _notifyUpdate();
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _urlController,
+            decoration: const InputDecoration(labelText: 'Icon URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _widthController,
+            decoration: const InputDecoration(labelText: 'Size'),
+          ),
+          const SizedBox(height: 8),
+          const Text('Tip: Use devicon.dev or simpleicons.org for URLs', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
+      );
+    } else if (element is EmbedElement) {
+      return Column(
+        children: [
+          DropdownButtonFormField<String>(
+            initialValue: element.typeName,
+            decoration: const InputDecoration(labelText: 'Embed Type'),
+            items: const [
+              DropdownMenuItem(value: 'gist', child: Text('GitHub Gist')),
+              DropdownMenuItem(value: 'codepen', child: Text('CodePen')),
+              DropdownMenuItem(value: 'youtube', child: Text('YouTube')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                element.typeName = value;
+                _notifyUpdate();
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _urlController,
+            decoration: const InputDecoration(labelText: 'Embed URL'),
+            validator: _validateUrl,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+        ],
+      );
+    } else if (element is GitHubStatsElement) {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _textController,
+                  decoration: const InputDecoration(labelText: 'Repo Name (user/repo)'),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.download),
+                tooltip: 'Fetch Info',
+                onPressed: () async {
+                  if (_textController.text.isEmpty) return;
+                  final parts = _textController.text.split('/');
+                  if (parts.length != 2) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid format. Use user/repo')));
+                    return;
+                  }
+
+                  final service = GitHubService();
+                  final data = await service.fetchRepoDetails(parts[0], parts[1]);
+                  if (!context.mounted) return;
+
+                  if (data != null) {
+                    // We could populate other fields or show a dialog with info
+                    // For now, let's just show a success message and maybe update description if we had one
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Found: ${data['description'] ?? 'No description'}')));
+                    // If we want to use this data to populate the README, we might need a way to pass it back to the provider or add new elements.
+                    // But for this specific element, it just shows stats.
+                    // Let's offer to add the description as a paragraph?
+                    if (data['description'] != null) {
+                       showDialog(
+                         context: context,
+                         builder: (dialogContext) => AlertDialog(
+                           title: const Text('Add Description?'),
+                           content: Text(data['description']),
+                           actions: [
+                             TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('No')),
+                             TextButton(
+                               onPressed: () {
+                                 Provider.of<ProjectProvider>(context, listen: false).addElement(ReadmeElementType.paragraph);
+                                 // The new element is added at the end. We need to find it and update text.
+                                 // This is a bit hacky. Better to just let user copy paste or have a dedicated "Import" feature.
+                                 // But let's try to update the LAST added element if it is a paragraph.
+                                 final provider = Provider.of<ProjectProvider>(context, listen: false);
+                                 final last = provider.elements.last;
+                                 if (last is ParagraphElement) {
+                                   last.text = data['description'];
+                                   provider.updateElement();
+                                 }
+                                 Navigator.pop(dialogContext);
+                               },
+                               child: const Text('Add as Paragraph')
+                             ),
+                           ],
+                         ),
+                       );
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Repo not found')));
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SwitchListTile(
+            title: const Text('Show Stars'),
+            value: element.showStars,
+            onChanged: (val) {
+              setState(() => element.showStars = val);
+              _notifyUpdate();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Show Forks'),
+            value: element.showForks,
+            onChanged: (val) {
+              setState(() => element.showForks = val);
+              _notifyUpdate();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Show Issues'),
+            value: element.showIssues,
+            onChanged: (val) {
+              setState(() => element.showIssues = val);
+              _notifyUpdate();
+            },
+          ),
+          SwitchListTile(
+            title: const Text('Show License'),
+            value: element.showLicense,
+            onChanged: (val) {
+              setState(() => element.showLicense = val);
+              _notifyUpdate();
+            },
+          ),
+        ],
+      );
+    } else if (element is ContributorsElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Repo Name (user/repo)'),
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            initialValue: element.style,
+            decoration: const InputDecoration(labelText: 'Style'),
+            items: const [
+              DropdownMenuItem(value: 'grid', child: Text('Grid (Avatars)')),
+              DropdownMenuItem(value: 'list', child: Text('List (Names)')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                element.style = value;
+                _notifyUpdate();
+              }
+            },
+          ),
+        ],
+      );
+    } else if (element is TableElement) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton.icon(
+                icon: const Icon(Icons.add),
+                label: const Text('Col'),
+                onPressed: () {
+                  setState(() {
+                    element.headers.add('Header');
+                    element.alignments.add(ColumnAlignment.left);
+                    for (var row in element.rows) {
+                      row.add('Cell');
+                    }
+                  });
+                  _notifyUpdate();
+                },
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.remove),
+                label: const Text('Col'),
+                onPressed: element.headers.length > 1 ? () {
+                  setState(() {
+                    element.headers.removeLast();
+                    if (element.alignments.length > element.headers.length) {
+                       element.alignments.removeLast();
+                    }
+                    for (var row in element.rows) {
+                      if (row.length > element.headers.length) {
+                        row.removeLast();
+                      }
+                    }
+                  });
+                  _notifyUpdate();
+                } : null,
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.add),
+                label: const Text('Row'),
+                onPressed: () {
+                  setState(() {
+                    // Create a new growable list for the row
+                    element.rows.add(List.generate(element.headers.length, (_) => 'Cell'));
+                  });
+                  _notifyUpdate();
+                },
+              ),
+            ],
+          ),
+          const Divider(),
+          const Text('Columns & Headers', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 150,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: element.headers.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 120,
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        initialValue: element.headers[index],
+                        decoration: InputDecoration(labelText: 'Header ${index + 1}'),
+                        onChanged: (val) {
+                          element.headers[index] = val;
+                          _notifyUpdate();
+                        },
+                      ),
+                      DropdownButton<ColumnAlignment>(
+                        value: element.alignments[index],
+                        isExpanded: true,
+                        items: ColumnAlignment.values.map((a) {
+                          return DropdownMenuItem(
+                            value: a,
+                            child: Text(a.toString().split('.').last),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              element.alignments[index] = val;
+                            });
+                            _notifyUpdate();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          const Divider(),
+          const Text('Rows Data', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          ...element.rows.asMap().entries.map((entry) {
+            final rowIndex = entry.key;
+            final row = entry.value;
+            return ExpansionTile(
+              title: Text('Row ${rowIndex + 1}'),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    element.rows.removeAt(rowIndex);
+                  });
+                  _notifyUpdate();
+                },
+              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: row.asMap().entries.map((cellEntry) {
+                      final colIndex = cellEntry.key;
+                      // Safety check: ensure colIndex is within headers bounds
+                      if (colIndex >= element.headers.length) return const SizedBox.shrink();
+
+                      return SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                          initialValue: cellEntry.value,
+                          decoration: InputDecoration(
+                            labelText: element.headers[colIndex],
+                            border: const OutlineInputBorder(),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          ),
+                          onChanged: (val) {
+                            row[colIndex] = val;
+                            _notifyUpdate();
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      );
+    } else if (element is MermaidElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _codeController,
+            decoration: const InputDecoration(labelText: 'Mermaid Code'),
+            maxLines: 10,
+            style: const TextStyle(fontFamily: 'monospace'),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Examples:\ngraph TD; A-->B;\ngantt\n  title A Gantt Diagram\n  section Section\n  A task :a1, 2014-01-01, 30d',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      );
+    } else if (element is TOCElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Title'),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'This element will automatically generate a Table of Contents based on the headings in your project.',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      );
+    }
+    return const SizedBox.shrink();
+  }
+}
+

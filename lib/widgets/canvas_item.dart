@@ -1,0 +1,146 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/readme_element.dart';
+import '../providers/library_provider.dart';
+import '../providers/project_provider.dart';
+import 'element_renderer.dart';
+
+class CanvasItem extends StatefulWidget {
+  final ReadmeElement element;
+  final bool isSelected;
+
+  const CanvasItem({
+    super.key,
+    required this.element,
+    required this.isSelected,
+  });
+
+  @override
+  State<CanvasItem> createState() => _CanvasItemState();
+}
+
+class _CanvasItemState extends State<CanvasItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<ProjectProvider>(context, listen: false);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () => provider.selectElement(widget.element.id),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: widget.isSelected ? Colors.blue.withAlpha(10) : Colors.transparent,
+            border: Border.all(
+              color: widget.isSelected
+                  ? Colors.blue
+                  : (_isHovered ? Colors.blue.withAlpha(100) : Colors.transparent),
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElementRenderer(element: widget.element),
+              ),
+              if (_isHovered || widget.isSelected)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[800] : Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(25),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.copy, size: 16),
+                          onPressed: () => provider.duplicateElement(widget.element.id),
+                          tooltip: 'Duplicate',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          icon: const Icon(Icons.save_as, size: 16),
+                          onPressed: () => _showSaveSnippetDialog(context, widget.element),
+                          tooltip: 'Save as Snippet',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          icon: const Icon(Icons.delete, size: 16),
+                          onPressed: () => provider.removeElement(widget.element.id),
+                          tooltip: 'Delete',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                        const SizedBox(width: 4),
+                        const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Icon(Icons.drag_handle, size: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSaveSnippetDialog(BuildContext context, ReadmeElement element) {
+    final libraryProvider = Provider.of<LibraryProvider>(context, listen: false);
+    final nameController = TextEditingController(text: 'New Snippet');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Save as Snippet'),
+        content: TextField(
+          controller: nameController,
+          decoration: const InputDecoration(labelText: 'Snippet Name'),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                libraryProvider.saveSnippet(
+                  name: nameController.text,
+                  elementJson: jsonEncode(element.toJson()),
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Snippet saved')));
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+}

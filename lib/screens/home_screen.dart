@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Load ${template.name}?'),
+                      title: Text('Load ${template.name}?', style: GoogleFonts.inter()),
                       content: const Text('This will replace your current workspace.'),
                       actions: [
                         TextButton(
@@ -518,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Project Settings'),
+        title: Text('Project Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 500,
           child: DefaultTabController(
@@ -554,6 +554,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   labelText: entry.key,
                                   border: const OutlineInputBorder(),
                                 ),
+                                style: GoogleFonts.inter(),
                                 onChanged: (value) => provider.updateVariable(entry.key, value),
                               ),
                             );
@@ -566,22 +567,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Select License for your project:'),
+                            Text('Select License for your project:', style: GoogleFonts.inter()),
                             const SizedBox(height: 16),
                             DropdownButtonFormField<String>(
                               initialValue: provider.licenseType,
                               decoration: const InputDecoration(border: OutlineInputBorder()),
-                              items: const [
-                                DropdownMenuItem(value: 'None', child: Text('None')),
-                                DropdownMenuItem(value: 'MIT', child: Text('MIT License')),
-                                DropdownMenuItem(value: 'Apache 2.0', child: Text('Apache License 2.0')),
+                              items: [
+                                DropdownMenuItem(value: 'None', child: Text('None', style: GoogleFonts.inter())),
+                                DropdownMenuItem(value: 'MIT', child: Text('MIT License', style: GoogleFonts.inter())),
+                                DropdownMenuItem(value: 'Apache 2.0', child: Text('Apache License 2.0', style: GoogleFonts.inter())),
                               ],
                               onChanged: (value) {
                                 if (value != null) provider.setLicenseType(value);
                               },
                             ),
                             const SizedBox(height: 16),
-                            const Text('A LICENSE file will be generated and included in the export.', style: TextStyle(color: Colors.grey)),
+                            Text('A LICENSE file will be generated and included in the export.', style: GoogleFonts.inter(color: Colors.grey)),
                           ],
                         ),
                       ),
@@ -591,8 +592,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             SwitchListTile(
-                              title: const Text('Include CONTRIBUTING.md'),
-                              subtitle: const Text('Adds a standard contributing guide to the export.'),
+                              title: Text('Include CONTRIBUTING.md', style: GoogleFonts.inter()),
+                              subtitle: Text('Adds a standard contributing guide to the export.', style: GoogleFonts.inter()),
                               value: provider.includeContributing,
                               onChanged: (value) => provider.setIncludeContributing(value),
                             ),
@@ -605,18 +606,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             ListTile(
-                              title: const Text('Primary Color'),
-                              subtitle: Text('#${provider.primaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}'),
+                              title: Text('Primary Color', style: GoogleFonts.inter()),
+                              subtitle: Text('#${provider.primaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
                               trailing: CircleAvatar(backgroundColor: provider.primaryColor),
                               onTap: () {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: const Text('Pick Primary Color'),
+                                    title: Text('Pick Primary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                                     content: SingleChildScrollView(
                                       child: ColorPicker(
                                         pickerColor: provider.primaryColor,
                                         onColorChanged: (color) => provider.setPrimaryColor(color),
+                                        labelTypes: const [],
                                       ),
                                     ),
                                     actions: [
@@ -630,18 +632,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                             ListTile(
-                              title: const Text('Secondary Color'),
-                              subtitle: Text('#${provider.secondaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}'),
+                              title: Text('Secondary Color', style: GoogleFonts.inter()),
+                              subtitle: Text('#${provider.secondaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
                               trailing: CircleAvatar(backgroundColor: provider.secondaryColor),
                               onTap: () {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: const Text('Pick Secondary Color'),
+                                    title: Text('Pick Secondary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                                     content: SingleChildScrollView(
                                       child: ColorPicker(
                                         pickerColor: provider.secondaryColor,
                                         onColorChanged: (color) => provider.setSecondaryColor(color),
+                                        labelTypes: const [],
                                       ),
                                     ),
                                     actions: [
@@ -663,8 +666,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             SwitchListTile(
-                              title: const Text('Export HTML'),
-                              subtitle: const Text('Include a formatted HTML file in the export.'),
+                              title: Text('Export HTML', style: GoogleFonts.inter()),
+                              subtitle: Text('Include a formatted HTML file in the export.', style: GoogleFonts.inter()),
                               value: provider.exportHtml,
                               onChanged: (value) => provider.setExportHtml(value),
                             ),
@@ -675,10 +678,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: DropdownButton<String>(
                                   value: provider.listBullet,
                                   isDense: true,
-                                  items: const [
-                                    DropdownMenuItem(value: '*', child: Text('* (Asterisk)')),
-                                    DropdownMenuItem(value: '-', child: Text('- (Dash)')),
-                                    DropdownMenuItem(value: '+', child: Text('+ (Plus)')),
+                                  items: [
+                                    DropdownMenuItem(value: '*', child: Text('* (Asterisk)', style: GoogleFonts.inter())),
+                                    DropdownMenuItem(value: '-', child: Text('- (Dash)', style: GoogleFonts.inter())),
+                                    DropdownMenuItem(value: '+', child: Text('+ (Plus)', style: GoogleFonts.inter())),
                                   ],
                                   onChanged: (value) {
                                     if (value != null) provider.setListBullet(value);
@@ -693,10 +696,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: DropdownButton<int>(
                                   value: provider.sectionSpacing,
                                   isDense: true,
-                                  items: const [
-                                    DropdownMenuItem(value: 0, child: Text('0 (Compact)')),
-                                    DropdownMenuItem(value: 1, child: Text('1 (Standard)')),
-                                    DropdownMenuItem(value: 2, child: Text('2 (Spacious)')),
+                                  items: [
+                                    DropdownMenuItem(value: 0, child: Text('0 (Compact)', style: GoogleFonts.inter())),
+                                    DropdownMenuItem(value: 1, child: Text('1 (Standard)', style: GoogleFonts.inter())),
+                                    DropdownMenuItem(value: 2, child: Text('2 (Spacious)', style: GoogleFonts.inter())),
                                   ],
                                   onChanged: (value) {
                                     if (value != null) provider.setSectionSpacing(value);
@@ -728,7 +731,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Local Snapshots'),
+        title: Text('Local Snapshots', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           height: 400,
@@ -746,7 +749,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Divider(),
               Expanded(
                 child: provider.snapshots.isEmpty
-                    ? const Center(child: Text('No snapshots saved.'))
+                    ? Center(child: Text('No snapshots saved.', style: GoogleFonts.inter()))
                     : ListView.builder(
                         itemCount: provider.snapshots.length,
                         itemBuilder: (context, index) {
@@ -755,8 +758,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           // Since it's a stack, index 0 is latest.
                           return ListTile(
                             leading: const Icon(Icons.history),
-                            title: Text('Snapshot ${provider.snapshots.length - index}'),
-                            subtitle: index == 0 ? const Text('Latest') : null,
+                            title: Text('Snapshot ${provider.snapshots.length - index}', style: GoogleFonts.inter()),
+                            subtitle: index == 0 ? Text('Latest', style: GoogleFonts.inter()) : null,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -767,8 +770,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text('Restore Snapshot?'),
-                                        content: const Text('Current work will be replaced.'),
+                                        title: Text('Restore Snapshot?', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                                        content: Text('Current work will be replaced.', style: GoogleFonts.inter()),
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(context),
@@ -873,7 +876,7 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Save to Library'),
+        title: Text('Save to Library', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           child: Column(
@@ -882,16 +885,19 @@ $htmlContent
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Project Name'),
+                style: GoogleFonts.inter(),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: descController,
                 decoration: const InputDecoration(labelText: 'Description'),
+                style: GoogleFonts.inter(),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: tagsController,
                 decoration: const InputDecoration(labelText: 'Tags (comma separated)'),
+                style: GoogleFonts.inter(),
               ),
             ],
           ),
@@ -924,7 +930,7 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Health Check'),
+        title: Text('Health Check', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           height: 300,
@@ -937,7 +943,7 @@ $htmlContent
                   issue.severity == IssueSeverity.error ? Icons.error : (issue.severity == IssueSeverity.warning ? Icons.warning : Icons.info),
                   color: issue.severity == IssueSeverity.error ? Colors.red : (issue.severity == IssueSeverity.warning ? Colors.orange : Colors.blue),
                 ),
-                title: Text(issue.message, style: const TextStyle(fontSize: 14)),
+                title: Text(issue.message, style: GoogleFonts.inter(fontSize: 14)),
                 trailing: issue.elementId != null
                     ? IconButton(
                         icon: const Icon(Icons.arrow_forward),
@@ -969,7 +975,7 @@ $htmlContent
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Import Markdown'),
+              title: Text('Import Markdown', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
                 width: 600,
                 height: 450,
@@ -992,7 +998,7 @@ $htmlContent
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
                                 children: [
-                                  const Text('Paste your Markdown content below or pick a file.'),
+                                  Text('Paste your Markdown content below or pick a file.', style: GoogleFonts.inter()),
                                   const SizedBox(height: 16),
                                   Expanded(
                                     child: TextField(
@@ -1004,6 +1010,7 @@ $htmlContent
                                         border: OutlineInputBorder(),
                                         hintText: '# My Project\n\nDescription...',
                                       ),
+                                      style: GoogleFonts.firaCode(fontSize: 13),
                                     ),
                                   ),
                                   const SizedBox(height: 16),
@@ -1033,7 +1040,7 @@ $htmlContent
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text('Enter a raw URL from GitHub or Pastebin.'),
+                                  Text('Enter a raw URL from GitHub or Pastebin.', style: GoogleFonts.inter()),
                                   const SizedBox(height: 16),
                                   TextField(
                                     controller: urlController,
@@ -1043,6 +1050,7 @@ $htmlContent
                                       labelText: 'URL',
                                       prefixIcon: Icon(Icons.link),
                                     ),
+                                    style: GoogleFonts.inter(),
                                   ),
                                   const SizedBox(height: 16),
                                   if (isLoading)

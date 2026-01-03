@@ -269,47 +269,65 @@ class ElementRenderer extends StatelessWidget {
       final e = element as TableElement;
       // Ensure consistency between headers and row cells to prevent DataTable assertions
       final columnCount = e.headers.length;
+      final colorScheme = Theme.of(context).colorScheme;
 
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingRowColor: WidgetStateProperty.all(isDark ? Colors.grey[800] : Colors.grey[200]),
-          dataRowColor: WidgetStateProperty.all(isDark ? Colors.grey[900] : Colors.white),
-          border: TableBorder.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
-          columns: e.headers.map((h) => DataColumn(label: Text(h, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)))).toList(),
-          rows: e.rows.map((row) {
-            // Pad row with empty strings if it has fewer cells than columns
-            final cells = List<String>.from(row);
-            while (cells.length < columnCount) {
-              cells.add('');
-            }
-            // Truncate if it has more (though UI prevents this, data might be stale)
-            if (cells.length > columnCount) {
-              cells.length = columnCount;
-            }
-
-            return DataRow(
-              cells: cells.asMap().entries.map((entry) {
-                final index = entry.key;
-                final cell = entry.value;
-                Alignment alignment = Alignment.centerLeft;
-                if (index < e.alignments.length) {
-                   switch(e.alignments[index]) {
-                     case ColumnAlignment.left: alignment = Alignment.centerLeft; break;
-                     case ColumnAlignment.center: alignment = Alignment.center; break;
-                     case ColumnAlignment.right: alignment = Alignment.centerRight; break;
-                   }
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: colorScheme.outlineVariant.withAlpha(100)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: DataTable(
+              headingRowColor: WidgetStateProperty.all(colorScheme.primaryContainer.withAlpha(50)),
+              dataRowColor: WidgetStateProperty.all(isDark ? colorScheme.surfaceContainer : colorScheme.surface),
+              border: TableBorder(
+                horizontalInside: BorderSide(color: colorScheme.outlineVariant.withAlpha(50)),
+                verticalInside: BorderSide(color: colorScheme.outlineVariant.withAlpha(50)),
+              ),
+              columns: e.headers.map((h) => DataColumn(
+                label: Text(
+                  h,
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                ),
+              )).toList(),
+              rows: e.rows.map((row) {
+                // Pad row with empty strings if it has fewer cells than columns
+                final cells = List<String>.from(row);
+                while (cells.length < columnCount) {
+                  cells.add('');
                 }
-                return DataCell(
-                  Container(
-                    alignment: alignment,
-                    width: double.infinity,
-                    child: _buildCellContent(cell, textColor),
-                  )
+                // Truncate if it has more (though UI prevents this, data might be stale)
+                if (cells.length > columnCount) {
+                  cells.length = columnCount;
+                }
+
+                return DataRow(
+                  cells: cells.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final cell = entry.value;
+                    Alignment alignment = Alignment.centerLeft;
+                    if (index < e.alignments.length) {
+                       switch(e.alignments[index]) {
+                         case ColumnAlignment.left: alignment = Alignment.centerLeft; break;
+                         case ColumnAlignment.center: alignment = Alignment.center; break;
+                         case ColumnAlignment.right: alignment = Alignment.centerRight; break;
+                       }
+                    }
+                    return DataCell(
+                      Container(
+                        alignment: alignment,
+                        width: double.infinity,
+                        child: _buildCellContent(cell, textColor),
+                      )
+                    );
+                  }).toList(),
                 );
               }).toList(),
-            );
-          }).toList(),
+            ),
+          ),
         ),
       );
     } else if (element is MermaidElement) {

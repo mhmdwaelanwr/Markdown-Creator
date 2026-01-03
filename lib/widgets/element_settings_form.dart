@@ -1212,12 +1212,12 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             child: DropdownButton<String>(
               value: element.style,
               isDense: true,
-              items: const [
-                DropdownMenuItem(value: 'for-the-badge', child: Text('For The Badge')),
-                DropdownMenuItem(value: 'flat', child: Text('Flat')),
-                DropdownMenuItem(value: 'flat-square', child: Text('Flat Square')),
-                DropdownMenuItem(value: 'plastic', child: Text('Plastic')),
-                DropdownMenuItem(value: 'social', child: Text('Social')),
+              items: [
+                DropdownMenuItem(value: 'for-the-badge', child: Text('For The Badge', style: GoogleFonts.inter())),
+                DropdownMenuItem(value: 'flat', child: Text('Flat', style: GoogleFonts.inter())),
+                DropdownMenuItem(value: 'flat-square', child: Text('Flat Square', style: GoogleFonts.inter())),
+                DropdownMenuItem(value: 'plastic', child: Text('Plastic', style: GoogleFonts.inter())),
+                DropdownMenuItem(value: 'social', child: Text('Social', style: GoogleFonts.inter())),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -1231,15 +1231,20 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           ),
         ),
         const SizedBox(height: 16),
-        const Text('Profiles', style: TextStyle(fontWeight: FontWeight.bold)),
+        Text('Profiles', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         ...element.profiles.asMap().entries.map((entry) {
           final index = entry.key;
           final profile = entry.value;
           return Card(
             margin: const EdgeInsets.only(bottom: 8),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withAlpha(80)),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
                   Expanded(
@@ -1261,7 +1266,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                                         Icon(platform.icon, size: 16, color: Color(int.parse('0xFF${platform.color}'))),
                                         const SizedBox(width: 8),
                                       ],
-                                      Text(key),
+                                      Text(key, style: GoogleFonts.inter()),
                                     ],
                                   ),
                                 );
@@ -1291,10 +1296,10 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                                     contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                   ),
                                   items: [
-                                    const DropdownMenuItem(value: '', child: Text('Manual', overflow: TextOverflow.ellipsis)),
+                                    DropdownMenuItem(value: '', child: Text('Manual', overflow: TextOverflow.ellipsis, style: GoogleFonts.inter())),
                                     ...CountryCodes.list.map((c) => DropdownMenuItem(
                                       value: '+${c.code}',
-                                      child: Text('${c.emoji} +${c.code}', overflow: TextOverflow.ellipsis),
+                                      child: Text('${c.emoji} +${c.code}', overflow: TextOverflow.ellipsis, style: GoogleFonts.inter()),
                                     )),
                                   ],
                                   onChanged: (value) {
@@ -1313,6 +1318,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                                 child: TextFormField(
                                   initialValue: profile.username,
                                   decoration: const InputDecoration(labelText: 'Phone Number', isDense: true),
+                                  style: GoogleFonts.inter(),
                                   onChanged: (value) {
                                     element.profiles[index] = SocialProfile(platform: profile.platform, username: value);
                                     _notifyUpdate();
@@ -1325,6 +1331,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                           TextFormField(
                             initialValue: profile.username,
                             decoration: const InputDecoration(labelText: 'Username / Handle', isDense: true),
+                            style: GoogleFonts.inter(),
                             onChanged: (value) {
                               element.profiles[index] = SocialProfile(platform: profile.platform, username: value);
                               _notifyUpdate();
@@ -1389,7 +1396,7 @@ class __TableCellImageDialogState extends State<_TableCellImageDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Cell Content'),
+      title: Text('Edit Cell Content', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1402,9 +1409,10 @@ class __TableCellImageDialogState extends State<_TableCellImageDialog> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
+              style: GoogleFonts.inter(),
             ),
             const SizedBox(height: 16),
-            const Text('Insert Media:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Insert Media:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,

@@ -136,41 +136,7 @@ class ElementRenderer extends StatelessWidget {
       final e = element as BadgeElement;
       if (e.imageUrl.isEmpty) return const Text('Empty Badge URL', style: TextStyle(color: Colors.red));
 
-      String badgeUrl = e.imageUrl;
-
-      // Force PNG for shields.io to avoid SVG rendering issues
-      if (badgeUrl.contains('img.shields.io') && !badgeUrl.contains('.png') && !badgeUrl.contains('.svg')) {
-         final uri = Uri.parse(badgeUrl);
-         // Insert .png before query parameters
-         final newPath = '${uri.path}.png';
-         badgeUrl = uri.replace(path: newPath).toString();
-      }
-
-      // If it's a PNG (which we just forced for shields.io), use Image.network
-      if (badgeUrl.endsWith('.png') || badgeUrl.contains('.png?')) {
-         return Image.network(
-          badgeUrl,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const SizedBox(width: 50, height: 20, child: Center(child: CircularProgressIndicator(strokeWidth: 2)));
-          },
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
-        );
-      }
-
-      // Badges are almost always SVGs (shields.io)
-      if (badgeUrl.contains('shields.io') || badgeUrl.toLowerCase().endsWith('.svg')) {
-         return SvgPicture.network(
-          badgeUrl,
-          placeholderBuilder: (BuildContext context) => const SizedBox(width: 50, height: 20, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-        );
-      }
-
-      return CachedNetworkImage(
-        imageUrl: badgeUrl,
-        placeholder: (context, url) => const SizedBox(width: 50, height: 20, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-        errorWidget: (context, url, error) => const Icon(Icons.broken_image),
-      );
+      return _buildBadgeImage(e.imageUrl);
     } else if (element is IconElement) {
       final e = element as IconElement;
       if (e.url.isEmpty) return const Text('Empty Icon URL', style: TextStyle(color: Colors.red));
@@ -229,13 +195,13 @@ class ElementRenderer extends StatelessWidget {
         runSpacing: 8,
         children: [
           if (e.showStars)
-            SvgPicture.network('https://img.shields.io/github/stars/${e.repoName}?style=social', placeholderBuilder: (_) => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+            _buildBadgeImage('https://img.shields.io/github/stars/${e.repoName}?style=social', height: 20, width: null),
           if (e.showForks)
-            SvgPicture.network('https://img.shields.io/github/forks/${e.repoName}?style=social', placeholderBuilder: (_) => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+            _buildBadgeImage('https://img.shields.io/github/forks/${e.repoName}?style=social', height: 20, width: null),
           if (e.showIssues)
-            SvgPicture.network('https://img.shields.io/github/issues/${e.repoName}', placeholderBuilder: (_) => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+            _buildBadgeImage('https://img.shields.io/github/issues/${e.repoName}', height: 20, width: null),
           if (e.showLicense)
-            SvgPicture.network('https://img.shields.io/github/license/${e.repoName}', placeholderBuilder: (_) => const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+            _buildBadgeImage('https://img.shields.io/github/license/${e.repoName}', height: 20, width: null),
         ],
       );
     } else if (element is ContributorsElement) {
@@ -310,7 +276,7 @@ class ElementRenderer extends StatelessWidget {
                   Container(
                     alignment: alignment,
                     width: double.infinity,
-                    child: Text(cell, style: TextStyle(color: textColor)),
+                    child: _buildCellContent(cell, textColor),
                   )
                 );
               }).toList(),
@@ -393,39 +359,36 @@ class ElementRenderer extends StatelessWidget {
           String badgeUrl = SocialPlatforms.getBadgeUrl(p.platform, e.style);
           if (badgeUrl.isEmpty) return Chip(label: Text('${p.platform}: ${p.username}'));
 
-          // Force PNG for shields.io to avoid SVG rendering issues
-          if (badgeUrl.contains('img.shields.io') && !badgeUrl.contains('.png') && !badgeUrl.contains('.svg')) {
-             final uri = Uri.parse(badgeUrl);
-             // Insert .png before query parameters
-             // If path ends with something, append .png
-             // Example: /badge/GitHub-100000 -> /badge/GitHub-100000.png
-             // Example: /static/v1 -> /static/v1.png
-             final newPath = '${uri.path}.png';
-             badgeUrl = uri.replace(path: newPath).toString();
-          }
-
-          // If it's a PNG (which we just forced for shields.io), use Image.network for simplicity and to avoid potential cache manager locks
-          if (badgeUrl.endsWith('.png') || badgeUrl.contains('.png?')) {
-             return Image.network(
-              badgeUrl,
-              height: 28,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const SizedBox(width: 50, height: 28, child: Center(child: CircularProgressIndicator(strokeWidth: 2)));
-              },
-              errorBuilder: (context, error, stackTrace) {
-                debugPrint('Error loading badge: $badgeUrl, error: $error');
-                return Chip(label: Text('${p.platform}: ${p.username}'));
-              },
-            );
-          }
-
-          return SvgPicture.network(
-            badgeUrl,
-            height: 28,
-            placeholderBuilder: (_) => const SizedBox(width: 50, height: 28, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
-          );
+          return _buildBadgeImage(badgeUrl, height: 28, width: null);
         }).toList(),
+      );
+    } else if (element is BlockquoteElement) {
+      final e = element as BlockquoteElement;
+      return Container(
+        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: Colors.grey[400]!, width: 4)),
+        ),
+        child: Text(
+          e.text,
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: isDark ? Colors.grey[300] : Colors.grey[700],
+          ),
+        ),
+      );
+    } else if (element is DividerElement) {
+      return const Divider(thickness: 2);
+    } else if (element is CollapsibleElement) {
+      final e = element as CollapsibleElement;
+      return ExpansionTile(
+        title: Text(e.summary, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(e.content, style: TextStyle(color: textColor)),
+          ),
+        ],
       );
     }
     return Text('Unknown Element: ${element.type}');
@@ -464,5 +427,73 @@ class ElementRenderer extends StatelessWidget {
 
     return RichText(text: TextSpan(children: spans));
   }
-}
 
+  Widget _buildCellContent(String text, Color textColor) {
+    // Check for Markdown image: ![alt](url)
+    final imageRegex = RegExp(r'!\[(.*?)\]\((.*?)\)');
+    final match = imageRegex.firstMatch(text);
+
+    if (match != null) {
+      final url = match.group(2) ?? '';
+      if (url.isNotEmpty) {
+        return _buildBadgeImage(url, height: 30, width: null);
+      }
+    }
+
+    // Check for HTML image: <img src="url" ... />
+    final htmlImageRegex = RegExp(r'<img[^>]+src="([^"]+)"[^>]*>');
+    final htmlMatch = htmlImageRegex.firstMatch(text);
+
+    if (htmlMatch != null) {
+      final url = htmlMatch.group(1) ?? '';
+      if (url.isNotEmpty) {
+        return _buildBadgeImage(url, height: 30, width: null);
+      }
+    }
+
+    return _buildRichText(text, textColor);
+  }
+
+  Widget _buildBadgeImage(String url, {double? height, double? width}) {
+    String badgeUrl = url;
+    // Force PNG for shields.io to avoid SVG rendering issues
+    if (badgeUrl.contains('img.shields.io') && !badgeUrl.contains('.png') && !badgeUrl.contains('.svg')) {
+       final uri = Uri.parse(badgeUrl);
+       // Insert .png before query parameters
+       final newPath = '${uri.path}.png';
+       badgeUrl = uri.replace(path: newPath).toString();
+    }
+
+    // If it's a PNG (which we just forced for shields.io), use Image.network
+    if (badgeUrl.endsWith('.png') || badgeUrl.contains('.png?')) {
+       return Image.network(
+        badgeUrl,
+        height: height,
+        width: width,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return SizedBox(
+            width: width ?? 50,
+            height: height ?? 20,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2))
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('Error loading badge: $badgeUrl, error: $error');
+          return const Icon(Icons.broken_image);
+        },
+      );
+    }
+
+    return SvgPicture.network(
+      badgeUrl,
+      height: height,
+      width: width,
+      placeholderBuilder: (_) => SizedBox(
+        width: width ?? 50,
+        height: height ?? 20,
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2))
+      ),
+    );
+  }
+}

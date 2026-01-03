@@ -54,6 +54,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     final typographyItems = [
       ComponentItem(ReadmeElementType.heading, 'Heading', Icons.title),
       ComponentItem(ReadmeElementType.paragraph, 'Paragraph', Icons.text_fields),
+      ComponentItem(ReadmeElementType.blockquote, 'Blockquote', Icons.format_quote),
       ComponentItem(ReadmeElementType.codeBlock, 'Code Block', Icons.code),
     ];
 
@@ -71,6 +72,8 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     final structureItems = [
       ComponentItem(ReadmeElementType.list, 'List', Icons.list),
       ComponentItem(ReadmeElementType.table, 'Table', Icons.table_chart),
+      ComponentItem(ReadmeElementType.divider, 'Divider', Icons.horizontal_rule),
+      ComponentItem(ReadmeElementType.collapsible, 'Collapsible', Icons.expand_more),
     ];
 
     final advancedItems = [
@@ -317,6 +320,12 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         return 'TOC: Auto-generated Table of Contents';
       case ReadmeElementType.socials:
         return 'Social Links: Adds social media badges';
+      case ReadmeElementType.blockquote:
+        return 'Blockquote: Adds a quoted text block';
+      case ReadmeElementType.divider:
+        return 'Divider: Adds a horizontal rule';
+      case ReadmeElementType.collapsible:
+        return 'Collapsible: Adds a details/summary section';
     }
   }
 }

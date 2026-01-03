@@ -138,6 +138,13 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     if (e is ContributorsElement) {
       _textController.text = e.repoName;
     }
+    if (e is BlockquoteElement) {
+      _textController.text = e.text;
+    }
+    if (e is CollapsibleElement) {
+      _textController.text = e.summary;
+      _codeController.text = e.content;
+    }
   }
 
   void _syncControllersIfChanged() {
@@ -176,6 +183,13 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     }
     if (e is ContributorsElement) {
       _syncText(_textController, e.repoName);
+    }
+    if (e is BlockquoteElement) {
+      _syncText(_textController, e.text);
+    }
+    if (e is CollapsibleElement) {
+      _syncText(_textController, e.summary);
+      _syncText(_codeController, e.content);
     }
   }
 
@@ -245,6 +259,12 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     } else if (e is TOCElement && e.title != _textController.text) {
       e.title = _textController.text;
       _debounceUpdate();
+    } else if (e is BlockquoteElement && e.text != _textController.text) {
+      e.text = _textController.text;
+      _debounceUpdate();
+    } else if (e is CollapsibleElement && e.summary != _textController.text) {
+      e.summary = _textController.text;
+      _debounceUpdate();
     }
   }
 
@@ -280,6 +300,9 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       _debounceUpdate();
     } else if (e is MermaidElement && e.code != _codeController.text) {
       e.code = _codeController.text;
+      _debounceUpdate();
+    } else if (e is CollapsibleElement && e.content != _codeController.text) {
+      e.content = _codeController.text;
       _debounceUpdate();
     }
   }
@@ -1053,18 +1076,42 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                       if (colIndex >= element.headers.length) return const SizedBox.shrink();
 
                       return SizedBox(
-                        width: 100,
-                        child: TextFormField(
-                          initialValue: cellEntry.value,
-                          decoration: InputDecoration(
-                            labelText: element.headers[colIndex],
-                            border: const OutlineInputBorder(),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          ),
-                          onChanged: (val) {
-                            row[colIndex] = val;
-                            _notifyUpdate();
-                          },
+                        width: 140,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: cellEntry.value,
+                                decoration: InputDecoration(
+                                  labelText: element.headers[colIndex],
+                                  border: const OutlineInputBorder(),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                ),
+                                onChanged: (val) {
+                                  row[colIndex] = val;
+                                  _notifyUpdate();
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.image, size: 16),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              tooltip: 'Insert Image/Badge',
+                              onPressed: () async {
+                                final result = await showDialog<String>(
+                                  context: context,
+                                  builder: (context) => _TableCellImageDialog(initialValue: row[colIndex]),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    row[colIndex] = result;
+                                  });
+                                  _notifyUpdate();
+                                }
+                              },
+                            ),
+                          ],
                         ),
                       );
                     }).toList(),
@@ -1100,6 +1147,33 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           ),
           const SizedBox(height: 8),
           const Text('This element will automatically generate a table of contents based on headings in your project.', style: TextStyle(color: Colors.grey)),
+        ],
+      );
+    } else if (element is BlockquoteElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Quote Text'),
+            maxLines: 5,
+          ),
+        ],
+      );
+    } else if (element is DividerElement) {
+      return const Center(child: Text('Horizontal Divider (---)'));
+    } else if (element is CollapsibleElement) {
+      return Column(
+        children: [
+          TextFormField(
+            controller: _textController,
+            decoration: const InputDecoration(labelText: 'Summary (Title)'),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _codeController,
+            decoration: const InputDecoration(labelText: 'Content (Markdown supported)'),
+            maxLines: 10,
+          ),
         ],
       );
     } else if (element is SocialsElement) {
@@ -1268,3 +1342,118 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
   }
 }
 
+class _TableCellImageDialog extends StatefulWidget {
+  final String initialValue;
+
+  const _TableCellImageDialog({super.key, required this.initialValue});
+
+  @override
+  State<_TableCellImageDialog> createState() => __TableCellImageDialogState();
+}
+
+class __TableCellImageDialogState extends State<_TableCellImageDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Edit Cell Content'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'Content (Text, Markdown, HTML)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            const Text('Insert Media:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.image, size: 18),
+                  label: const Text('Image URL'),
+                  onPressed: () {
+                    _insertText('![Alt Text](https://example.com/image.png)');
+                  },
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.shield, size: 18),
+                  label: const Text('Badge'),
+                  onPressed: () {
+                    _insertText('![Label](https://img.shields.io/badge/Label-Message-blue)');
+                  },
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.emoji_emotions, size: 18),
+                  label: const Text('Icon'),
+                  onPressed: () {
+                    // Simple icon insertion
+                    _insertText('<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="20" height="20"/>');
+                  },
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.gif, size: 18),
+                  label: const Text('GIPHY'),
+                  onPressed: () async {
+                    final url = await showDialog<String>(
+                      context: context,
+                      builder: (context) => const GiphyPickerDialog(),
+                    );
+                    if (url != null) {
+                      _insertText('![GIF]($url)');
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, _controller.text),
+          child: const Text('Save'),
+        ),
+      ],
+    );
+  }
+
+  void _insertText(String text) {
+    final currentText = _controller.text;
+    final selection = _controller.selection;
+    if (selection.isValid) {
+      final newText = currentText.replaceRange(selection.start, selection.end, text);
+      _controller.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: selection.start + text.length),
+      );
+    } else {
+      _controller.text = currentText + text;
+    }
+  }
+}

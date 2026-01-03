@@ -325,6 +325,15 @@ class ProjectProvider with ChangeNotifier {
       case ReadmeElementType.socials:
         newElement = SocialsElement();
         break;
+      case ReadmeElementType.blockquote:
+        newElement = BlockquoteElement();
+        break;
+      case ReadmeElementType.divider:
+        newElement = DividerElement();
+        break;
+      case ReadmeElementType.collapsible:
+        newElement = CollapsibleElement();
+        break;
     }
     _elements.add(newElement);
     _selectedElementId = newElement.id;
@@ -418,6 +427,12 @@ class ProjectProvider with ChangeNotifier {
           profiles: element.profiles.map((p) => SocialProfile(platform: p.platform, username: p.username)).toList(),
           style: element.style,
         );
+      } else if (element is BlockquoteElement) {
+        newElement = BlockquoteElement(text: element.text);
+      } else if (element is DividerElement) {
+        newElement = DividerElement();
+      } else if (element is CollapsibleElement) {
+        newElement = CollapsibleElement(summary: element.summary, content: element.content);
       } else {
         return;
       }

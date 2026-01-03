@@ -152,6 +152,12 @@ class MarkdownGenerator {
         }
       }
       return buffer.toString().trim();
+    } else if (element is BlockquoteElement) {
+      return element.text.split('\n').map((line) => '> $line').join('\n');
+    } else if (element is DividerElement) {
+      return '---';
+    } else if (element is CollapsibleElement) {
+      return '<details>\n<summary>${element.summary}</summary>\n\n${element.content}\n\n</details>';
     }
     return '';
   }

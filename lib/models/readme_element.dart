@@ -17,6 +17,9 @@ enum ReadmeElementType {
   mermaid,
   toc,
   socials,
+  blockquote,
+  divider,
+  collapsible,
 }
 
 abstract class ReadmeElement {
@@ -62,6 +65,12 @@ abstract class ReadmeElement {
         return TOCElement.fromJson(json);
       case ReadmeElementType.socials:
         return SocialsElement.fromJson(json);
+      case ReadmeElementType.blockquote:
+        return BlockquoteElement.fromJson(json);
+      case ReadmeElementType.divider:
+        return DividerElement.fromJson(json);
+      case ReadmeElementType.collapsible:
+        return CollapsibleElement.fromJson(json);
     }
   }
 }
@@ -513,6 +522,72 @@ class ContributorsElement extends ReadmeElement {
     return ContributorsElement(
       repoName: json['repoName'] ?? '',
       style: json['style'] ?? 'grid',
+      id: json['id'],
+    );
+  }
+}
+
+class BlockquoteElement extends ReadmeElement {
+  String text;
+
+  BlockquoteElement({this.text = 'Blockquote text', super.id}) : super(type: ReadmeElementType.blockquote);
+
+  @override
+  String get description => 'Blockquote';
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': type.toString(),
+    'text': text,
+  };
+
+  factory BlockquoteElement.fromJson(Map<String, dynamic> json) {
+    return BlockquoteElement(
+      text: json['text'],
+      id: json['id'],
+    );
+  }
+}
+
+class DividerElement extends ReadmeElement {
+  DividerElement({super.id}) : super(type: ReadmeElementType.divider);
+
+  @override
+  String get description => 'Divider';
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': type.toString(),
+  };
+
+  factory DividerElement.fromJson(Map<String, dynamic> json) {
+    return DividerElement(id: json['id']);
+  }
+}
+
+class CollapsibleElement extends ReadmeElement {
+  String summary;
+  String content;
+
+  CollapsibleElement({this.summary = 'Click to expand', this.content = 'Hidden content', super.id}) : super(type: ReadmeElementType.collapsible);
+
+  @override
+  String get description => 'Collapsible Section';
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': type.toString(),
+    'summary': summary,
+    'content': content,
+  };
+
+  factory CollapsibleElement.fromJson(Map<String, dynamic> json) {
+    return CollapsibleElement(
+      summary: json['summary'],
+      content: json['content'],
       id: json['id'],
     );
   }

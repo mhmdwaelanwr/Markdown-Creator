@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:http/http.dart' as http;
 import '../models/readme_element.dart';
 import '../widgets/components_panel.dart';
 import '../widgets/editor_canvas.dart';
@@ -147,6 +148,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(provider.showGrid ? Icons.grid_on : Icons.grid_off),
                 tooltip: 'Toggle Grid',
                 onPressed: () => provider.toggleGrid(),
+              ),
+              IconButton(
+                icon: Icon(_showPreview ? Icons.visibility : Icons.visibility_off),
+                tooltip: _showPreview ? 'Hide Live Preview' : 'Show Live Preview',
+                onPressed: () {
+                  setState(() {
+                    _showPreview = !_showPreview;
+                  });
+                },
               ),
               IconButton(
                 icon: Icon(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen),
@@ -428,10 +438,10 @@ class _HomeScreenState extends State<HomeScreen> {
           final elementCount = provider.elements.length;
           final wordCount = provider.elements.fold<int>(0, (sum, e) {
             if (e is HeadingElement) {
-              return sum + (e as HeadingElement).text.split(' ').length;
+              return sum + e.text.split(' ').length;
             }
             if (e is ParagraphElement) {
-              return sum + (e as ParagraphElement).text.split(' ').length;
+              return sum + e.text.split(' ').length;
             }
             return sum;
           });
@@ -943,64 +953,165 @@ $htmlContent
 
   void _showImportMarkdownDialog(BuildContext context, ProjectProvider provider) {
     final textController = TextEditingController();
+    final urlController = TextEditingController();
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Import Markdown'),
-        content: SizedBox(
-          width: 500,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Paste your Markdown content below or pick a file.'),
-              const SizedBox(height: 16),
-              TextField(
-                controller: textController,
-                maxLines: 10,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: '# My Project\n\nDescription...',
+      builder: (context) {
+        bool isLoading = false;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Import Markdown'),
+              content: SizedBox(
+                width: 600,
+                height: 450,
+                child: DefaultTabController(
+                  length: 2,
+                  child: Column(
+                    children: [
+                      const TabBar(
+                        labelColor: Colors.blue,
+                        tabs: [
+                          Tab(text: 'Text / File'),
+                          Tab(text: 'URL (GitHub/Pastebin)'),
+                        ],
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            // Tab 1: Text / File
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  const Text('Paste your Markdown content below or pick a file.'),
+                                  const SizedBox(height: 16),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: textController,
+                                      maxLines: null,
+                                      expands: true,
+                                      textAlignVertical: TextAlignVertical.top,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: '# My Project\n\nDescription...',
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton.icon(
+                                    icon: const Icon(Icons.upload_file),
+                                    label: const Text('Pick Markdown File'),
+                                    onPressed: () async {
+                                      final result = await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: ['md', 'txt'],
+                                        withData: true,
+                                      );
+                                      if (result != null && result.files.isNotEmpty) {
+                                        final bytes = result.files.first.bytes;
+                                        if (bytes != null) {
+                                          textController.text = utf8.decode(bytes);
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Tab 2: URL
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text('Enter a raw URL from GitHub or Pastebin.'),
+                                  const SizedBox(height: 16),
+                                  TextField(
+                                    controller: urlController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'https://raw.githubusercontent.com/...',
+                                      labelText: 'URL',
+                                      prefixIcon: Icon(Icons.link),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  if (isLoading)
+                                    const CircularProgressIndicator()
+                                  else
+                                    ElevatedButton.icon(
+                                      icon: const Icon(Icons.cloud_download),
+                                      label: const Text('Fetch Content'),
+                                      onPressed: () async {
+                                        if (urlController.text.isEmpty) return;
+                                        setState(() => isLoading = true);
+                                        try {
+                                          final url = urlController.text;
+                                          // Basic check for github blob -> raw
+                                          String fetchUrl = url;
+                                          if (url.contains('github.com') && url.contains('/blob/')) {
+                                            fetchUrl = url.replaceFirst('/blob/', '/raw/');
+                                          }
+
+                                          final response = await http.get(Uri.parse(fetchUrl));
+                                          if (response.statusCode == 200) {
+                                            textController.text = response.body;
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Content fetched! Switch to "Text / File" tab to review.')));
+                                            }
+                                          } else {
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to fetch: ${response.statusCode}')));
+                                            }
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                          }
+                                        } finally {
+                                          if (context.mounted) {
+                                            setState(() => isLoading = false);
+                                          }
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Pick Markdown File'),
-                onPressed: () async {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['md', 'txt'],
-                    withData: true,
-                  );
-                  if (result != null && result.files.isNotEmpty) {
-                    final bytes = result.files.first.bytes;
-                    if (bytes != null) {
-                      textController.text = utf8.decode(bytes);
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (textController.text.isNotEmpty) {
+                      provider.importMarkdown(textController.text);
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Markdown imported successfully')));
                     }
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (textController.text.isNotEmpty) {
-                provider.importMarkdown(textController.text);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Markdown imported successfully')));
-              }
-            },
-            child: const Text('Import'),
-          ),
-        ],
-      ),
+                  },
+                  child: const Text('Import'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
+
+
+
+
 

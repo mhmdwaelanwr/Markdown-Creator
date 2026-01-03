@@ -847,7 +847,58 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _urlController,
-            decoration: const InputDecoration(labelText: 'Embed URL'),
+            decoration: InputDecoration(
+              labelText: 'Embed URL',
+              suffixIcon: element.typeName == 'youtube'
+                  ? IconButton(
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Search Video',
+                      onPressed: () async {
+                        final url = await showDialog<String>(
+                          context: context,
+                          builder: (context) => _YouTubeHelperDialog(initialUrl: _urlController.text),
+                        );
+                        if (url != null) {
+                          _urlController.text = url;
+                          element.url = url;
+                          _notifyUpdate();
+                        }
+                      },
+                    )
+                  : element.typeName == 'codepen'
+                      ? IconButton(
+                          icon: const Icon(Icons.search),
+                          tooltip: 'CodePen Helper',
+                          onPressed: () async {
+                            final url = await showDialog<String>(
+                              context: context,
+                              builder: (context) => _CodePenHelperDialog(initialUrl: _urlController.text),
+                            );
+                            if (url != null) {
+                              _urlController.text = url;
+                              element.url = url;
+                              _notifyUpdate();
+                            }
+                          },
+                        )
+                      : element.typeName == 'gist'
+                          ? IconButton(
+                              icon: const Icon(Icons.search),
+                              tooltip: 'Gist Helper',
+                              onPressed: () async {
+                                final url = await showDialog<String>(
+                                  context: context,
+                                  builder: (context) => _GistHelperDialog(initialUrl: _urlController.text),
+                                );
+                                if (url != null) {
+                                  _urlController.text = url;
+                                  element.url = url;
+                                  _notifyUpdate();
+                                }
+                              },
+                            )
+                          : null,
+            ),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: GoogleFonts.inter(),
@@ -1504,3 +1555,326 @@ class __TableCellImageDialogState extends State<_TableCellImageDialog> {
     }
   }
 }
+
+class _YouTubeHelperDialog extends StatefulWidget {
+  final String initialUrl;
+
+  const _YouTubeHelperDialog({required this.initialUrl});
+
+  @override
+  State<_YouTubeHelperDialog> createState() => _YouTubeHelperDialogState();
+}
+
+class _YouTubeHelperDialogState extends State<_YouTubeHelperDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialUrl);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('YouTube URL Helper', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('To embed a YouTube video, paste the video URL below. We will help you extract the video ID if needed.', style: GoogleFonts.inter()),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'YouTube Video URL',
+                border: OutlineInputBorder(),
+              ),
+              style: GoogleFonts.inter(),
+              onChanged: (value) {
+                setState(() {});
+              },
+            ),
+            const SizedBox(height: 16),
+            Text('Preview:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 200,
+              width: double.maxFinite,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Builder(builder: (context) {
+                  final url = _controller.text;
+                  final videoId = _extractVideoId(url);
+                  if (videoId != null) {
+                    // Simple thumbnail preview using YouTube thumbnail URL pattern
+                    return Image.network(
+                      'https://img.youtube.com/vi/$videoId/hqdefault.jpg',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.black12,
+                        child: const Center(child: Text('Thumbnail not found', style: TextStyle(color: Colors.red))),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      color: Colors.black12,
+                      child: const Center(child: Text('Invalid URL or ID not found', style: TextStyle(color: Colors.grey))),
+                    );
+                  }
+                }),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final url = _controller.text;
+            final videoId = _extractVideoId(url);
+            if (videoId != null) {
+              // We return the original URL or a formatted one.
+              // Markdown generator handles the thumbnail generation if we pass the watch URL.
+              // But user might want the embed URL for other purposes.
+              // Let's return the watch URL as it's more standard for the generator to parse ID.
+              // Or we can return the embed URL if the generator expects it.
+              // The generator expects `element.url`.
+              // Let's return the standard watch URL constructed from ID to be safe.
+              final standardUrl = 'https://www.youtube.com/watch?v=$videoId';
+              Navigator.pop(context, standardUrl);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid YouTube URL')));
+            }
+          },
+          child: const Text('Use This Video'),
+        ),
+      ],
+    );
+  }
+
+  String? _extractVideoId(String url) {
+    if (url.isEmpty) return null;
+    // Very simple YouTube URL parser
+    // Supports:
+    // - https://www.youtube.com/watch?v=VIDEO_ID
+    // - https://youtu.be/VIDEO_ID
+    // - https://www.youtube.com/embed/VIDEO_ID
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+
+    if (uri.host.contains('youtube.com')) {
+      if (uri.pathSegments.isNotEmpty && uri.pathSegments[0] == 'embed') {
+         return uri.pathSegments.length > 1 ? uri.pathSegments[1] : null;
+      }
+      return uri.queryParameters['v'];
+    } else if (uri.host == 'youtu.be') {
+      return uri.pathSegments.isNotEmpty ? uri.pathSegments.last : null;
+    }
+
+    return null;
+  }
+}
+
+class _CodePenHelperDialog extends StatefulWidget {
+  final String initialUrl;
+
+  const _CodePenHelperDialog({required this.initialUrl});
+
+  @override
+  State<_CodePenHelperDialog> createState() => _CodePenHelperDialogState();
+}
+
+class _CodePenHelperDialogState extends State<_CodePenHelperDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialUrl);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('CodePen Helper', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Paste your CodePen URL. We will generate a preview image link for your README.', style: GoogleFonts.inter()),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'CodePen URL',
+                hintText: 'https://codepen.io/user/pen/slug',
+                border: OutlineInputBorder(),
+              ),
+              style: GoogleFonts.inter(),
+              onChanged: (value) => setState(() {}),
+            ),
+            const SizedBox(height: 16),
+            Text('Preview:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 200,
+              width: double.maxFinite,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Builder(builder: (context) {
+                  final url = _controller.text;
+                  final uri = Uri.tryParse(url);
+                  if (uri != null && uri.host.contains('codepen.io') && uri.pathSegments.length >= 3) {
+                    final user = uri.pathSegments[0];
+                    final slug = uri.pathSegments[2];
+                    final imageUrl = 'https://shots.codepen.io/$user/pen/$slug-800.jpg';
+                    return Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.black12,
+                        child: const Center(child: Text('Preview not available', style: TextStyle(color: Colors.grey))),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      color: Colors.black12,
+                      child: const Center(child: Text('Invalid CodePen URL', style: TextStyle(color: Colors.grey))),
+                    );
+                  }
+                }),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, _controller.text);
+          },
+          child: const Text('Use This Pen'),
+        ),
+      ],
+    );
+  }
+}
+
+class _GistHelperDialog extends StatefulWidget {
+  final String initialUrl;
+
+  const _GistHelperDialog({required this.initialUrl});
+
+  @override
+  State<_GistHelperDialog> createState() => _GistHelperDialogState();
+}
+
+class _GistHelperDialogState extends State<_GistHelperDialog> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialUrl);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('GitHub Gist Helper', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Paste your Gist URL or ID.', style: GoogleFonts.inter()),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'Gist URL / ID',
+                hintText: 'https://gist.github.com/user/id',
+                border: OutlineInputBorder(),
+              ),
+              style: GoogleFonts.inter(),
+              onChanged: (value) => setState(() {}),
+            ),
+            const SizedBox(height: 16),
+            if (_isValidGist(_controller.text))
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(20),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green),
+                    const SizedBox(width: 8),
+                    const Expanded(child: Text('Valid Gist URL format')),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            String url = _controller.text;
+            if (!url.startsWith('http')) {
+              // Assume ID
+              url = 'https://gist.github.com/$url';
+            }
+            Navigator.pop(context, url);
+          },
+          child: const Text('Use This Gist'),
+        ),
+      ],
+    );
+  }
+
+  bool _isValidGist(String url) {
+    if (url.isEmpty) return false;
+    if (url.contains('gist.github.com')) return true;
+    // Simple ID check (hex)
+    final hexRegex = RegExp(r'^[a-f0-9]+$');
+    if (hexRegex.hasMatch(url) && url.length > 10) return true;
+    return false;
+  }
+}
+

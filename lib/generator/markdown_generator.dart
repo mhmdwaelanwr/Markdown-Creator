@@ -110,12 +110,26 @@ class MarkdownGenerator {
         // YouTube thumbnail link
         final videoId = Uri.tryParse(element.url)?.queryParameters['v'] ?? '';
         if (videoId.isNotEmpty) {
-          return '[![${element.typeName}]](https://img.youtube.com/vi/$videoId/0.jpg)](${element.url})';
+          return '[![${element.typeName}](https://img.youtube.com/vi/$videoId/0.jpg)](${element.url})';
         }
         return '[${element.typeName}](${element.url})';
+      } else if (element.typeName == 'codepen') {
+        // CodePen screenshot
+        // https://codepen.io/username/pen/slug
+        final uri = Uri.tryParse(element.url);
+        if (uri != null && uri.pathSegments.length >= 3) {
+          final user = uri.pathSegments[0];
+          final slug = uri.pathSegments[2];
+          return '[![CodePen](https://shots.codepen.io/$user/pen/$slug-800.jpg)](${element.url})';
+        }
+        return '[CodePen](${element.url})';
+      } else if (element.typeName == 'gist') {
+        // GitHub Gist doesn't have a standard screenshot, but we can format the link nicely
+        // Maybe use a generic gist badge?
+        return '[![Gist](https://img.shields.io/badge/GitHub-Gist-1f425f.svg)](${element.url})';
       }
 
-      // For Gist/CodePen, usually just a link is safe for GitHub README.
+      // For others, usually just a link is safe for GitHub README.
       return '[${element.typeName}](${element.url})';
     } else if (element is ContributorsElement) {
       final e = element;

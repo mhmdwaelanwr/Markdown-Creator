@@ -3,7 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -850,6 +849,7 @@ $htmlContent
 ''';
 
     await Printing.layoutPdf(
+      // ignore: deprecated_member_use
       onLayout: (PdfPageFormat format) async => await Printing.convertHtml(
         format: format,
         html: fullHtml,

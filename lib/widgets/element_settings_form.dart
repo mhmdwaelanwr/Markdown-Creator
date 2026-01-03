@@ -1326,7 +1326,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
               ),
             ),
           );
-        }).toList(),
+        }),
         ElevatedButton.icon(
           icon: const Icon(Icons.add),
           label: const Text('Add Profile'),
@@ -1345,7 +1345,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
 class _TableCellImageDialog extends StatefulWidget {
   final String initialValue;
 
-  const _TableCellImageDialog({super.key, required this.initialValue});
+  const _TableCellImageDialog({required this.initialValue});
 
   @override
   State<_TableCellImageDialog> createState() => __TableCellImageDialogState();

@@ -261,7 +261,7 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
                               description,
                               style: TextStyle(
                                 fontSize: _descSize,
-                                color: _textColor.withOpacity(0.8),
+                                color: _textColor.withValues(alpha: 0.8),
                                 fontFamily: 'sans-serif',
                               ),
                               maxLines: 3,
@@ -276,7 +276,7 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
                                   'Built with Readme Creator',
                                   style: TextStyle(
                                     fontSize: 24,
-                                    color: _textColor.withOpacity(0.6),
+                                    color: _textColor.withValues(alpha: 0.6),
                                   ),
                                 ),
                               ],

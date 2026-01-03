@@ -346,7 +346,7 @@ class ElementRenderer extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       );

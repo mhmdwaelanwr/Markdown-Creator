@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class GiphyService {
   // This is a public beta key from GIPHY docs, might be rate limited.
   // Ideally, user should provide their own key or we use a production key.
-  static const String _apiKey = 'GlVGYHwi6bv4NiY1n2e08T6eZ1ArrowD'; // Public Beta Key
+  static const String _apiKey = 'uf5faUuQOSnXJksmoUsbpSypk1SS7hQK'; // User provided key
   static const String _baseUrl = 'https://api.giphy.com/v1/gifs';
 
   Future<List<String>> searchGifs(String query) async {

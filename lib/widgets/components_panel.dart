@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/library_provider.dart';
+import '../providers/project_provider.dart';
 import '../models/snippet.dart';
 
 class ComponentsPanel extends StatefulWidget {
@@ -164,10 +166,10 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
 
   Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+      padding: const EdgeInsets.only(bottom: 12.0, top: 16.0, left: 4.0),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(
+        style: GoogleFonts.inter(
           fontSize: 11,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -188,45 +190,83 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         dragAnchorStrategy: pointerDragAnchorStrategy,
         feedback: Material(
           elevation: 8.0,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           color: Colors.transparent,
           child: Container(
-            width: 220,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            width: 240,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.primary),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: colorScheme.primary.withAlpha(100)),
               boxShadow: [
-                BoxShadow(color: Colors.black.withAlpha(50), blurRadius: 10, offset: const Offset(0, 4)),
+                BoxShadow(color: Colors.black.withAlpha(50), blurRadius: 20, offset: const Offset(0, 8)),
               ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: colorScheme.primary),
-                const SizedBox(width: 12),
-                Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: colorScheme.primary, size: 20),
+                ),
+                const SizedBox(width: 16),
+                Text(label, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 15)),
               ],
             ),
           ),
         ),
-        child: Card(
+        child: Container(
           margin: const EdgeInsets.only(bottom: 8.0),
-          child: ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withAlpha(100),
-                borderRadius: BorderRadius.circular(8),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-              child: Icon(icon, color: colorScheme.primary, size: 20),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                // Optional: Add tap to add functionality if needed, but drag is primary
+                Provider.of<ProjectProvider>(context, listen: false).addElement(type);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer.withAlpha(100),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: colorScheme.primary, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+                      ),
+                    ),
+                    Icon(Icons.drag_indicator, size: 18, color: colorScheme.onSurfaceVariant.withAlpha(100)),
+                  ],
+                ),
+              ),
             ),
-            title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
-            trailing: const Icon(Icons.drag_indicator, size: 16, color: Colors.grey),
-            dense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ),
@@ -239,50 +279,89 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
       data: snippet,
       feedback: Material(
         elevation: 8.0,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         color: Colors.transparent,
         child: Container(
-          width: 220,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          width: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.green),
             boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(50), blurRadius: 10, offset: const Offset(0, 4)),
+              BoxShadow(color: Colors.black.withAlpha(50), blurRadius: 20, offset: const Offset(0, 8)),
             ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.content_paste, color: Colors.green),
-              const SizedBox(width: 12),
-              Expanded(child: Text(snippet.name, style: const TextStyle(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis)),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.content_paste, color: Colors.green, size: 20),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: Text(snippet.name, style: GoogleFonts.inter(fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis)),
             ],
           ),
         ),
       ),
-      child: Card(
+      child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
-        child: ListTile(
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.green.withAlpha(30),
-              borderRadius: BorderRadius.circular(8),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(5),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-            child: const Icon(Icons.content_paste, color: Colors.green, size: 20),
-          ),
-          title: Text(snippet.name, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
-            onPressed: () {
-              Provider.of<LibraryProvider>(context, listen: false).deleteSnippet(snippet.id);
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+               Provider.of<ProjectProvider>(context, listen: false).addSnippet(snippet);
             },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withAlpha(30),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.content_paste, color: Colors.green, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      snippet.name,
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, size: 18),
+                    color: colorScheme.error,
+                    onPressed: () {
+                      Provider.of<LibraryProvider>(context, listen: false).deleteSnippet(snippet.id);
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-          dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

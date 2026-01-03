@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../providers/library_provider.dart';
 import '../providers/project_provider.dart';
 
@@ -44,7 +45,7 @@ class _ProjectsLibraryScreenState extends State<ProjectsLibraryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Projects Library'),
+        title: Text('My Projects Library', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
       ),
       body: Column(
         children: [
@@ -53,7 +54,8 @@ class _ProjectsLibraryScreenState extends State<ProjectsLibraryScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search projects (name, description, tags)',
+                labelText: 'Search projects',
+                hintText: 'Name, description, or tags...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
@@ -63,104 +65,155 @@ class _ProjectsLibraryScreenState extends State<ProjectsLibraryScreen> {
                         },
                       )
                     : null,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
           Expanded(
             child: filteredProjects.isEmpty
-                ? const Center(child: Text('No projects found.'))
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.folder_open, size: 64, color: Theme.of(context).colorScheme.primary.withAlpha(100)),
+                        const SizedBox(height: 16),
+                        Text('No projects found', style: GoogleFonts.inter(fontSize: 18, color: Colors.grey)),
+                      ],
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: filteredProjects.length,
                     itemBuilder: (context, index) {
                       final project = filteredProjects[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: ListTile(
-                          title: Text(project.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (project.description.isNotEmpty)
-                                Text(project.description, maxLines: 2, overflow: TextOverflow.ellipsis),
-                              const SizedBox(height: 4),
-                              Wrap(
-                                spacing: 4,
-                                children: project.tags.map((tag) => ActionChip(
-                                  label: Text(tag, style: const TextStyle(fontSize: 10)),
-                                  padding: EdgeInsets.zero,
-                                  visualDensity: VisualDensity.compact,
-                                  onPressed: () {
-                                    _searchController.text = tag;
-                                  },
-                                )).toList(),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withAlpha(80)),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Load "${project.name}"?'),
+                                content: const Text('This will replace your current workspace.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      projectProvider.importFromJson(project.jsonContent);
+                                      Navigator.pop(context); // Close dialog
+                                      Navigator.pop(context); // Close library screen
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Loaded ${project.name}')));
+                                    },
+                                    child: const Text('Load'),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                'Last modified: ${project.lastModified.toString().split('.')[0]}',
-                                style: const TextStyle(fontSize: 10, color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                tooltip: 'Load Project',
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Load Project?'),
-                                      content: const Text('Current workspace will be replaced. Make sure to save changes first.'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            projectProvider.importFromJson(project.jsonContent);
-                                            Navigator.pop(context); // Close dialog
-                                            Navigator.pop(context); // Close library screen
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('Loaded project: ${project.name}')),
-                                            );
-                                          },
-                                          child: const Text('Load'),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        project.name,
+                                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
+                                      ),
+                                    ),
+                                    PopupMenuButton<String>(
+                                      icon: const Icon(Icons.more_vert),
+                                      onSelected: (value) {
+                                        if (value == 'delete') {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: const Text('Delete Project?'),
+                                              content: Text('Are you sure you want to delete "${project.name}"?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    libraryProvider.deleteProject(project.id);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      itemBuilder: (context) => [
+                                        const PopupMenuItem(
+                                          value: 'delete',
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.delete, color: Colors.red, size: 20),
+                                              SizedBox(width: 8),
+                                              Text('Delete', style: TextStyle(color: Colors.red)),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                tooltip: 'Delete Project',
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text('Delete Project?'),
-                                      content: Text('Are you sure you want to delete "${project.name}"?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            libraryProvider.deleteProject(project.id);
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                        ),
-                                      ],
+                                  ],
+                                ),
+                                if (project.description.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    project.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.inter(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  ),
+                                ],
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Wrap(
+                                        spacing: 8,
+                                        runSpacing: 4,
+                                        children: project.tags.map((tag) => Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.secondaryContainer.withAlpha(100),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            tag,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        )).toList(),
+                                      ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
+                                    Text(
+                                      project.lastModified.toString().split('.')[0],
+                                      style: GoogleFonts.inter(fontSize: 11, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -172,4 +225,3 @@ class _ProjectsLibraryScreenState extends State<ProjectsLibraryScreen> {
     );
   }
 }
-

@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../widgets/components_panel.dart';
 import '../widgets/editor_canvas.dart';
@@ -60,7 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Advanced Readme Creator'),
+        title: Row(
+          children: [
+            Icon(Icons.description, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 12),
+            const Text('Advanced Readme Creator'),
+          ],
+        ),
         actions: isDesktop ? _buildDesktopActions(context) : _buildMobileActions(context),
       ),
       drawer: isDesktop ? null : const Drawer(child: ComponentsPanel()),
@@ -426,11 +433,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildStatusBar(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      height: 28,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0), // Slate 800 / Slate 200
-        border: Border(top: BorderSide(color: isDark ? Colors.black12 : Colors.white54)),
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9), // Slate 900 / Slate 100
+        border: Border(top: BorderSide(color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(10))),
       ),
       child: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
@@ -452,13 +459,13 @@ class _HomeScreenState extends State<HomeScreen> {
           return Row(
             children: [
               Icon(Icons.widgets_outlined, size: 14, color: isDark ? Colors.white70 : Colors.black54),
-              const SizedBox(width: 4),
-              Text('$elementCount Elements', style: TextStyle(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
-              const SizedBox(width: 16),
+              const SizedBox(width: 6),
+              Text('$elementCount Elements', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
+              const SizedBox(width: 24),
               Icon(Icons.text_fields, size: 14, color: isDark ? Colors.white70 : Colors.black54),
-              const SizedBox(width: 4),
-              Text('$wordCount Words', style: TextStyle(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
-              const SizedBox(width: 16),
+              const SizedBox(width: 6),
+              Text('$wordCount Words', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
+              const SizedBox(width: 24),
               if (errorCount > 0 || warningCount > 0)
                 InkWell(
                   onTap: () => _showHealthCheckDialog(context, issues, provider),
@@ -466,14 +473,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       if (errorCount > 0) ...[
                         const Icon(Icons.error, size: 14, color: Colors.redAccent),
-                        const SizedBox(width: 4),
-                        Text('$errorCount Errors', style: const TextStyle(fontSize: 11, color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
+                        Text('$errorCount Errors', style: GoogleFonts.inter(fontSize: 12, color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 12),
                       ],
                       if (warningCount > 0) ...[
                         const Icon(Icons.warning, size: 14, color: Colors.orangeAccent),
-                        const SizedBox(width: 4),
-                        Text('$warningCount Warnings', style: const TextStyle(fontSize: 11, color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 6),
+                        Text('$warningCount Warnings', style: GoogleFonts.inter(fontSize: 12, color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
                       ],
                     ],
                   ),
@@ -482,24 +489,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     const Icon(Icons.check_circle, size: 14, color: Colors.green),
-                    const SizedBox(width: 4),
-                    Text('Healthy', style: TextStyle(fontSize: 11, color: Colors.green[700], fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 6),
+                    Text('Healthy', style: GoogleFonts.inter(fontSize: 12, color: Colors.green[700], fontWeight: FontWeight.bold)),
                   ],
                 ),
               const Spacer(),
               if (_isFocusMode)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.blue.withAlpha(30),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Text('FOCUS MODE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue)),
+                  child: Text('FOCUS MODE', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue)),
                 ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Icon(Icons.cloud_done, size: 14, color: isDark ? Colors.white54 : Colors.black45),
-              const SizedBox(width: 4),
-              Text('Auto-saved', style: TextStyle(fontSize: 11, color: isDark ? Colors.white54 : Colors.black45)),
+              const SizedBox(width: 6),
+              Text('Auto-saved', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white54 : Colors.black45)),
             ],
           );
         },
@@ -1110,8 +1117,4 @@ $htmlContent
     );
   }
 }
-
-
-
-
 

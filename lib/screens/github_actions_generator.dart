@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlight/themes/github.dart';
+import 'package:flutter_highlight/themes/dracula.dart';
 
 class GitHubActionsGenerator extends StatefulWidget {
   const GitHubActionsGenerator({super.key});
@@ -77,9 +81,10 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GitHub Actions Generator'),
+        title: Text('GitHub Actions Generator', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: const Icon(Icons.copy),
@@ -99,7 +104,8 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const Text('Triggers', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text('Triggers', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 SwitchListTile(
                   title: const Text('Schedule (Cron)'),
                   value: _scheduleEnabled,
@@ -107,10 +113,14 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
                 ),
                 if (_scheduleEnabled)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: TextFormField(
                       initialValue: _cronSchedule,
-                      decoration: const InputDecoration(labelText: 'Cron Expression'),
+                      decoration: const InputDecoration(
+                        labelText: 'Cron Expression',
+                        helperText: 'e.g. 0 0 * * * (Daily)',
+                        border: OutlineInputBorder(),
+                      ),
                       onChanged: (v) => setState(() => _cronSchedule = v),
                     ),
                   ),
@@ -120,12 +130,13 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
                   onChanged: (v) => setState(() => _pushEnabled = v),
                 ),
                 SwitchListTile(
-                  title: const Text('Manual Trigger (workflow_dispatch)'),
+                  title: const Text('Workflow Dispatch (Manual)'),
                   value: _workflowDispatchEnabled,
                   onChanged: (v) => setState(() => _workflowDispatchEnabled = v),
                 ),
-                const Divider(),
-                const Text('Steps', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const Divider(height: 32),
+                Text('Steps', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 CheckboxListTile(
                   title: const Text('Checkout Repository'),
                   value: _checkout,
@@ -143,10 +154,13 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
                 ),
                 if (_updateFeed)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: TextFormField(
                       initialValue: _feedUrl,
-                      decoration: const InputDecoration(labelText: 'RSS Feed URL'),
+                      decoration: const InputDecoration(
+                        labelText: 'RSS Feed URL',
+                        border: OutlineInputBorder(),
+                      ),
                       onChanged: (v) => setState(() => _feedUrl = v),
                     ),
                   ),
@@ -163,17 +177,27 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
           Expanded(
             flex: 1,
             child: Container(
-              color: const Color(0xFF1E1E1E),
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: SelectableText(
-                  _generateYaml(),
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    color: Color(0xFFD4D4D4),
-                    fontSize: 14,
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('Preview: .github/workflows/readme.yml', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                   ),
-                ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: HighlightView(
+                        _generateYaml(),
+                        language: 'yaml',
+                        theme: isDark ? draculaTheme : githubTheme,
+                        padding: const EdgeInsets.all(12),
+                        textStyle: GoogleFonts.firaCode(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -182,4 +206,3 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
     );
   }
 }
-

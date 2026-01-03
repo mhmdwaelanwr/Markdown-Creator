@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/library_provider.dart';
 import '../providers/project_provider.dart';
@@ -117,17 +118,18 @@ class _CanvasItemState extends State<CanvasItem> {
   }
 
   void _showSaveSnippetDialog(BuildContext context, ReadmeElement element) {
-    final libraryProvider = Provider.of<LibraryProvider>(context, listen: false);
-    final nameController = TextEditingController(text: 'New Snippet');
-
+    final nameController = TextEditingController(text: element.description);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Save as Snippet'),
+        title: Text('Save as Snippet', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(labelText: 'Snippet Name'),
-          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Snippet Name',
+            border: OutlineInputBorder(),
+          ),
+          style: GoogleFonts.inter(),
         ),
         actions: [
           TextButton(
@@ -137,12 +139,12 @@ class _CanvasItemState extends State<CanvasItem> {
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
-                libraryProvider.saveSnippet(
+                Provider.of<LibraryProvider>(context, listen: false).saveSnippet(
                   name: nameController.text,
                   elementJson: jsonEncode(element.toJson()),
                 );
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Snippet saved')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Snippet saved!')));
               }
             },
             child: const Text('Save'),

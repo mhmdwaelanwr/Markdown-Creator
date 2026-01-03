@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
 import '../generator/markdown_generator.dart';
@@ -61,7 +62,7 @@ class SettingsPanel extends StatelessWidget {
               const SizedBox(height: 24),
               Text(
                 'No Element Selected',
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface,
@@ -71,7 +72,7 @@ class SettingsPanel extends StatelessWidget {
               Text(
                 'Select an element from the canvas to edit its properties, or drag a new component from the left panel.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: colorScheme.onSurface.withAlpha(150)),
+                style: GoogleFonts.inter(color: colorScheme.onSurface.withAlpha(150)),
               ),
             ],
           ),
@@ -87,10 +88,10 @@ class SettingsPanel extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colorScheme.primaryContainer.withAlpha(50),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: colorScheme.primary.withAlpha(50)),
             ),
             child: Row(
@@ -98,7 +99,7 @@ class SettingsPanel extends StatelessWidget {
               children: [
                 Text(
                   'Edit ${element.description}',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.primary),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: colorScheme.primary, fontSize: 16),
                 ),
                 Row(
                   children: [
@@ -109,6 +110,10 @@ class SettingsPanel extends StatelessWidget {
                       iconSize: 20,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     IconButton(
@@ -118,13 +123,17 @@ class SettingsPanel extends StatelessWidget {
                       iconSize: 20,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
+                      style: IconButton.styleFrom(
+                        backgroundColor: colorScheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           ElementSettingsForm(element: element),
         ],
       ),
@@ -168,10 +177,10 @@ class SettingsPanel extends StatelessWidget {
           child: SingleChildScrollView(
             child: SelectableText(
               markdown,
-              style: TextStyle(
-                fontFamily: 'monospace',
+              style: GoogleFonts.firaCode(
                 color: colorScheme.onSurface,
                 fontSize: 13,
+                height: 1.5,
               ),
             ),
           ),

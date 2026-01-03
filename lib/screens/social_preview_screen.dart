@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import '../providers/project_provider.dart';
 
@@ -122,100 +123,74 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context);
     final projectName = provider.variables['PROJECT_NAME'] ?? 'Project Name';
-    final description = 'A short description of your project goes here.'; // We don't have a dedicated description variable, maybe use a default or add one.
-    // Actually, `SavedProject` has description, but `ProjectProvider` variables map doesn't explicitly have it unless user added it.
-    // Let's use a local controller for description so user can edit it for the card.
+    final projectDesc = provider.variables['PROJECT_DESCRIPTION'] ?? 'A short description of your project.';
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Social Preview Designer'),
+        title: Text('Social Preview Designer', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
+            tooltip: 'Export Image',
             onPressed: _exportImage,
-            tooltip: 'Export PNG',
           ),
         ],
       ),
       body: Row(
         children: [
-          // Settings
+          // Settings Panel
           Container(
             width: 300,
             padding: const EdgeInsets.all(16),
-            color: Colors.grey[200],
+            decoration: BoxDecoration(
+              border: Border(right: BorderSide(color: Colors.grey.withAlpha(50))),
+            ),
             child: ListView(
               children: [
-                const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text('Settings', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 24),
+                ListTile(
+                  title: const Text('Background Color'),
+                  trailing: CircleAvatar(backgroundColor: _backgroundColor),
+                  onTap: () => _pickColor(_backgroundColor, (c) => setState(() => _backgroundColor = c)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                ListTile(
+                  title: const Text('Text Color'),
+                  trailing: CircleAvatar(backgroundColor: _textColor),
+                  onTap: () => _pickColor(_textColor, (c) => setState(() => _textColor = c)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                const Divider(),
+                Text('Typography', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 16),
-                const Text('Background Color'),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: _backgroundColor,
-                            onColorChanged: (color) => setState(() => _backgroundColor = color),
-                          ),
-                        ),
+                Row(
+                  children: [
+                    const Text('Title Size'),
+                    Expanded(
+                      child: Slider(
+                        value: _titleSize,
+                        min: 24,
+                        max: 120,
+                        onChanged: (v) => setState(() => _titleSize = v),
                       ),
-                    );
-                  },
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _backgroundColor,
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                const Text('Text Color'),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: _textColor,
-                            onColorChanged: (color) => setState(() => _textColor = color),
-                          ),
-                        ),
+                Row(
+                  children: [
+                    const Text('Desc Size'),
+                    Expanded(
+                      child: Slider(
+                        value: _descSize,
+                        min: 12,
+                        max: 60,
+                        onChanged: (v) => setState(() => _descSize = v),
                       ),
-                    );
-                  },
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _textColor,
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                const Text('Title Size'),
-                Slider(
-                  value: _titleSize,
-                  min: 24,
-                  max: 128,
-                  onChanged: (v) => setState(() => _titleSize = v),
-                ),
-                const SizedBox(height: 16),
-                const Text('Description Size'),
-                Slider(
-                  value: _descSize,
-                  min: 16,
-                  max: 64,
-                  onChanged: (v) => setState(() => _descSize = v),
-                ),
-                const SizedBox(height: 16),
+                const Divider(),
                 SwitchListTile(
                   title: const Text('Show Border'),
                   value: _showBorder,
@@ -225,64 +200,79 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
               ],
             ),
           ),
-          // Preview
+          // Preview Area
           Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+            child: Container(
+              color: Colors.grey[200], // Canvas background
+              child: Center(
                 child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: RepaintBoundary(
-                      key: _previewKey,
-                      child: Container(
-                        width: 1280,
-                        height: 640,
-                        decoration: BoxDecoration(
-                          color: _backgroundColor,
-                          border: _showBorder ? Border.all(color: Colors.grey, width: 1) : null,
-                        ),
-                        padding: const EdgeInsets.all(64),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              projectName,
-                              style: TextStyle(
-                                fontSize: _titleSize,
-                                fontWeight: FontWeight.bold,
-                                color: _textColor,
-                                fontFamily: 'sans-serif',
+                  child: RepaintBoundary(
+                    key: _previewKey,
+                    child: Container(
+                      width: 1280,
+                      height: 640,
+                      decoration: BoxDecoration(
+                        color: _backgroundColor,
+                        border: _showBorder ? Border.all(color: Colors.white.withAlpha(50), width: 20) : null,
+                      ),
+                      child: Stack(
+                        children: [
+                          // Decorative elements
+                          Positioned(
+                            top: -100,
+                            right: -100,
+                            child: Container(
+                              width: 400,
+                              height: 400,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withAlpha(10),
                               ),
                             ),
-                            const SizedBox(height: 32),
-                            Text(
-                              description,
-                              style: TextStyle(
-                                fontSize: _descSize,
-                                color: _textColor.withValues(alpha: 0.8),
-                                fontFamily: 'sans-serif',
+                          ),
+                          Positioned(
+                            bottom: -50,
+                            left: -50,
+                            child: Container(
+                              width: 300,
+                              height: 300,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withAlpha(10),
                               ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                Icon(Icons.code, color: _textColor, size: 48),
-                                const SizedBox(width: 16),
-                                Text(
-                                  'Built with Readme Creator',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: _textColor.withValues(alpha: 0.6),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(64.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    projectName,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: _titleSize,
+                                      fontWeight: FontWeight.w800,
+                                      color: _textColor,
+                                      height: 1.1,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 32),
+                                  Text(
+                                    projectDesc,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: _descSize,
+                                      fontWeight: FontWeight.w400,
+                                      color: _textColor.withAlpha(200),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -292,6 +282,41 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _pickColor(Color initialColor, ValueChanged<Color> onColorPicked) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        Color pickedColor = initialColor;
+        return AlertDialog(
+          title: const Text('Pick a color'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: initialColor,
+              onColorChanged: (color) {
+                pickedColor = color;
+              },
+              labelTypes: const [],
+              pickerAreaHeightPercent: 0.7,
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Select'),
+              onPressed: () {
+                onColorPicked(pickedColor);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

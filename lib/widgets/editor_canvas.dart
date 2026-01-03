@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../models/snippet.dart';
 import '../providers/project_provider.dart';
@@ -181,22 +182,29 @@ class EditorCanvas extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.drag_indicator, size: 64, color: colorScheme.primary.withAlpha(100)),
-          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withAlpha(50),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.drag_indicator, size: 48, color: colorScheme.primary.withAlpha(150)),
+          ),
+          const SizedBox(height: 24),
           Text(
             'Drag components here',
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 18,
-              color: colorScheme.onSurface.withAlpha(150),
-              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface.withAlpha(200),
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Start building your README',
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 14,
-              color: colorScheme.onSurface.withAlpha(100),
+              color: colorScheme.onSurface.withAlpha(150),
             ),
           ),
         ],
@@ -231,17 +239,16 @@ class GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : Colors.black).withAlpha(20)
-      ..strokeWidth = 1;
+      ..color = (isDark ? Colors.white : Colors.black).withAlpha(30)
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
 
     const double gridSize = 20.0;
 
     for (double x = 0; x < size.width; x += gridSize) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-
-    for (double y = 0; y < size.height; y += gridSize) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+      for (double y = 0; y < size.height; y += gridSize) {
+        canvas.drawPoints(PointMode.points, [Offset(x, y)], paint);
+      }
     }
   }
 

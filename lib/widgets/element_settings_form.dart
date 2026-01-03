@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
 import '../utils/dev_icons.dart';
@@ -449,6 +450,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                 child: TextFormField(
                   controller: _textController,
                   decoration: const InputDecoration(labelText: 'Heading Text'),
+                  style: GoogleFonts.inter(),
                 ),
               ),
               IconButton(
@@ -508,6 +510,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             controller: _textController,
             decoration: const InputDecoration(labelText: 'Text'),
             maxLines: 5,
+            style: GoogleFonts.inter(),
           ),
         ],
       );
@@ -519,6 +522,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'Image URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 8),
           Row(
@@ -581,11 +585,13 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           TextFormField(
             controller: _altTextController,
             decoration: const InputDecoration(labelText: 'Alt Text'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _widthController,
             decoration: const InputDecoration(labelText: 'Width (optional)'),
+            style: GoogleFonts.inter(),
           ),
         ],
       );
@@ -595,6 +601,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           TextFormField(
             controller: _textController,
             decoration: const InputDecoration(labelText: 'Button Text'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -602,6 +609,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
           if (provider.elements.whereType<HeadingElement>().isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -611,7 +619,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                 final anchor = '#${h.text.toLowerCase().replaceAll(' ', '-')}';
                 return DropdownMenuItem(
                   value: anchor,
-                  child: Text(h.text),
+                  child: Text(h.text, style: GoogleFonts.inter()),
                 );
               }).toList(),
               onChanged: (value) {
@@ -630,12 +638,14 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           TextFormField(
             controller: _languageController,
             decoration: const InputDecoration(labelText: 'Language'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _codeController,
             decoration: const InputDecoration(labelText: 'Code'),
             maxLines: 10,
+            style: GoogleFonts.firaCode(),
           ),
         ],
       );
@@ -643,7 +653,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       return Column(
         children: [
           SwitchListTile(
-            title: const Text('Ordered List'),
+            title: Text('Ordered List', style: GoogleFonts.inter()),
             value: element.isOrdered,
             onChanged: (value) {
               setState(() {
@@ -664,6 +674,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                       key: ValueKey(index), // Use index as key to preserve focus
                       initialValue: item,
                       decoration: InputDecoration(labelText: 'Item ${index + 1}'),
+                      style: GoogleFonts.inter(),
                       onChanged: (value) {
                         element.items[index] = value;
                         _notifyUpdate();
@@ -696,6 +707,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           TextFormField(
             controller: _labelController,
             decoration: const InputDecoration(labelText: 'Label'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -703,6 +715,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'Image URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -710,6 +723,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'Target URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
           if (provider.elements.whereType<HeadingElement>().isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -719,7 +733,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                 final anchor = '#${h.text.toLowerCase().replaceAll(' ', '-')}';
                 return DropdownMenuItem(
                   value: anchor,
-                  child: Text(h.text),
+                  child: Text(h.text, style: GoogleFonts.inter()),
                 );
               }).toList(),
               onChanged: (value) {
@@ -759,6 +773,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                 controller: textEditingController,
                 focusNode: focusNode,
                 decoration: const InputDecoration(labelText: 'Search Icon Name'),
+                style: GoogleFonts.inter(),
                 onFieldSubmitted: (String value) {
                   onFieldSubmitted();
                 },
@@ -780,14 +795,16 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'Icon URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           TextFormField(
             controller: _widthController,
             decoration: const InputDecoration(labelText: 'Size'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 8),
-          const Text('Tip: Use devicon.dev or simpleicons.org for URLs', style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text('Tip: Use devicon.dev or simpleicons.org for URLs', style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
         ],
       );
     } else if (element is EmbedElement) {
@@ -796,10 +813,10 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           DropdownButtonFormField<String>(
             initialValue: element.typeName,
             decoration: const InputDecoration(labelText: 'Embed Type'),
-            items: const [
-              DropdownMenuItem(value: 'gist', child: Text('GitHub Gist')),
-              DropdownMenuItem(value: 'codepen', child: Text('CodePen')),
-              DropdownMenuItem(value: 'youtube', child: Text('YouTube')),
+            items: [
+              DropdownMenuItem(value: 'gist', child: Text('GitHub Gist', style: GoogleFonts.inter())),
+              DropdownMenuItem(value: 'codepen', child: Text('CodePen', style: GoogleFonts.inter())),
+              DropdownMenuItem(value: 'youtube', child: Text('YouTube', style: GoogleFonts.inter())),
             ],
             onChanged: (value) {
               if (value != null) {
@@ -814,6 +831,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             decoration: const InputDecoration(labelText: 'Embed URL'),
             validator: _validateUrl,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: GoogleFonts.inter(),
           ),
         ],
       );
@@ -826,6 +844,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                 child: TextFormField(
                   controller: _textController,
                   decoration: const InputDecoration(labelText: 'Repo Name (user/repo)'),
+                  style: GoogleFonts.inter(),
                 ),
               ),
               IconButton(
@@ -887,7 +906,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           ),
           const SizedBox(height: 16),
           SwitchListTile(
-            title: const Text('Show Stars'),
+            title: Text('Show Stars', style: GoogleFonts.inter()),
             value: element.showStars,
             onChanged: (val) {
               setState(() => element.showStars = val);
@@ -895,7 +914,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             },
           ),
           SwitchListTile(
-            title: const Text('Show Forks'),
+            title: Text('Show Forks', style: GoogleFonts.inter()),
             value: element.showForks,
             onChanged: (val) {
               setState(() => element.showForks = val);
@@ -903,7 +922,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             },
           ),
           SwitchListTile(
-            title: const Text('Show Issues'),
+            title: Text('Show Issues', style: GoogleFonts.inter()),
             value: element.showIssues,
             onChanged: (val) {
               setState(() => element.showIssues = val);
@@ -911,7 +930,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             },
           ),
           SwitchListTile(
-            title: const Text('Show License'),
+            title: Text('Show License', style: GoogleFonts.inter()),
             value: element.showLicense,
             onChanged: (val) {
               setState(() => element.showLicense = val);
@@ -926,14 +945,15 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           TextFormField(
             controller: _textController,
             decoration: const InputDecoration(labelText: 'Repo Name (user/repo)'),
+            style: GoogleFonts.inter(),
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             initialValue: element.style,
             decoration: const InputDecoration(labelText: 'Style'),
-            items: const [
-              DropdownMenuItem(value: 'grid', child: Text('Grid (Avatars)')),
-              DropdownMenuItem(value: 'list', child: Text('List (Names)')),
+            items: [
+              DropdownMenuItem(value: 'grid', child: Text('Grid (Avatars)', style: GoogleFonts.inter())),
+              DropdownMenuItem(value: 'list', child: Text('List (Names)', style: GoogleFonts.inter())),
             ],
             onChanged: (value) {
               if (value != null) {
@@ -997,7 +1017,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             ],
           ),
           const Divider(),
-          const Text('Columns & Headers', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Columns & Headers', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           SizedBox(
             height: 150,
@@ -1048,7 +1068,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             ),
           ),
           const Divider(),
-          const Text('Rows Data', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Rows Data', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...element.rows.asMap().entries.map((entry) {
             final rowIndex = entry.key;
@@ -1409,7 +1429,7 @@ class __TableCellImageDialogState extends State<_TableCellImageDialog> {
                   label: const Text('Icon'),
                   onPressed: () {
                     // Simple icon insertion
-                    _insertText('<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="20" height="20"/>');
+                    _insertText('<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="20" height="20" alt="icon"/>');
                   },
                 ),
                 ElevatedButton.icon(

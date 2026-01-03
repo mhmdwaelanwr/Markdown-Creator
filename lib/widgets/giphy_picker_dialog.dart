@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/giphy_service.dart';
 
 class GiphyPickerDialog extends StatefulWidget {
@@ -66,7 +67,7 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Select GIF from GIPHY'),
+      title: Text('Select GIF from GIPHY', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 600,
         height: 500,
@@ -84,8 +85,9 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
                     _loadTrending();
                   },
                 ),
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
+              style: GoogleFonts.inter(),
               onSubmitted: _search,
             ),
             const SizedBox(height: 16),
@@ -93,9 +95,9 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                      ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
+                      ? Center(child: Text(_error!, style: GoogleFonts.inter(color: Colors.red)))
                       : _gifs.isEmpty
-                          ? const Center(child: Text('No GIFs found'))
+                          ? Center(child: Text('No GIFs found', style: GoogleFonts.inter()))
                           : GridView.builder(
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -131,4 +133,3 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
     );
   }
 }
-

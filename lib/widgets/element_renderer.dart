@@ -6,6 +6,7 @@ import 'package:flutter_highlight/themes/dracula.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
 import '../utils/social_platforms.dart';
@@ -25,16 +26,35 @@ class ElementRenderer extends StatelessWidget {
       TextStyle style;
       switch (e.level) {
         case 1:
-          style = Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold, color: textColor) ?? TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: textColor);
+          style = GoogleFonts.inter(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            color: textColor,
+            height: 1.2,
+          );
           break;
         case 2:
-          style = Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: textColor) ?? TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: textColor);
+          style = GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: textColor,
+            height: 1.3,
+          );
           break;
         case 3:
-          style = Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: textColor) ?? TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor);
+          style = GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+            height: 1.4,
+          );
           break;
         default:
-          style = TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor);
+          style = GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          );
       }
       return Text(e.text, style: style);
     } else if (element is ParagraphElement) {
@@ -86,6 +106,13 @@ class ElementRenderer extends StatelessWidget {
       final e = element as LinkButtonElement;
       return ElevatedButton(
         onPressed: null, // Disabled in editor
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          textStyle: GoogleFonts.inter(fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
         child: Text(e.text),
       );
     } else if (element is CodeBlockElement) {
@@ -95,11 +122,12 @@ class ElementRenderer extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
+          color: isDark ? const Color(0xFF282A36) : const Color(0xFFF6F8FA),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(8),
           child: HighlightView(
             e.code,
             language: e.language.isEmpty ? 'plaintext' : e.language,
@@ -395,26 +423,35 @@ class ElementRenderer extends StatelessWidget {
   }
 
   Widget _buildRichText(String text, Color textColor) {
-    List<TextSpan> spans = [];
-    final RegExp exp = RegExp(r'(\*\*(.*?)\*\*)|(\*(.*?)\*)|(`(.*?)`)');
+    final spans = <TextSpan>[];
+    final exp = RegExp(r'(\*\*(.*?)\*\*)|(\*(.*?)\*)|(`(.*?)`)');
     int start = 0;
 
     for (final match in exp.allMatches(text)) {
       if (match.start > start) {
-        spans.add(TextSpan(text: text.substring(start, match.start), style: TextStyle(color: textColor)));
+        spans.add(TextSpan(
+          text: text.substring(start, match.start),
+          style: GoogleFonts.inter(color: textColor, height: 1.6),
+        ));
       }
 
       if (match.group(1) != null) { // Bold **text**
-        spans.add(TextSpan(text: match.group(2), style: TextStyle(fontWeight: FontWeight.bold, color: textColor)));
+        spans.add(TextSpan(
+          text: match.group(2),
+          style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: textColor, height: 1.6),
+        ));
       } else if (match.group(3) != null) { // Italic *text*
-        spans.add(TextSpan(text: match.group(4), style: TextStyle(fontStyle: FontStyle.italic, color: textColor)));
+        spans.add(TextSpan(
+          text: match.group(4),
+          style: GoogleFonts.inter(fontStyle: FontStyle.italic, color: textColor, height: 1.6),
+        ));
       } else if (match.group(5) != null) { // Code `text`
         spans.add(TextSpan(
           text: match.group(6),
-          style: TextStyle(
-            fontFamily: 'monospace',
+          style: GoogleFonts.firaCode(
             backgroundColor: Colors.grey.withAlpha(50),
             color: textColor,
+            fontSize: 13,
           ),
         ));
       }
@@ -422,7 +459,10 @@ class ElementRenderer extends StatelessWidget {
     }
 
     if (start < text.length) {
-      spans.add(TextSpan(text: text.substring(start), style: TextStyle(color: textColor)));
+      spans.add(TextSpan(
+        text: text.substring(start),
+        style: GoogleFonts.inter(color: textColor, height: 1.6),
+      ));
     }
 
     return RichText(text: TextSpan(children: spans));

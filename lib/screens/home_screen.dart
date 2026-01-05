@@ -25,6 +25,9 @@ import '../generator/markdown_generator.dart';
 import 'social_preview_screen.dart';
 import 'github_actions_generator.dart';
 import '../services/health_check_service.dart';
+import '../services/codebase_scanner_service.dart';
+import '../services/github_scanner_service.dart';
+import '../services/ai_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -347,6 +350,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(children: [Icon(Icons.psychology, color: Colors.grey), SizedBox(width: 8), Text('AI Settings')]),
         ),
         const PopupMenuItem(
+          value: 'generate_codebase',
+          child: Row(children: [Icon(Icons.auto_awesome, color: Colors.purple), SizedBox(width: 8), Text('Generate from Codebase (AI)')]),
+        ),
+        const PopupMenuItem(
           value: 'help',
           child: Row(children: [Icon(Icons.help_outline, color: Colors.grey), SizedBox(width: 8), Text('Show Tour')]),
         ),
@@ -428,6 +435,8 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         } else if (value == 'ai_settings') {
           _showAISettingsDialog(context, provider);
+        } else if (value == 'generate_codebase') {
+          _showGenerateFromCodebaseDialog(context, provider);
         } else if (value == 'help') {
           OnboardingHelper.restartOnboarding(
             context: context,
@@ -1336,7 +1345,9 @@ $htmlContent
 
   void _showAISettingsDialog(BuildContext context, ProjectProvider provider) {
     final apiKeyController = TextEditingController(text: provider.geminiApiKey);
+    final githubTokenController = TextEditingController(text: provider.githubToken);
     bool isObscured = true;
+    bool isGithubObscured = true;
 
     showDialog(
       context: context,
@@ -1344,39 +1355,71 @@ $htmlContent
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('AI Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              title: Text('AI & Integrations', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
                 width: 400,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Enter your Gemini API Key to enable real AI features.', style: GoogleFonts.inter()),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: apiKeyController,
-                      obscureText: isObscured,
-                      decoration: InputDecoration(
-                        labelText: 'Gemini API Key',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(isObscured ? Icons.visibility : Icons.visibility_off),
-                          onPressed: () => setState(() => isObscured = !isObscured),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Gemini AI', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Text('Enter your Gemini API Key to enable real AI features.', style: GoogleFonts.inter(fontSize: 12)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: apiKeyController,
+                        obscureText: isObscured,
+                        decoration: InputDecoration(
+                          labelText: 'Gemini API Key',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(isObscured ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () => setState(() => isObscured = !isObscured),
+                          ),
+                        ),
+                        style: GoogleFonts.inter(),
+                      ),
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () {
+                          launchUrl(Uri.parse('https://aistudio.google.com/app/apikey'));
+                        },
+                        child: Text(
+                          'Get your API key from Google AI Studio',
+                          style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12),
                         ),
                       ),
-                      style: GoogleFonts.inter(),
-                    ),
-                    const SizedBox(height: 8),
-                    InkWell(
-                      onTap: () {
-                        launchUrl(Uri.parse('https://aistudio.google.com/app/apikey'));
-                      },
-                      child: Text(
-                        'Get your API key from Google AI Studio',
-                        style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline),
+                      const SizedBox(height: 24),
+                      Text('GitHub Integration', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Text('Optional: Enter GitHub Token for higher rate limits when scanning repos.', style: GoogleFonts.inter(fontSize: 12)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: githubTokenController,
+                        obscureText: isGithubObscured,
+                        decoration: InputDecoration(
+                          labelText: 'GitHub Token (Optional)',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(isGithubObscured ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () => setState(() => isGithubObscured = !isGithubObscured),
+                          ),
+                        ),
+                        style: GoogleFonts.inter(),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () {
+                          launchUrl(Uri.parse('https://github.com/settings/tokens'));
+                        },
+                        child: Text(
+                          'Generate a Personal Access Token',
+                          style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
@@ -1387,8 +1430,9 @@ $htmlContent
                 ElevatedButton(
                   onPressed: () {
                     provider.setGeminiApiKey(apiKeyController.text.trim());
+                    provider.setGitHubToken(githubTokenController.text.trim());
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('API Key saved!')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved!')));
                   },
                   child: const Text('Save'),
                 ),
@@ -1399,7 +1443,188 @@ $htmlContent
       },
     );
   }
+
+  void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) {
+    final repoUrlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        bool isLoading = false;
+        String statusMessage = '';
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Generate from Codebase', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              content: SizedBox(
+                width: 500,
+                height: 300,
+                child: DefaultTabController(
+                  length: 2,
+                  child: Column(
+                    children: [
+                      const TabBar(
+                        labelColor: Colors.blue,
+                        tabs: [
+                          Tab(text: 'Local Folder'),
+                          Tab(text: 'GitHub Repo'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: isLoading
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const CircularProgressIndicator(),
+                                const SizedBox(height: 16),
+                                Text(statusMessage, style: GoogleFonts.inter(fontStyle: FontStyle.italic), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          )
+                        : TabBarView(
+                          children: [
+                            // Local Folder Tab
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Scan a local project folder to generate a README.',
+                                  style: GoogleFonts.inter(),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 24),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.folder_open),
+                                  label: const Text('Pick Project Folder'),
+                                  onPressed: () async {
+                                    final result = await FilePicker.platform.getDirectoryPath();
+                                    if (result != null) {
+                                      setState(() {
+                                        isLoading = true;
+                                        statusMessage = 'Scanning local codebase...';
+                                      });
+
+                                      try {
+                                        final codeContext = await CodebaseScannerService.scanDirectory(result);
+                                        if (codeContext.isEmpty) throw Exception('No suitable source code found.');
+
+                                        setState(() => statusMessage = 'Analyzing with AI...');
+                                        final apiKey = provider.geminiApiKey;
+                                        final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
+
+                                        if (markdown.startsWith('# Error')) throw Exception(markdown);
+
+                                        if (context.mounted) {
+                                          provider.importMarkdown(markdown);
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('README generated successfully!')));
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          setState(() {
+                                            isLoading = false;
+                                            statusMessage = 'Error: $e';
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                        }
+                                      }
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                            // GitHub Repo Tab
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Scan a public GitHub repository.',
+                                  style: GoogleFonts.inter(),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                TextField(
+                                  controller: repoUrlController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Repository URL',
+                                    hintText: 'https://github.com/username/repo',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.link),
+                                  ),
+                                  style: GoogleFonts.inter(),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.cloud_download),
+                                  label: const Text('Scan & Generate'),
+                                  onPressed: () async {
+                                    if (repoUrlController.text.isEmpty) return;
+
+                                    setState(() {
+                                      isLoading = true;
+                                      statusMessage = 'Fetching repository data...';
+                                    });
+
+                                    try {
+                                      final scanner = GitHubScannerService();
+                                      final token = provider.githubToken;
+                                      final codeContext = await scanner.scanRepo(repoUrlController.text, token: token);
+
+                                      if (codeContext.isEmpty) throw Exception('No suitable source code found or repo is empty.');
+
+                                      setState(() => statusMessage = 'Analyzing with AI...');
+                                      final apiKey = provider.geminiApiKey;
+                                      final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
+
+                                      if (markdown.startsWith('# Error')) throw Exception(markdown);
+
+                                      if (context.mounted) {
+                                        provider.importMarkdown(markdown);
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('README generated successfully!')));
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        setState(() {
+                                          isLoading = false;
+                                          statusMessage = 'Error: $e';
+                                        });
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                      }
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                if (!isLoading)
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
+
+
+
+
+
 
 
 

@@ -29,6 +29,7 @@ class ProjectProvider with ChangeNotifier {
   DeviceMode _deviceMode = DeviceMode.desktop;
   bool _exportHtml = false;
   String? _geminiApiKey;
+  String? _githubToken;
 
   final List<String> _undoStack = [];
   final List<String> _redoStack = [];
@@ -48,12 +49,13 @@ class ProjectProvider with ChangeNotifier {
   DeviceMode get deviceMode => _deviceMode;
   bool get exportHtml => _exportHtml;
   String? get geminiApiKey => _geminiApiKey;
+  String? get githubToken => _githubToken;
 
   ProjectProvider() {
-    _loadState();
+    _loadPreferences();
   }
 
-  Future<void> _loadState() async {
+  Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
 
     // Load Theme
@@ -96,8 +98,8 @@ class ProjectProvider with ChangeNotifier {
     _listBullet = prefs.getString('listBullet') ?? '*';
     _sectionSpacing = prefs.getInt('sectionSpacing') ?? 1;
     _exportHtml = prefs.getBool('exportHtml') ?? false;
-    _geminiApiKey = prefs.getString('geminiApiKey');
-
+    _geminiApiKey = prefs.getString('gemini_api_key');
+    _githubToken = prefs.getString('github_token');
     notifyListeners();
   }
 
@@ -141,9 +143,14 @@ class ProjectProvider with ChangeNotifier {
     await prefs.setInt('sectionSpacing', _sectionSpacing);
     await prefs.setBool('exportHtml', _exportHtml);
     if (_geminiApiKey != null) {
-      await prefs.setString('geminiApiKey', _geminiApiKey!);
+      await prefs.setString('gemini_api_key', _geminiApiKey!);
     } else {
-      await prefs.remove('geminiApiKey');
+      await prefs.remove('gemini_api_key');
+    }
+    if (_githubToken != null) {
+      await prefs.setString('github_token', _githubToken!);
+    } else {
+      await prefs.remove('github_token');
     }
   }
 
@@ -603,8 +610,14 @@ class ProjectProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setGeminiApiKey(String? key) {
+  void setGeminiApiKey(String key) {
     _geminiApiKey = key;
+    _saveState();
+    notifyListeners();
+  }
+
+  void setGitHubToken(String token) {
+    _githubToken = token;
     _saveState();
     notifyListeners();
   }

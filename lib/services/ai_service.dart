@@ -91,4 +91,41 @@ class AIService {
     }
     return fixed;
   }
+
+  static Future<String> generateReadmeFromCodebase(String codeContext, {String? apiKey}) async {
+    if (apiKey != null && apiKey.isNotEmpty) {
+      try {
+        // Using a model with larger context window if possible, but flash is good.
+        final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+        final prompt = '''
+You are an expert developer tool designed to generate comprehensive README.md files.
+Analyze the following codebase context and generate a professional, detailed README.md file in Markdown format.
+
+The README should include:
+1. Project Title and Description (infer from code).
+2. Features (key functionalities).
+3. Tech Stack (languages, frameworks, libraries used).
+4. Installation Instructions (how to set up).
+5. Usage Guide (how to run/use).
+6. Project Structure (brief overview).
+7. Contributing Guidelines (standard).
+8. License (if found, otherwise mention it).
+
+Output ONLY the raw Markdown content. Do not include "Here is the README" or markdown code block fences (```markdown).
+
+Codebase Context:
+$codeContext
+''';
+        final content = [Content.text(prompt)];
+        final response = await model.generateContent(content);
+        return response.text ?? '# Error generating README';
+      } catch (e) {
+        debugPrint('Gemini API Error: $e');
+        return '# Error: ${e.toString().replaceAll('GenerativeAIException: ', '')}';
+      }
+    }
+
+    await Future.delayed(const Duration(seconds: 2));
+    return '# Mock README\n\nThis is a mock README generated because no API key was provided.\n\n## Features\n- Feature 1\n- Feature 2';
+  }
 }

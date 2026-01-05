@@ -125,4 +125,41 @@ class GitHubService {
       return null;
     }
   }
+
+  Future<List<dynamic>?> fetchRepoTree(String owner, String repo, {String? token, String? branch}) async {
+    // If branch is not provided, we should ideally fetch repo details to get default branch,
+    // but the API allows passing the branch name directly if known, or we can try 'HEAD'.
+    // However, the trees API requires a SHA or branch name.
+
+    String ref = branch ?? 'main'; // Default fallback, but better to resolve.
+
+    if (branch == null) {
+      final details = await fetchRepoDetails(owner, repo, token: token);
+      if (details != null && details['default_branch'] != null) {
+        ref = details['default_branch'];
+      }
+    }
+
+    final url = Uri.parse('$_baseUrl/repos/$owner/$repo/git/trees/$ref?recursive=1');
+    final headers = {
+      'Accept': 'application/vnd.github.v3+json',
+    };
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'token $token';
+    }
+
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['tree'];
+      } else {
+        debugPrint('GitHub API Error (Tree): ${response.statusCode} ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('GitHub API Exception (Tree): $e');
+      return null;
+    }
+  }
 }

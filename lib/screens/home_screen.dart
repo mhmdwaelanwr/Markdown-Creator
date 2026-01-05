@@ -1917,64 +1917,69 @@ $htmlContent
       context,
       builder: (context) => AlertDialog(
         title: Text('Generate Extra Files', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.gavel),
-              title: const Text('LICENSE'),
-              subtitle: const Text('Generate a standard license file.'),
-              onTap: () {
-                Navigator.pop(context);
-                final content = FileGenerators.generateLicense(provider.licenseType, provider.variables['GITHUB_USERNAME'] ?? 'Author');
-                downloadTextFile(content, 'LICENSE');
-              },
+        content: SizedBox(
+          width: 400,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.gavel),
+                  title: const Text('LICENSE'),
+                  subtitle: const Text('Generate a standard license file.'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final content = FileGenerators.generateLicense(provider.licenseType, provider.variables['GITHUB_USERNAME'] ?? 'Author');
+                    downloadTextFile(content, 'LICENSE');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.handshake),
+                  title: const Text('CONTRIBUTING.md'),
+                  subtitle: const Text('Guidelines for contributors.'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final content = FileGenerators.generateContributing(provider.variables);
+                    downloadTextFile(content, 'CONTRIBUTING.md');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.security),
+                  title: const Text('SECURITY.md'),
+                  subtitle: const Text('Security policy.'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final content = FileGenerators.generateSecurity(provider.variables);
+                    downloadTextFile(content, 'SECURITY.md');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.rule),
+                  title: const Text('CODE_OF_CONDUCT.md'),
+                  subtitle: const Text('Contributor Covenant Code of Conduct.'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final content = FileGenerators.generateCodeOfConduct(provider.variables);
+                    downloadTextFile(content, 'CODE_OF_CONDUCT.md');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.bug_report),
+                  title: const Text('Issue Templates'),
+                  subtitle: const Text('Bug report and feature request templates.'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final bugReport = FileGenerators.generateBugReportTemplate();
+                    final featureRequest = FileGenerators.generateFeatureRequestTemplate();
+                    // TODO: Download as zip or separate files. For now, just one example or improve downloader.
+                    downloadTextFile(bugReport, 'bug_report.md');
+                    downloadTextFile(featureRequest, 'feature_request.md');
+                    ToastHelper.show(context, 'Templates downloaded');
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.handshake),
-              title: const Text('CONTRIBUTING.md'),
-              subtitle: const Text('Guidelines for contributors.'),
-              onTap: () {
-                Navigator.pop(context);
-                final content = FileGenerators.generateContributing(provider.variables);
-                downloadTextFile(content, 'CONTRIBUTING.md');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.security),
-              title: const Text('SECURITY.md'),
-              subtitle: const Text('Security policy.'),
-              onTap: () {
-                Navigator.pop(context);
-                final content = FileGenerators.generateSecurity(provider.variables);
-                downloadTextFile(content, 'SECURITY.md');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.rule),
-              title: const Text('CODE_OF_CONDUCT.md'),
-              subtitle: const Text('Contributor Covenant Code of Conduct.'),
-              onTap: () {
-                Navigator.pop(context);
-                final content = FileGenerators.generateCodeOfConduct(provider.variables);
-                downloadTextFile(content, 'CODE_OF_CONDUCT.md');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bug_report),
-              title: const Text('Issue Templates'),
-              subtitle: const Text('Bug report and feature request templates.'),
-              onTap: () {
-                Navigator.pop(context);
-                final bugReport = FileGenerators.generateBugReportTemplate();
-                final featureRequest = FileGenerators.generateFeatureRequestTemplate();
-                // TODO: Download as zip or separate files. For now, just one example or improve downloader.
-                downloadTextFile(bugReport, 'bug_report.md');
-                downloadTextFile(featureRequest, 'feature_request.md');
-                ToastHelper.show(context, 'Templates downloaded');
-              },
-            ),
-          ],
+          ),
         ),
         actions: [
           TextButton(
@@ -1991,99 +1996,104 @@ $htmlContent
       context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.changeLanguage, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('English'),
-              trailing: provider.locale?.languageCode == 'en' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('en'));
-                Navigator.pop(context);
-              },
+        content: SizedBox(
+          width: 300,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('English'),
+                  trailing: provider.locale?.languageCode == 'en' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('en'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('العربية (Arabic)'),
+                  trailing: provider.locale?.languageCode == 'ar' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('ar'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Español (Spanish)'),
+                  trailing: provider.locale?.languageCode == 'es' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('es'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Français (French)'),
+                  trailing: provider.locale?.languageCode == 'fr' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('fr'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Deutsch (German)'),
+                  trailing: provider.locale?.languageCode == 'de' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('de'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('हिन्दी (Hindi)'),
+                  trailing: provider.locale?.languageCode == 'hi' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('hi'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('日本語 (Japanese)'),
+                  trailing: provider.locale?.languageCode == 'ja' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('ja'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Português (Portuguese)'),
+                  trailing: provider.locale?.languageCode == 'pt' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('pt'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Русский (Russian)'),
+                  trailing: provider.locale?.languageCode == 'ru' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('ru'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: const Text('中文 (Chinese)'),
+                  trailing: provider.locale?.languageCode == 'zh' ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(const Locale('zh'));
+                    Navigator.pop(context);
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('System Default'),
+                  trailing: provider.locale == null ? const Icon(Icons.check, color: Colors.blue) : null,
+                  onTap: () {
+                    provider.setLocale(null);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('العربية (Arabic)'),
-              trailing: provider.locale?.languageCode == 'ar' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('ar'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Español (Spanish)'),
-              trailing: provider.locale?.languageCode == 'es' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('es'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Français (French)'),
-              trailing: provider.locale?.languageCode == 'fr' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('fr'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Deutsch (German)'),
-              trailing: provider.locale?.languageCode == 'de' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('de'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('हिन्दी (Hindi)'),
-              trailing: provider.locale?.languageCode == 'hi' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('hi'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('日本語 (Japanese)'),
-              trailing: provider.locale?.languageCode == 'ja' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('ja'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Português (Portuguese)'),
-              trailing: provider.locale?.languageCode == 'pt' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('pt'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Русский (Russian)'),
-              trailing: provider.locale?.languageCode == 'ru' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('ru'));
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('中文 (Chinese)'),
-              trailing: provider.locale?.languageCode == 'zh' ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(const Locale('zh'));
-                Navigator.pop(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              title: const Text('System Default'),
-              trailing: provider.locale == null ? const Icon(Icons.check, color: Colors.blue) : null,
-              onTap: () {
-                provider.setLocale(null);
-                Navigator.pop(context);
-              },
-            ),
-          ],
+          ),
         ),
         actions: [
           TextButton(

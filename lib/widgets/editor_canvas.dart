@@ -341,9 +341,9 @@ class GridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final color = isDark ? Colors.white.withAlpha(30) : Colors.black.withAlpha(40);
+    final color = isDark ? Colors.white.withAlpha(30) : Colors.black.withAlpha(20); // Reduced alpha for light mode to be subtle but visible
     final paintWeak = Paint()..color = color..strokeWidth = 1.0;
-    final paintStrong = Paint()..color = (isDark ? Colors.white : Colors.black).withAlpha(80)..strokeWidth = 1.5;
+    final paintStrong = Paint()..color = (isDark ? Colors.white.withAlpha(80) : Colors.black.withAlpha(40))..strokeWidth = 1.5;
 
     const double gridSize = 20.0;
     // Draw vertical lines

@@ -19,6 +19,7 @@ enum ReadmeElementType {
   socials,
   blockquote,
   divider,
+  raw,
   collapsible,
   dynamicWidget,
 }
@@ -70,6 +71,8 @@ abstract class ReadmeElement {
         return BlockquoteElement.fromJson(json);
       case ReadmeElementType.divider:
         return DividerElement.fromJson(json);
+      case ReadmeElementType.raw:
+        return RawElement.fromJson(json);
       case ReadmeElementType.collapsible:
         return CollapsibleElement.fromJson(json);
       case ReadmeElementType.dynamicWidget:
@@ -629,6 +632,29 @@ class DynamicWidgetElement extends ReadmeElement {
           orElse: () => DynamicWidgetType.spotify),
       identifier: json['identifier'] ?? '',
       theme: json['theme'] ?? 'default',
+      id: json['id'],
+    );
+  }
+}
+
+class RawElement extends ReadmeElement {
+  String content;
+
+  RawElement({this.content = '', super.id}) : super(type: ReadmeElementType.raw);
+
+  @override
+  String get description => 'Raw Content';
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'type': type.toString(),
+    'content': content,
+  };
+
+  factory RawElement.fromJson(Map<String, dynamic> json) {
+    return RawElement(
+      content: json['content'] ?? '',
       id: json['id'],
     );
   }

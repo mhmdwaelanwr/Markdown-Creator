@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:file_picker/file_picker.dart';
 import '../providers/project_provider.dart';
 import '../utils/downloader.dart';
 import '../utils/toast_helper.dart';
@@ -28,6 +29,19 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   double _titleSize = 64;
   double _descSize = 32;
   bool _showBorder = true;
+  Uint8List? _logoBytes; // Added for logo support
+
+  Future<void> _pickLogo() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      withData: true,
+    );
+    if (result != null && result.files.first.bytes != null) {
+      setState(() {
+        _logoBytes = result.files.first.bytes;
+      });
+    }
+  }
 
   Future<void> _exportImage() async {
     try {
@@ -110,8 +124,6 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context);
-    final projectName = provider.variables['PROJECT_NAME'] ?? 'Project Name';
-    const projectDesc = 'A short description of your project.';
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -138,138 +150,13 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
               color: isDark ? AppColors.editorBackgroundDark : Colors.white,
               border: Border(right: BorderSide(color: isDark ? Colors.white.withAlpha(20) : Colors.grey.withAlpha(50))),
             ),
-            child: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                Text('APPEARANCE', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
-                const SizedBox(height: 16),
-                SwitchListTile(
-                  title: Text('Use Gradient', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                  value: _useGradient,
-                  onChanged: (val) => setState(() => _useGradient = val),
-                  contentPadding: EdgeInsets.zero,
-                  activeTrackColor: AppColors.primary,
-                ),
-                const SizedBox(height: 12),
-                if (_useGradient) ...[
-                  _buildColorPickerTile('Start Color', _gradientStart, (c) => setState(() => _gradientStart = c)),
-                  const SizedBox(height: 12),
-                  _buildColorPickerTile('End Color', _gradientEnd, (c) => setState(() => _gradientEnd = c)),
-                ] else
-                  _buildColorPickerTile('Background', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
-                const SizedBox(height: 12),
-                _buildColorPickerTile('Text Color', _textColor, (c) => setState(() => _textColor = c)),
-
-                const SizedBox(height: 32),
-                Text('TYPOGRAPHY', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
-                const SizedBox(height: 16),
-                _buildSlider('Title Size', _titleSize, 24, 120, (v) => setState(() => _titleSize = v)),
-                const SizedBox(height: 16),
-                _buildSlider('Description Size', _descSize, 12, 60, (v) => setState(() => _descSize = v)),
-
-                const SizedBox(height: 32),
-                Text('LAYOUT', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
-                const SizedBox(height: 16),
-                SwitchListTile(
-                  title: Text('Show Border', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                  value: _showBorder,
-                  onChanged: (val) => setState(() => _showBorder = val),
-                  contentPadding: EdgeInsets.zero,
-                  activeTrackColor: AppColors.primary,
-                ),
-              ],
-            ),
+            child: _buildControls(),
           ),
           // Preview Area
           Expanded(
             child: Container(
               color: isDark ? Colors.black : Colors.grey[100],
-              child: Center(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('1280 x 640 px', style: GoogleFonts.inter(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withAlpha(50),
-                                  blurRadius: 30,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: RepaintBoundary(
-                              key: _previewKey,
-                              child: Container(
-                                width: 1280,
-                                height: 640,
-                                decoration: BoxDecoration(
-                                  color: _useGradient ? null : _backgroundColor,
-                                  gradient: _useGradient
-                                      ? LinearGradient(
-                                          colors: [_gradientStart, _gradientEnd],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        )
-                                      : null,
-                                  border: _showBorder ? Border.all(color: Colors.white.withAlpha(50), width: 20) : null,
-                                ),
-                                padding: const EdgeInsets.all(80),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      projectName,
-                                      style: GoogleFonts.inter(
-                                        fontSize: _titleSize,
-                                        fontWeight: FontWeight.w900,
-                                        color: _textColor,
-                                        height: 1.1,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 32),
-                                    Text(
-                                      projectDesc,
-                                      style: GoogleFonts.inter(
-                                        fontSize: _descSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: _textColor.withAlpha(200),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Row(
-                                      children: [
-                                        Icon(Icons.star, color: _textColor, size: 32),
-                                        const SizedBox(width: 12),
-                                        Text(
-                                          'Star on GitHub',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            color: _textColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: _buildPreview(provider),
             ),
           ),
         ],
@@ -355,6 +242,180 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
             onChanged: onChanged,
           ),
         ),
+      ],
+    );
+  }
+
+  bool _showWatermark = true;
+  String _watermarkText = 'Made with Readme Creator';
+
+  // ...existing code...
+
+  Widget _buildPreview(ProjectProvider provider) {
+    final projectName = provider.variables['PROJECT_NAME'] ?? 'Project Name';
+    final description = 'Awesome project description goes here.'; // Placeholder or from var
+
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView(
+          child: RepaintBoundary(
+            key: _previewKey,
+            child: Container(
+              width: 800, // Standard social preview size ratio 2:1 usually 1280x640 or similar
+              height: 400,
+              decoration: BoxDecoration(
+                color: _useGradient ? null : _backgroundColor,
+                gradient: _useGradient
+                    ? LinearGradient(
+                        colors: [_gradientStart, _gradientEnd],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                border: _showBorder ? Border.all(color: Colors.white.withAlpha(50), width: 2) : null,
+                borderRadius: BorderRadius.circular(16), // Rounded corners for preview look
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(100),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Background Pattern (Optional - maybe add later)
+
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(48.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_logoBytes != null) ...[
+                            Image.memory(_logoBytes!, height: 80, fit: BoxFit.contain),
+                            const SizedBox(height: 24),
+                          ],
+                          Text(
+                            projectName,
+                            style: GoogleFonts.inter(
+                              fontSize: _titleSize,
+                              fontWeight: FontWeight.bold,
+                              color: _textColor,
+                              height: 1.1,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            description,
+                            style: GoogleFonts.inter(
+                              fontSize: _descSize,
+                              color: _textColor.withAlpha(200),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Watermark or Badge
+                  if (_showWatermark)
+                    Positioned(
+                      bottom: 20,
+                      right: 20,
+                      child: Row(
+                        children: [
+                          Icon(Icons.description, color: _textColor.withAlpha(100), size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            _watermarkText,
+                            style: GoogleFonts.inter(
+                              color: _textColor.withAlpha(100),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControls() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text('Design Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 16),
+
+        // Logo Picker
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('Project Logo', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+          trailing: _logoBytes != null
+              ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => setState(() => _logoBytes = null))
+              : ElevatedButton.icon(
+                  icon: const Icon(Icons.upload_file, size: 16),
+                  label: const Text('Upload'),
+                  onPressed: _pickLogo,
+                  style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                ),
+        ),
+        const Divider(),
+
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('Use Gradient Background', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+          value: _useGradient,
+          onChanged: (val) => setState(() => _useGradient = val),
+        ),
+        const SizedBox(height: 12),
+        if (_useGradient) ...[
+          _buildColorPickerTile('Gradient Start Color', _gradientStart, (c) => setState(() => _gradientStart = c)),
+          const SizedBox(height: 12),
+          _buildColorPickerTile('Gradient End Color', _gradientEnd, (c) => setState(() => _gradientEnd = c)),
+        ] else
+          _buildColorPickerTile('Background Color', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
+        const SizedBox(height: 12),
+        _buildColorPickerTile('Text Color', _textColor, (c) => setState(() => _textColor = c)),
+
+        const SizedBox(height: 32),
+        Text('Typography Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 16),
+        _buildSlider('Title Font Size', _titleSize, 24, 120, (v) => setState(() => _titleSize = v)),
+        const SizedBox(height: 16),
+        _buildSlider('Description Font Size', _descSize, 12, 60, (v) => setState(() => _descSize = v)),
+
+        const SizedBox(height: 32),
+        Text('Layout Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 16),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('Show Border', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+          value: _showBorder,
+          onChanged: (val) => setState(() => _showBorder = val),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text('Show Watermark', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+          value: _showWatermark,
+          onChanged: (val) => setState(() => _showWatermark = val),
+        ),
+        if (_showWatermark)
+          TextFormField(
+            initialValue: _watermarkText,
+            decoration: const InputDecoration(labelText: 'Watermark Text', isDense: true),
+            onChanged: (val) => setState(() => _watermarkText = val),
+          ),
       ],
     );
   }

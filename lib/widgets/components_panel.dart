@@ -83,6 +83,20 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     final advancedItems = [
       ComponentItem(ReadmeElementType.mermaid, 'Mermaid Diagram', Icons.account_tree),
       ComponentItem(ReadmeElementType.toc, 'Table of Contents', Icons.list_alt),
+      ComponentItem(ReadmeElementType.raw, 'Raw Markdown / HTML', Icons.code),
+    ];
+
+    final builtInSnippets = [
+      Snippet(
+        id: 'template_skills',
+        name: 'Skills Table',
+        elementJson: '{"type":"table","headers":["Language","Proficiency"],"rows":[["Dart","Expert"],["Flutter","Expert"]],"alignments":[0,0],"id":"temp_skills"}',
+      ),
+      Snippet(
+        id: 'template_contact',
+        name: 'Contact Info',
+        elementJson: '{"type":"socials","profiles":[{"platform":"github","username":"username"},{"platform":"linkedin","username":"username"}],"style":"for-the-badge","id":"temp_contact"}',
+      ),
     ];
 
     return DefaultTabController(
@@ -127,28 +141,39 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                     ],
                   ),
                   // Snippets Tab
-                  libraryProvider.snippets.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.dashboard_customize, size: 48, color: Theme.of(context).colorScheme.primary.withAlpha(100)),
-                              const SizedBox(height: 16),
-                              const Text('No snippets saved.\nRight-click an element to save.', textAlign: TextAlign.center),
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.all(12.0),
-                          itemCount: libraryProvider.snippets.length,
-                          itemBuilder: (context, index) {
-                            final snippet = libraryProvider.snippets[index];
-                            if (_searchQuery.isNotEmpty && !snippet.name.toLowerCase().contains(_searchQuery)) {
-                              return const SizedBox.shrink();
-                            }
-                            return _buildDraggableSnippet(context, snippet, isDark);
-                          },
-                        ),
+                  ListView(
+                    padding: const EdgeInsets.all(12.0),
+                    children: [
+                      if (builtInSnippets.isNotEmpty) ...[
+                        _buildSectionHeader('Templates', isDark),
+                        ...builtInSnippets.map((s) => _buildDraggableSnippet(context, s, isDark, isTemplate: true)),
+                        const SizedBox(height: 16),
+                      ],
+                      _buildSectionHeader('My Snippets', isDark),
+                      libraryProvider.snippets.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 32.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.dashboard_customize, size: 48, color: Theme.of(context).colorScheme.primary.withAlpha(100)),
+                                    const SizedBox(height: 16),
+                                    const Text('No snippets saved.\nRight-click an element to save.', textAlign: TextAlign.center),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: libraryProvider.snippets.map((snippet) {
+                                if (_searchQuery.isNotEmpty && !snippet.name.toLowerCase().contains(_searchQuery)) {
+                                  return const SizedBox.shrink();
+                                }
+                                return _buildDraggableSnippet(context, snippet, isDark);
+                              }).toList(),
+                            ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -202,7 +227,13 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
               children: [
                 Icon(icon, color: colorScheme.primary, size: 20),
                 const SizedBox(width: 12),
-                Text(label, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : Colors.black87),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),
@@ -271,7 +302,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     );
   }
 
-  Widget _buildDraggableSnippet(BuildContext context, Snippet snippet, bool isDark) {
+  Widget _buildDraggableSnippet(BuildContext context, Snippet snippet, bool isDark, {bool isTemplate = false}) {
     return Draggable<Snippet>(
       data: snippet,
       feedback: Material(
@@ -333,15 +364,16 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    color: AppColors.error,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      Provider.of<LibraryProvider>(context, listen: false).deleteSnippet(snippet.id);
-                    },
-                  ),
+                  if (!isTemplate)
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 18),
+                      color: AppColors.error,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        Provider.of<LibraryProvider>(context, listen: false).deleteSnippet(snippet.id);
+                      },
+                    ),
                 ],
               ),
             ),
@@ -391,6 +423,8 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         return 'Collapsible: Adds a details/summary section';
       case ReadmeElementType.dynamicWidget:
         return 'Dynamic Widget: Spotify, YouTube, etc.';
+      case ReadmeElementType.raw:
+        return 'Raw: Insert raw Markdown or HTML';
     }
   }
 }

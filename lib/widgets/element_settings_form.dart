@@ -149,9 +149,8 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       _textController.text = e.summary;
       _codeController.text = e.content;
     }
-    if (e is DynamicWidgetElement) {
-      _textController.text = e.identifier;
-      _typeNameController.text = e.theme;
+    if (e is RawElement) {
+      _codeController.text = e.content;
     }
   }
 
@@ -197,6 +196,9 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     }
     if (e is CollapsibleElement) {
       _syncText(_textController, e.summary);
+      _syncText(_codeController, e.content);
+    }
+    if (e is RawElement) {
       _syncText(_codeController, e.content);
     }
     if (e is DynamicWidgetElement) {
@@ -429,7 +431,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       final provider = Provider.of<ProjectProvider>(context, listen: false);
       final apiKey = provider.geminiApiKey;
 
-      if (apiKey == null || apiKey.isEmpty) {
+      if (apiKey.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Using Mock AI. Set API Key in Settings for real AI.')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('AI is thinking...')));
@@ -1283,6 +1285,40 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           ),
         ],
       );
+    } else if (element is RawElement) {
+      return Column(
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildInsertButton('<br>', '<br>'),
+              _buildInsertButton('<b>', '<b>', '</b>'),
+              _buildInsertButton('<i>', '<i>', '</i>'),
+              _buildInsertButton('<center>', '<center>\n', '\n</center>'),
+              _buildInsertButton('<div>', '<div>\n', '\n</div>'),
+              _buildInsertButton('<img>', '<img src="" width="100">'),
+              _buildInsertButton('details', '<details>\n<summary>Title</summary>\n', '\n</details>'),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _codeController,
+            decoration: const InputDecoration(
+              labelText: 'Raw Markdown / HTML',
+              hintText: 'Enter any valid Markdown or HTML code here.',
+              alignLabelWithHint: true,
+            ),
+            maxLines: 15,
+            style: GoogleFonts.firaCode(),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'This content will be rendered exactly as written in the final README.',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+        ],
+      );
     } else if (element is DynamicWidgetElement) {
       String label = 'Identifier';
       String hint = '';
@@ -1308,7 +1344,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       return Column(
         children: [
           DropdownButtonFormField<DynamicWidgetType>(
-            value: element.widgetType,
+            initialValue: element.widgetType,
             decoration: const InputDecoration(labelText: 'Widget Type'),
             items: DynamicWidgetType.values.map((type) {
               return DropdownMenuItem(
@@ -1508,6 +1544,56 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildInsertButton(String label, String start, [String end = '']) {
+    return ActionChip(
+      label: Text(label, style: GoogleFonts.firaCode(fontSize: 12)),
+      onPressed: () {
+        _wrapSelection(_codeController, start); // _wrapSelection uses one wrapper, need to adapt or use insert
+        // Actually _wrapSelection takes one wrapper.
+        // Let's implement a proper insert method.
+        final text = _codeController.text;
+        final selection = _codeController.selection;
+
+        if (end.isEmpty) {
+          // Just insert
+          if (selection.isValid) {
+             final newText = text.replaceRange(selection.start, selection.end, start);
+             _codeController.value = TextEditingValue(
+               text: newText,
+               selection: TextSelection.collapsed(offset: selection.start + start.length),
+             );
+          } else {
+             _codeController.text += start;
+          }
+        } else {
+          // Wrap
+          if (selection.isValid && selection.start != selection.end) {
+            final newText = text.replaceRange(selection.start, selection.end, '$start${selection.textInside(text)}$end');
+            _codeController.value = TextEditingValue(
+              text: newText,
+              selection: TextSelection(
+                baseOffset: selection.start + start.length,
+                extentOffset: selection.end + start.length,
+              ),
+            );
+          } else {
+            final s = selection.isValid ? selection.start : text.length;
+            final newText = text.replaceRange(s, s, '$start$end');
+            _codeController.value = TextEditingValue(
+              text: newText,
+              selection: TextSelection.collapsed(offset: s + start.length),
+            );
+          }
+        }
+        // Trigger update
+        if (widget.element is RawElement) {
+           (widget.element as RawElement).content = _codeController.text;
+        }
+        _notifyUpdate();
+      },
     );
   }
 }

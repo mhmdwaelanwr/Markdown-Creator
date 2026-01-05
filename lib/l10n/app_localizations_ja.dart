@@ -202,115 +202,169 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsSaved => '設定を保存しました！';
 
   @override
-  String get commonShortcuts => 'Common Shortcuts';
+  String get commonShortcuts => '一般的なショートカット';
 
   @override
-  String get elementShortcuts => 'Element Shortcuts';
+  String get elementShortcuts => '要素のショートカット';
 
   @override
-  String get newProject => 'New Project';
+  String get newProject => '新規プロジェクト';
 
   @override
-  String get openProject => 'Open Project';
+  String get openProject => 'プロジェクトを開く';
 
   @override
-  String get saveProject => 'Save Project';
+  String get saveProject => 'プロジェクトを保存';
 
   @override
-  String get exportProject => 'Export Project';
+  String get exportProject => 'プロジェクトをエクスポート';
 
   @override
-  String get print => 'Print';
+  String get print => '印刷';
 
   @override
-  String get undo => 'Undo';
+  String get undo => '元に戻す';
 
   @override
-  String get redo => 'Redo';
+  String get redo => 'やり直し';
 
   @override
-  String get showPreview => 'Show Preview';
+  String get showPreview => 'プレビューを表示';
 
   @override
-  String get toggleGrid => 'Toggle Grid';
+  String get toggleGrid => 'グリッドを切り替え';
 
   @override
-  String get toggleTheme => 'Toggle Theme';
+  String get toggleTheme => 'テーマを切り替え';
 
   @override
-  String get openSettings => 'Open Settings';
+  String get openSettings => '設定を開く';
 
   @override
-  String get help => 'Help';
+  String get help => 'ヘルプ';
 
   @override
-  String get addHeading => 'Add Heading';
+  String get addHeading => '見出しを追加';
 
   @override
-  String get addSubheading => 'Add Subheading';
+  String get addSubheading => '小見出しを追加';
 
   @override
-  String get addParagraph => 'Add Paragraph';
+  String get addParagraph => '段落を追加';
 
   @override
-  String get addImage => 'Add Image';
+  String get addImage => '画像を追加';
 
   @override
-  String get addTable => 'Add Table';
+  String get addTable => '表を追加';
 
   @override
-  String get addList => 'Add List';
+  String get addList => 'リストを追加';
 
   @override
-  String get addQuote => 'Add Quote';
+  String get addQuote => '引用を追加';
 
   @override
-  String get addLink => 'Add Link';
+  String get addLink => 'リンクを追加';
 
   @override
   String get aboutDescription =>
-      'Readme Creator is a powerful tool for generating professional README files for your projects. All features work across desktop, mobile and web.';
+      'Readme Creatorは、プロジェクト用のプロフェッショナルなREADMEファイルを生成するための強力なツールです。すべての機能はデスクトップ、モバイル、ウェブで動作します。';
 
   @override
-  String get enterGeminiKey =>
-      'Enter your Gemini API Key to enable real AI features.';
+  String get enterGeminiKey => '実際のAI機能を有効にするには��Gemini APIキーを入力してください。';
 
   @override
-  String get githubIntegration => 'GitHub Integration';
+  String get githubIntegration => 'GitHub統合';
 
   @override
   String get enterGithubToken =>
-      'Optional: Enter GitHub Token for higher rate limits when scanning repos.';
+      'オプション：リポジトリのスキャン時にレート制限を高くするには、GitHubトークンを入力してください。';
 
   @override
-  String get localFolder => 'Local Folder';
+  String get localFolder => 'ローカルフォルダ';
 
   @override
-  String get githubRepo => 'GitHub Repo';
+  String get githubRepo => 'GitHubリポジトリ';
 
   @override
-  String get scanLocalFolder =>
-      'Scan a local project folder to generate a README.';
+  String get scanLocalFolder => 'ローカルプロジェクトフォルダをスキャンしてREADMEを生成します。';
 
   @override
-  String get scanGithubRepo => 'Scan a public GitHub repository.';
+  String get scanGithubRepo => '公開GitHubリポジトリをスキャンします。';
 
   @override
-  String get fetchingRepo => 'Fetching repository data...';
+  String get fetchingRepo => 'リポジトリデータを取得中...';
 
   @override
-  String get analyzingAI => 'Analyzing with AI...';
+  String get analyzingAI => 'AIで分析中...';
 
   @override
-  String get readmeGenerated => 'README generated successfully!';
+  String get readmeGenerated => 'READMEが正常に生成されました！';
 
   @override
-  String get projectImported => 'Project imported successfully';
+  String get projectImported => 'プロジェクトが正常にインポートされました';
 
   @override
-  String get contentFetched =>
-      'Content fetched! Switch to \"Text / File\" tab to review.';
+  String get contentFetched => 'コンテンツを取得しました！確認するには「テキスト / ファイル」タブに切り替えてください。';
 
   @override
-  String get fetchFailed => 'Failed to fetch';
+  String get fetchFailed => '取得に失敗しました';
+
+  @override
+  String get generateExtraFiles => '追加ファイルを生成';
+
+  @override
+  String get publishToGithub => 'GitHubに公開';
+
+  @override
+  String get contributionGuidelinesBuilder => '貢献ガイドラインビルダー';
+
+  @override
+  String get contributionGuidelinesDesc => 'プロジェクト用の標準的なコミュニティファイルを生成します。';
+
+  @override
+  String get contributingMdDesc => 'プロジェクトへの貢献方法に関するガイドライン。';
+
+  @override
+  String get generate => '生成';
+
+  @override
+  String get codeOfConductDesc => '貢献者行動規範。';
+
+  @override
+  String get githubTokenMissing => 'GitHubトークンがありません。AI設定で設定してください。';
+
+  @override
+  String get owner => '所有者 (ユーザー名/組織)';
+
+  @override
+  String get repoName => 'リポジトリ名';
+
+  @override
+  String get branchName => '新しいブランチ名';
+
+  @override
+  String get commitMessage => 'コミットメッセージ';
+
+  @override
+  String get publishDialogDesc => 'これにより、新しいブランチとプルリクエストが作成されます。';
+
+  @override
+  String get ownerRepoRequired => '所有者とリポジトリは必須です';
+
+  @override
+  String get prCreated => 'プルリクエストが正常に作成されました。';
+
+  @override
+  String get viewPrs => 'PRを表示';
+
+  @override
+  String get copiedToClipboard => 'クリップボードにコピーしました';
+
+  @override
+  String get download => 'ダウンロード';
+
+  @override
+  String get copy => 'コピー';
 }

@@ -12,6 +12,7 @@ import 'package:markdown/markdown.dart' as md;
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/readme_element.dart';
 import '../widgets/components_panel.dart';
 import '../widgets/editor_canvas.dart';
@@ -30,11 +31,14 @@ import '../services/health_check_service.dart';
 import '../services/codebase_scanner_service.dart';
 import '../services/github_scanner_service.dart';
 import '../services/ai_service.dart';
+import '../services/github_publisher_service.dart';
 import '../utils/toast_helper.dart';
 import '../utils/debouncer.dart';
 import '../widgets/developer_info_dialog.dart';
 import '../utils/dialog_helper.dart';
 import '../generator/file_generators.dart';
+import 'onboarding_screen.dart';
+import 'gallery_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,15 +60,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-      OnboardingHelper.showOnboarding(
-        context: context,
-        componentsKey: _componentsKey,
-        canvasKey: _canvasKey,
-        settingsKey: _settingsKey,
-        exportKey: _exportKey,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      final hasSeenWizard = prefs.getBool('hasSeenSetupWizard') ?? false;
+
+      if (!hasSeenWizard && mounted) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const OnboardingScreen(),
+        );
+        await prefs.setBool('hasSeenSetupWizard', true);
+      }
+
+      if (mounted) {
+        _focusNode.requestFocus();
+        OnboardingHelper.showOnboarding(
+          context: context,
+          componentsKey: _componentsKey,
+          canvasKey: _canvasKey,
+          settingsKey: _settingsKey,
+          exportKey: _exportKey,
+        );
+      }
     });
   }
 
@@ -344,12 +362,20 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(children: [const Icon(Icons.file_upload, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.importMarkdown)]),
         ),
         PopupMenuItem(
+          value: 'gallery',
+          child: Row(children: [const Icon(Icons.collections, color: Colors.orange), const SizedBox(width: 8), const Text('Showcase Gallery')]),
+        ),
+        PopupMenuItem(
           value: 'social_preview',
           child: Row(children: [const Icon(Icons.image, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.socialPreviewDesigner)]),
         ),
         PopupMenuItem(
           value: 'github_actions',
           child: Row(children: [const Icon(Icons.build, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.githubActionsGenerator)]),
+        ),
+        PopupMenuItem(
+          value: 'publish_github',
+          child: Row(children: [const Icon(Icons.cloud_upload, color: Colors.blue), const SizedBox(width: 8), Text('Publish to GitHub')]),
         ),
         PopupMenuItem(
           value: 'export_json',
@@ -396,6 +422,11 @@ class _HomeScreenState extends State<HomeScreen> {
         final provider = Provider.of<ProjectProvider>(context, listen: false);
         if (value == 'save_library') {
           _showSaveToLibraryDialog(context, provider);
+        } else if (value == 'gallery') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const GalleryScreen()),
+          );
         } else if (value == 'snapshots') {
           _showSnapshotsDialog(context, provider);
         } else if (value == 'clear_workspace') {
@@ -432,6 +463,8 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             MaterialPageRoute(builder: (context) => const GitHubActionsGenerator()),
           );
+        } else if (value == 'publish_github') {
+          _showPublishToGitHubDialog(context, provider);
         } else if (value == 'export_json') {
           final json = provider.exportToJson();
           downloadJsonFile(json, 'readme_project.json');
@@ -1407,7 +1440,14 @@ $htmlContent
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
+          Expanded(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -1464,11 +1504,9 @@ $htmlContent
     );
   }
 
-  void _showAISettingsDialog(BuildContext context, ProjectProvider provider) {
+    void _showAISettingsDialog(BuildContext context, ProjectProvider provider) {
     final apiKeyController = TextEditingController(text: provider.geminiApiKey);
-    final githubTokenController = TextEditingController(text: provider.githubToken);
     bool isObscured = true;
-    bool isGithubObscured = true;
 
     showSafeDialog(
       context,
@@ -1512,33 +1550,6 @@ $htmlContent
                         ),
                       ),
                       const SizedBox(height: 24),
-                      Text('GitHub Integration', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Text(AppLocalizations.of(context)!.enterGithubToken, style: GoogleFonts.inter(fontSize: 12)),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: githubTokenController,
-                        obscureText: isGithubObscured,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.githubToken,
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(isGithubObscured ? Icons.visibility : Icons.visibility_off),
-                            onPressed: () => setState(() => isGithubObscured = !isGithubObscured),
-                          ),
-                        ),
-                        style: GoogleFonts.inter(),
-                      ),
-                      const SizedBox(height: 4),
-                      InkWell(
-                        onTap: () {
-                          launchUrl(Uri.parse('https://github.com/settings/tokens'));
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.generateToken,
-                          style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -1551,11 +1562,9 @@ $htmlContent
                 ElevatedButton(
                   onPressed: () {
                     final key = apiKeyController.text.trim();
-                    final token = githubTokenController.text.trim();
                     Navigator.pop(context);
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       provider.setGeminiApiKey(key);
-                      provider.setGitHubToken(token);
                       ToastHelper.show(context, AppLocalizations.of(context)!.settingsSaved);
                     });
                   },
@@ -1567,184 +1576,162 @@ $htmlContent
         );
       },
     );
-  }
+    }
 
-  void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) {
-    final repoUrlController = TextEditingController();
+  void _showPublishToGitHubDialog(BuildContext context, ProjectProvider provider) {
+    final ownerController = TextEditingController();
+    final repoController = TextEditingController();
+    final branchController = TextEditingController(text: 'docs/update-readme');
+    final messageController = TextEditingController(text: 'docs: update README.md via Readme Creator');
+    final tokenController = TextEditingController(text: provider.githubToken); // Added
+    bool isLoading = false;
+    bool isTokenObscured = true; // Added
 
-    showSafeDialog<void>(
+    showSafeDialog(
       context,
       builder: (context) {
-        bool isLoading = false;
-        String statusMessage = '';
-
         return StatefulBuilder(
           builder: (context, setState) {
-            Future<void> handleLocalFolder() async {
-              final result = await FilePicker.platform.getDirectoryPath();
-              if (result == null) return;
-
-              setState(() {
-                isLoading = true;
-                statusMessage = AppLocalizations.of(context)!.scanLocalFolder;
-              });
-
-              try {
-                final codeContext = await CodebaseScannerService.scanDirectory(result);
-                if (codeContext.isEmpty) throw Exception('No suitable source code found.');
-
-                setState(() => statusMessage = AppLocalizations.of(context)!.analyzingAI);
-                final apiKey = provider.geminiApiKey;
-                final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
-
-                if (markdown.startsWith('# Error')) throw Exception(markdown);
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    provider.importMarkdown(markdown);
-                    ToastHelper.show(context, AppLocalizations.of(context)!.readmeGenerated);
-                  });
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  setState(() {
-                    isLoading = false;
-                    statusMessage = '${AppLocalizations.of(context)!.error}: $e';
-                  });
-                  ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
-                }
-              }
-            }
-
-            Future<void> handleGithubRepo() async {
-              final url = repoUrlController.text.trim();
-              if (url.isEmpty) return;
-
-              setState(() {
-                isLoading = true;
-                statusMessage = AppLocalizations.of(context)!.fetchingRepo;
-              });
-
-              try {
-                final scanner = GitHubScannerService();
-                final token = provider.githubToken;
-                final codeContext = await scanner.scanRepo(url, token: token);
-
-                if (codeContext.isEmpty) throw Exception('No suitable source code found or repo is empty.');
-
-                setState(() => statusMessage = AppLocalizations.of(context)!.analyzingAI);
-                final apiKey = provider.geminiApiKey;
-                final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
-
-                if (markdown.startsWith('# Error')) throw Exception(markdown);
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    provider.importMarkdown(markdown);
-                    ToastHelper.show(context, AppLocalizations.of(context)!.readmeGenerated);
-                  });
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  setState(() {
-                    isLoading = false;
-                    statusMessage = '${AppLocalizations.of(context)!.error}: $e';
-                  });
-                  ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
-                }
-              }
-            }
-
             return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.generateFromCodebase, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              title: Text('Publish to GitHub', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
-                width: 520,
-                height: 360,
-                child: DefaultTabController(
-                  length: 2,
+                width: 400,
+                child: SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 6),
-                      TabBar(
-                        labelColor: Colors.blue,
-                        tabs: [
-                          Tab(text: AppLocalizations.of(context)!.localFolder),
-                          Tab(text: AppLocalizations.of(context)!.githubRepo),
-                        ],
+                      // GitHub Token Field
+                      TextField(
+                        controller: tokenController,
+                        obscureText: isTokenObscured,
+                        decoration: InputDecoration(
+                          labelText: 'GitHub Personal Access Token',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(isTokenObscured ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () => setState(() => isTokenObscured = !isTokenObscured),
+                          ),
+                          helperText: 'Required to create Pull Request',
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      Expanded(
-                        child: isLoading
-                            ? Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const CircularProgressIndicator(),
-                                    const SizedBox(height: 12),
-                                    Text(statusMessage, style: GoogleFonts.inter(fontStyle: FontStyle.italic), textAlign: TextAlign.center),
-                                  ],
-                                ),
-                              )
-                            : TabBarView(
-                                children: [
-                                  // Local folder tab
-                                  Center(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(AppLocalizations.of(context)!.scanLocalFolder, textAlign: TextAlign.center, style: GoogleFonts.inter()),
-                                        const SizedBox(height: 12),
-                                        ElevatedButton.icon(
-                                          icon: const Icon(Icons.folder_open),
-                                          label: Text(AppLocalizations.of(context)!.pickProjectFolder),
-                                          onPressed: handleLocalFolder,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                      const SizedBox(height: 16),
 
-                                  // GitHub repo tab
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(AppLocalizations.of(context)!.scanGithubRepo, style: GoogleFonts.inter(), textAlign: TextAlign.center),
-                                        const SizedBox(height: 12),
-                                        TextField(
-                                          controller: repoUrlController,
-                                          decoration: InputDecoration(
-                                            labelText: AppLocalizations.of(context)!.repoUrl,
-                                            hintText: 'https://github.com/username/repo',
-                                            border: const OutlineInputBorder(),
-                                            prefixIcon: const Icon(Icons.link),
-                                          ),
-                                          style: GoogleFonts.inter(),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        ElevatedButton.icon(
-                                          icon: const Icon(Icons.cloud_download),
-                                          label: Text(AppLocalizations.of(context)!.scanAndGenerate),
-                                          onPressed: handleGithubRepo,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      TextField(
+                        controller: ownerController,
+                        decoration: const InputDecoration(
+                          labelText: 'Owner (Username/Org)',
+                          border: OutlineInputBorder(),
+                          hintText: 'e.g. mhmdwaelanwr',
+                        ),
                       ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: repoController,
+                        decoration: const InputDecoration(
+                          labelText: 'Repository Name',
+                          border: OutlineInputBorder(),
+                          hintText: 'e.g. Readme-Creator',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: branchController,
+                        decoration: const InputDecoration(
+                          labelText: 'New Branch Name',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: messageController,
+                        decoration: const InputDecoration(
+                          labelText: 'Commit Message',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      if (isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else
+                        const Text('This will create a new branch and a Pull Request.', style: TextStyle(color: Colors.grey, fontSize: 12)),
                     ],
                   ),
                 ),
               ),
               actions: [
-                if (!isLoading)
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(AppLocalizations.of(context)!.close),
-                  ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.cloud_upload),
+                  label: const Text('Publish'),
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          if (tokenController.text.isEmpty) {
+                             ToastHelper.show(context, 'GitHub Token is required', isError: true);
+                             return;
+                          }
+                          if (ownerController.text.isEmpty || repoController.text.isEmpty) {
+                            ToastHelper.show(context, 'Owner and Repo are required', isError: true);
+                            return;
+                          }
+
+                          setState(() => isLoading = true);
+
+                          // Save token
+                          provider.setGitHubToken(tokenController.text.trim());
+
+                          try {
+                            final generator = MarkdownGenerator();
+                            final content = generator.generate(
+                              provider.elements,
+                              variables: provider.variables,
+                              listBullet: provider.listBullet,
+                              sectionSpacing: provider.sectionSpacing,
+                              targetLanguage: provider.targetLanguage,
+                            );
+
+                            final publisher = GitHubPublisherService(provider.githubToken);
+                            await publisher.publishReadme(
+                              owner: ownerController.text.trim(),
+                              repo: repoController.text.trim(),
+                              content: content,
+                              branchName: branchController.text.trim(),
+                              commitMessage: messageController.text.trim(),
+                            );
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              showSafeDialog(
+                                context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Success!'),
+                                  content: const Text('Pull Request created successfully.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Close'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        launchUrl(Uri.parse('https://github.com/${ownerController.text}/${repoController.text}/pulls'));
+                                      },
+                                      child: const Text('View PRs'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              setState(() => isLoading = false);
+                              ToastHelper.show(context, 'Error: $e', isError: true);
+                            }
+                          }
+                        },
+                ),
               ],
             );
           },
@@ -1753,138 +1740,355 @@ $htmlContent
     );
   }
 
-  void _showLanguageDialog(BuildContext context, ProjectProvider provider) {
-    final languages = [
-      {'code': 'en', 'name': 'English', 'native': 'English'},
-      {'code': 'ar', 'name': 'Arabic', 'native': 'العربية'},
-      {'code': 'de', 'name': 'German', 'native': 'Deutsch'},
-      {'code': 'es', 'name': 'Spanish', 'native': 'Español'},
-      {'code': 'fr', 'name': 'French', 'native': 'Français'},
-      {'code': 'hi', 'name': 'Hindi', 'native': 'हिन्दी'},
-      {'code': 'ja', 'name': 'Japanese', 'native': '日本語'},
-      {'code': 'pt', 'name': 'Portuguese', 'native': 'Português'},
-      {'code': 'ru', 'name': 'Russian', 'native': 'Русский'},
-      {'code': 'zh', 'name': 'Chinese', 'native': '中文'},
-    ];
+    void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) {
+    final pathController = TextEditingController();
+    final repoUrlController = TextEditingController();
+    bool isLoading = false;
+    String? statusMessage;
 
-    showSafeDialog<void>(
+    showSafeDialog(
       context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.changeLanguage, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-          content: SizedBox(
-            width: 360,
-            height: 420,
-            child: ListView(
-              children: [
-                ListTile(
-                  title: Text(AppLocalizations.of(context)!.systemDefault),
-                  onTap: () {
-                    Navigator.pop(context);
-                    WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(null));
-                  },
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.generateFromCodebase, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              content: SizedBox(
+                width: 500,
+                child: DefaultTabController(
+                  length: 2,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const TabBar(
+                        labelColor: Colors.blue,
+                        tabs: [
+                          Tab(text: 'Local Folder'),
+                          Tab(text: 'GitHub Repo'),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 200,
+                        child: TabBarView(
+                          children: [
+                            // Local Folder
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    controller: pathController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Project Path',
+                                      border: const OutlineInputBorder(),
+                                      suffixIcon: IconButton(
+                                        icon: const Icon(Icons.folder_open),
+                                        onPressed: () async {
+                                          String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+                                          if (selectedDirectory != null) {
+                                            pathController.text = selectedDirectory;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  if (isLoading)
+                                    Column(
+                                      children: [
+                                        const CircularProgressIndicator(),
+                                        const SizedBox(height: 8),
+                                        Text(statusMessage ?? 'Analyzing...', style: GoogleFonts.inter(fontSize: 12)),
+                                      ],
+                                    )
+                                  else
+                                    ElevatedButton.icon(
+                                      icon: const Icon(Icons.auto_awesome),
+                                      label: const Text('Generate README'),
+                                      onPressed: () async {
+                                        if (pathController.text.isEmpty) return;
+                                        setState(() {
+                                          isLoading = true;
+                                          statusMessage = 'Scanning codebase...';
+                                        });
+
+                                        try {
+                                          final structure = await CodebaseScannerService.scanDirectory(pathController.text);
+
+                                          setState(() => statusMessage = 'Generating content with AI...');
+
+                                          final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
+
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                            provider.importMarkdown(readmeContent);
+                                            ToastHelper.show(context, 'README generated successfully!');
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            setState(() => isLoading = false);
+                                            ToastHelper.show(context, 'Error: $e', isError: true);
+                                          }
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ),
+                            // GitHub Repo
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  TextField(
+                                    controller: repoUrlController,
+                                    decoration: const InputDecoration(
+                                      labelText: 'GitHub Repository URL',
+                                      border: OutlineInputBorder(),
+                                      hintText: 'https://github.com/username/repo',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  if (isLoading)
+                                    Column(
+                                      children: [
+                                        const CircularProgressIndicator(),
+                                        const SizedBox(height: 8),
+                                        Text(statusMessage ?? 'Analyzing...', style: GoogleFonts.inter(fontSize: 12)),
+                                      ],
+                                    )
+                                  else
+                                    ElevatedButton.icon(
+                                      icon: const Icon(Icons.auto_awesome),
+                                      label: const Text('Generate README'),
+                                      onPressed: () async {
+                                        if (repoUrlController.text.isEmpty) return;
+                                        setState(() {
+                                          isLoading = true;
+                                          statusMessage = 'Fetching repository...';
+                                        });
+
+                                        try {
+                                          final githubScanner = GitHubScannerService();
+                                          final structure = await githubScanner.scanRepo(repoUrlController.text);
+
+                                          setState(() => statusMessage = 'Generating content with AI...');
+
+                                          final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
+
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                            provider.importMarkdown(readmeContent);
+                                            ToastHelper.show(context, 'README generated successfully!');
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            setState(() => isLoading = false);
+                                            ToastHelper.show(context, 'Error: $e', isError: true);
+                                          }
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const Divider(),
-                ...languages.map((lang) => ListTile(
-                  title: Text(lang['name']!),
-                  subtitle: Text(lang['native']!),
-                  onTap: () {
-                    Navigator.pop(context);
-                    WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(Locale(lang['code']!)));
-                  },
-                )),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.close)),
-          ],
+            );
+          },
         );
       },
     );
-  }
+    }
 
-  void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) {
+    void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) {
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: Text('Contribution Guidelines Builder', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: 500,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Generate standard community files for your project.', style: GoogleFonts.inter()),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(Icons.handshake, color: Colors.blue),
-                title: Text('CONTRIBUTING.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                subtitle: Text('Guidelines for how to contribute to the project.', style: GoogleFonts.inter(fontSize: 12)),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    final content = FileGenerators.generateContributing(provider.variables);
-                    _showFilePreviewDialog(context, 'CONTRIBUTING.md', content);
-                  },
-                  child: const Text('Generate'),
-                ),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.gavel, color: Colors.purple),
-                title: Text('CODE_OF_CONDUCT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                subtitle: Text('Contributor Covenant Code of Conduct.', style: GoogleFonts.inter(fontSize: 12)),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    final content = FileGenerators.generateCodeOfConduct(provider.variables);
-                    _showFilePreviewDialog(context, 'CODE_OF_CONDUCT.md', content);
-                  },
-                  child: const Text('Generate'),
-                ),
-              ),
-            ],
-          ),
+        title: Text('Generate Extra Files', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.gavel),
+              title: const Text('LICENSE'),
+              subtitle: const Text('Generate a standard license file.'),
+              onTap: () {
+                Navigator.pop(context);
+                final content = FileGenerators.generateLicense(provider.licenseType, provider.variables['GITHUB_USERNAME'] ?? 'Author');
+                downloadTextFile(content, 'LICENSE');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.handshake),
+              title: const Text('CONTRIBUTING.md'),
+              subtitle: const Text('Guidelines for contributors.'),
+              onTap: () {
+                Navigator.pop(context);
+                final content = FileGenerators.generateContributing(provider.variables);
+                downloadTextFile(content, 'CONTRIBUTING.md');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.security),
+              title: const Text('SECURITY.md'),
+              subtitle: const Text('Security policy.'),
+              onTap: () {
+                Navigator.pop(context);
+                final content = FileGenerators.generateSecurity(provider.variables);
+                downloadTextFile(content, 'SECURITY.md');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.rule),
+              title: const Text('CODE_OF_CONDUCT.md'),
+              subtitle: const Text('Contributor Covenant Code of Conduct.'),
+              onTap: () {
+                Navigator.pop(context);
+                final content = FileGenerators.generateCodeOfConduct(provider.variables);
+                downloadTextFile(content, 'CODE_OF_CONDUCT.md');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bug_report),
+              title: const Text('Issue Templates'),
+              subtitle: const Text('Bug report and feature request templates.'),
+              onTap: () {
+                Navigator.pop(context);
+                final bugReport = FileGenerators.generateBugReportTemplate();
+                final featureRequest = FileGenerators.generateFeatureRequestTemplate();
+                // TODO: Download as zip or separate files. For now, just one example or improve downloader.
+                downloadTextFile(bugReport, 'bug_report.md');
+                downloadTextFile(featureRequest, 'feature_request.md');
+                ToastHelper.show(context, 'Templates downloaded');
+              },
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.close),
+            child: const Text('Close'),
           ),
         ],
       ),
     );
-  }
+    }
 
-  void _showFilePreviewDialog(BuildContext context, String filename, String content) {
+  void _showLanguageDialog(BuildContext context, ProjectProvider provider) {
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: Text(filename, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: 600,
-          height: 400,
-          child: SingleChildScrollView(
-            child: SelectableText(content, style: GoogleFonts.firaCode(fontSize: 12)),
-          ),
+        title: Text(AppLocalizations.of(context)!.changeLanguage, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('English'),
+              trailing: provider.locale?.languageCode == 'en' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('en'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('العربية (Arabic)'),
+              trailing: provider.locale?.languageCode == 'ar' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('ar'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Español (Spanish)'),
+              trailing: provider.locale?.languageCode == 'es' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('es'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Français (French)'),
+              trailing: provider.locale?.languageCode == 'fr' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('fr'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Deutsch (German)'),
+              trailing: provider.locale?.languageCode == 'de' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('de'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('हिन्दी (Hindi)'),
+              trailing: provider.locale?.languageCode == 'hi' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('hi'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('日本語 (Japanese)'),
+              trailing: provider.locale?.languageCode == 'ja' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('ja'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Português (Portuguese)'),
+              trailing: provider.locale?.languageCode == 'pt' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('pt'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Русский (Russian)'),
+              trailing: provider.locale?.languageCode == 'ru' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('ru'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('中文 (Chinese)'),
+              trailing: provider.locale?.languageCode == 'zh' ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(const Locale('zh'));
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('System Default'),
+              trailing: provider.locale == null ? const Icon(Icons.check, color: Colors.blue) : null,
+              onTap: () {
+                provider.setLocale(null);
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(AppLocalizations.of(context)!.close),
-          ),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.copy),
-            label: const Text('Copy'),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: content));
-              ToastHelper.show(context, 'Copied to clipboard');
-            },
-          ),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.download),
-            label: const Text('Download'),
-            onPressed: () {
-              downloadTextFile(filename, content);
-            },
           ),
         ],
       ),

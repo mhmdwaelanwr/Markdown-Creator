@@ -54,6 +54,27 @@ class SocialPlatforms {
       icon: FontAwesomeIcons.facebook,
       urlBuilder: (username) => 'https://facebook.com/$username',
     ),
+    'App Store': SocialPlatform(
+      name: 'App Store',
+      color: '0D96F6',
+      logo: 'apple',
+      icon: FontAwesomeIcons.appStore,
+      urlBuilder: (username) => 'https://apps.apple.com/developer/$username', // Generic developer link
+    ),
+    'Google Play': SocialPlatform(
+      name: 'Google Play',
+      color: '414141',
+      logo: 'google-play',
+      icon: FontAwesomeIcons.googlePlay,
+      urlBuilder: (username) => 'https://play.google.com/store/apps/developer?id=$username',
+    ),
+    'Buy Me A Coffee': SocialPlatform(
+      name: 'Buy Me A Coffee',
+      color: 'FFDD00',
+      logo: 'buymeacoffee',
+      icon: FontAwesomeIcons.mugHot,
+      urlBuilder: (username) => 'https://www.buymeacoffee.com/$username',
+    ),
     'Twitch': SocialPlatform(
       name: 'Twitch',
       color: '9146FF',
@@ -215,13 +236,7 @@ class SocialPlatforms {
       icon: Icons.coffee, // Fallback
       urlBuilder: (username) => 'https://ko-fi.com/$username',
     ),
-    'Buy Me a Coffee': SocialPlatform(
-      name: 'Buy Me a Coffee',
-      color: 'FFDD00',
-      logo: 'buymeacoffee',
-      icon: FontAwesomeIcons.mugHot,
-      urlBuilder: (username) => 'https://www.buymeacoffee.com/$username',
-    ),
+
     'Dev.to': SocialPlatform(
       name: 'Dev.to',
       color: '0A0A0A',

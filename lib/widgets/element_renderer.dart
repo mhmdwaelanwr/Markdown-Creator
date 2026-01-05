@@ -595,6 +595,35 @@ class ElementRenderer extends StatelessWidget {
           ),
         ),
       );
+    } else if (element is RawElement) {
+      final e = element as RawElement;
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[900] : Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.withAlpha(50)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.code, size: 16, color: Colors.grey),
+                const SizedBox(width: 8),
+                Text('Raw Markdown / HTML', style: GoogleFonts.firaCode(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              e.content.isEmpty ? '(Empty)' : e.content,
+              style: GoogleFonts.firaCode(fontSize: 14, color: textColor),
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      );
     }
 
     return const SizedBox.shrink();

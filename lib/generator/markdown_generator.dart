@@ -173,8 +173,21 @@ class MarkdownGenerator {
       return element.text.split('\n').map((line) => '> $line').join('\n');
     } else if (element is DividerElement) {
       return '---';
+    } else if (element is RawElement) {
+      return element.content;
     } else if (element is CollapsibleElement) {
-      return '<details>\n<summary>${element.summary}</summary>\n\n${element.content}\n\n</details>';
+      return '<details>\n<summary>${element.summary}</summary>\n\n${element.content}\n</details>';
+    } else if (element is DynamicWidgetElement) {
+      switch (element.widgetType) {
+        case DynamicWidgetType.spotify:
+          return '[![Spotify](https://spotify-github-profile.vercel.app/api/view?uid=${element.identifier}&cover_image=true&theme=${element.theme}&show_offline=true&background_color=121212&interchange=true&bar_color=53b14f&bar_color_cover=false)](https://open.spotify.com/user/${element.identifier})';
+        case DynamicWidgetType.youtube:
+          return '[![YouTube Channel](https://github-readme-youtube-cards.vercel.app/?channel_id=${element.identifier}&theme=${element.theme})](${element.identifier})';
+        case DynamicWidgetType.medium:
+           return '[![Medium](https://github-readme-medium-recent-article.vercel.app/medium/@${element.identifier}/0)](https://medium.com/@${element.identifier})';
+        case DynamicWidgetType.activity:
+           return '![GitHub Activity Graph](https://activity-graph.herokuapp.com/graph?username=${element.identifier}&theme=${element.theme})';
+      }
     }
     return '';
   }

@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => '高级 Readme 创建器';
+  String get appTitle => 'Readme 创建器';
 
   @override
   String get saveToLibrary => '保存到库';
@@ -144,7 +144,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get focusMode => '专注模式';
 
   @override
-  String get autoSaved => '自动保存';
+  String get autoSaved => '已自动保存';
 
   @override
   String get projectSettings => '项目设置';
@@ -201,115 +201,168 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsSaved => '设置已保存！';
 
   @override
-  String get commonShortcuts => 'Common Shortcuts';
+  String get commonShortcuts => '常用快捷键';
 
   @override
-  String get elementShortcuts => 'Element Shortcuts';
+  String get elementShortcuts => '元素快捷键';
 
   @override
-  String get newProject => 'New Project';
+  String get newProject => '新���项目';
 
   @override
-  String get openProject => 'Open Project';
+  String get openProject => '打开项目';
 
   @override
-  String get saveProject => 'Save Project';
+  String get saveProject => '保存项目';
 
   @override
-  String get exportProject => 'Export Project';
+  String get exportProject => '导出项目';
 
   @override
-  String get print => 'Print';
+  String get print => '打印';
 
   @override
-  String get undo => 'Undo';
+  String get undo => '撤销';
 
   @override
-  String get redo => 'Redo';
+  String get redo => '重做';
 
   @override
-  String get showPreview => 'Show Preview';
+  String get showPreview => '显示预览';
 
   @override
-  String get toggleGrid => 'Toggle Grid';
+  String get toggleGrid => '切换网格';
 
   @override
-  String get toggleTheme => 'Toggle Theme';
+  String get toggleTheme => '切换主题';
 
   @override
-  String get openSettings => 'Open Settings';
+  String get openSettings => '打开设置';
 
   @override
-  String get help => 'Help';
+  String get help => '帮助';
 
   @override
-  String get addHeading => 'Add Heading';
+  String get addHeading => '添加标题';
 
   @override
-  String get addSubheading => 'Add Subheading';
+  String get addSubheading => '添加副标题';
 
   @override
-  String get addParagraph => 'Add Paragraph';
+  String get addParagraph => '添加段落';
 
   @override
-  String get addImage => 'Add Image';
+  String get addImage => '添加图片';
 
   @override
-  String get addTable => 'Add Table';
+  String get addTable => '添加表格';
 
   @override
-  String get addList => 'Add List';
+  String get addList => '添加列表';
 
   @override
-  String get addQuote => 'Add Quote';
+  String get addQuote => '添加引用';
 
   @override
-  String get addLink => 'Add Link';
+  String get addLink => '添加链接';
 
   @override
   String get aboutDescription =>
-      'Readme Creator is a powerful tool for generating professional README files for your projects. All features work across desktop, mobile and web.';
+      'Readme Creator 是一个强大的工具，用于为您的项目生成专业的 README 文件。所有功能均可在桌面、移动设备和 Web 上运行。';
 
   @override
-  String get enterGeminiKey =>
-      'Enter your Gemini API Key to enable real AI features.';
+  String get enterGeminiKey => '输入您的 Gemini API 密钥以启用真正的 AI 功能。';
 
   @override
-  String get githubIntegration => 'GitHub Integration';
+  String get githubIntegration => 'GitHub 集成';
 
   @override
-  String get enterGithubToken =>
-      'Optional: Enter GitHub Token for higher rate limits when scanning repos.';
+  String get enterGithubToken => '可选：输入 GitHub 令牌以在扫描仓库时获得更高的速率限制。';
 
   @override
-  String get localFolder => 'Local Folder';
+  String get localFolder => '本地文件夹';
 
   @override
-  String get githubRepo => 'GitHub Repo';
+  String get githubRepo => 'GitHub 仓库';
 
   @override
-  String get scanLocalFolder =>
-      'Scan a local project folder to generate a README.';
+  String get scanLocalFolder => '扫描本地项目文件夹以生成 README。';
 
   @override
-  String get scanGithubRepo => 'Scan a public GitHub repository.';
+  String get scanGithubRepo => '扫描公共 GitHub 仓库。';
 
   @override
-  String get fetchingRepo => 'Fetching repository data...';
+  String get fetchingRepo => '正在获取仓库数据...';
 
   @override
-  String get analyzingAI => 'Analyzing with AI...';
+  String get analyzingAI => '正在使用 AI 分析...';
 
   @override
-  String get readmeGenerated => 'README generated successfully!';
+  String get readmeGenerated => 'README 生成成功！';
 
   @override
-  String get projectImported => 'Project imported successfully';
+  String get projectImported => '项目导入成功';
 
   @override
-  String get contentFetched =>
-      'Content fetched! Switch to \"Text / File\" tab to review.';
+  String get contentFetched => '内容已获取！切换到“文本/文件”选项卡进行查看。';
 
   @override
-  String get fetchFailed => 'Failed to fetch';
+  String get fetchFailed => '获取失败';
+
+  @override
+  String get generateExtraFiles => '生成额外文件';
+
+  @override
+  String get publishToGithub => '发布到 GitHub';
+
+  @override
+  String get contributionGuidelinesBuilder => '贡献指南生成器';
+
+  @override
+  String get contributionGuidelinesDesc => '为您的项目生成标准社区文件。';
+
+  @override
+  String get contributingMdDesc => '关于如何为项目做出贡献的指南。';
+
+  @override
+  String get generate => '生成';
+
+  @override
+  String get codeOfConductDesc => '贡献者公约行为准则。';
+
+  @override
+  String get githubTokenMissing => '缺少 GitHub 令牌。请在 AI 设置中设置。';
+
+  @override
+  String get owner => '所有者 (用户名/组织)';
+
+  @override
+  String get repoName => '仓库名称';
+
+  @override
+  String get branchName => '新分支名称';
+
+  @override
+  String get commitMessage => '提交信息';
+
+  @override
+  String get publishDialogDesc => '这将创建一个新分支和拉取请求 (Pull Request)。';
+
+  @override
+  String get ownerRepoRequired => '所有者和仓库是必需的';
+
+  @override
+  String get prCreated => '拉取请求创建成功。';
+
+  @override
+  String get viewPrs => '查看 PR';
+
+  @override
+  String get copiedToClipboard => '已复制到剪贴板';
+
+  @override
+  String get download => '下载';
+
+  @override
+  String get copy => '复制';
 }

@@ -58,8 +58,8 @@ class ProjectProvider with ChangeNotifier {
   int get sectionSpacing => _sectionSpacing;
   DeviceMode get deviceMode => _deviceMode;
   bool get exportHtml => _exportHtml;
-  String? get geminiApiKey => _geminiApiKey;
-  String? get githubToken => _githubToken;
+  String get geminiApiKey => _geminiApiKey ?? '';
+  String get githubToken => _githubToken ?? '';
   Locale? get locale => _locale;
   String get targetLanguage => _targetLanguage;
 
@@ -407,6 +407,8 @@ class ProjectProvider with ChangeNotifier {
         return CollapsibleElement();
       case ReadmeElementType.dynamicWidget:
         return DynamicWidgetElement();
+      case ReadmeElementType.raw:
+        return RawElement();
     }
   }
 
@@ -423,6 +425,10 @@ class ProjectProvider with ChangeNotifier {
     _selectedElementId = newElement.id;
     _saveState();
     _safeNotify();
+  }
+
+  void addSnippet(Snippet snippet) {
+    insertSnippet(_elements.length, snippet);
   }
 
   void insertSnippet(int index, Snippet snippet) {
@@ -718,21 +724,7 @@ class ProjectProvider with ChangeNotifier {
     _safeNotify();
   }
 
-  void addSnippet(Snippet snippet) {
-    _recordHistory();
-    try {
-      final Map<String, dynamic> json = jsonDecode(snippet.elementJson);
-      json.remove('id');
-      final newElement = ReadmeElement.fromJson(json);
 
-      _elements.add(newElement);
-      _selectedElementId = newElement.id;
-      _saveState();
-      _safeNotify();
-    } catch (e) {
-      debugPrint('Error adding snippet: $e');
-    }
-  }
 }
 
 // Top-level function for compute

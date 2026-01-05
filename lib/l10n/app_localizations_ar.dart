@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'منشئ ملفات Readme المتقدم';
+  String get appTitle => 'منشئ ملفات Readme';
 
   @override
   String get saveToLibrary => 'حفظ في المكتبة';
@@ -24,22 +24,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importMarkdown => 'استيراد Markdown';
 
   @override
-  String get socialPreviewDesigner => 'مصمم معاينة التواصل الاجتماعي';
+  String get socialPreviewDesigner => 'مصمم المعاينة الاجتماعية';
 
   @override
-  String get githubActionsGenerator => 'مولد إجراءات GitHub';
+  String get githubActionsGenerator => 'مولد GitHub Actions';
 
   @override
   String get exportProjectJson => 'تصدير المشروع (JSON)';
 
   @override
-  String get importProjectJson => 'استيراد مشروع (JSON)';
+  String get importProjectJson => 'استيراد المشروع (JSON)';
 
   @override
   String get aiSettings => 'إعدادات الذكاء الاصطناعي';
 
   @override
-  String get generateFromCodebase => 'توليد من الكود المصدري (AI)';
+  String get generateFromCodebase => 'توليد من الكود (AI)';
 
   @override
   String get showTour => 'عرض الجولة';
@@ -103,7 +103,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmClearWorkspaceContent =>
-      'سيؤدي هذا إلى إزالة جميع العناصر. لا يمكن التراجع عن هذا الإجراء (ما لم يكن لديك لقطة محفوظة).';
+      'سيؤدي هذا إلى إزالة جميع العناصر. لا يمكن التراجع عن هذا الإجراء (إلا إذا كان لديك لقطة محفوظة).';
 
   @override
   String get pickProjectFolder => 'اختر مجلد المشروع';
@@ -145,7 +145,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get focusMode => 'وضع التركيز';
 
   @override
-  String get autoSaved => 'تم الحفظ تلقائياً';
+  String get autoSaved => 'تم الحفظ تلقائيًا';
 
   @override
   String get projectSettings => 'إعدادات المشروع';
@@ -196,7 +196,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rightsReserved => 'جميع الحقوق محفوظة.';
 
   @override
-  String get systemDefault => 'النظام الافتراضي';
+  String get systemDefault => 'افتراضي النظام';
 
   @override
   String get settingsSaved => 'تم حفظ الإعدادات!';
@@ -269,7 +269,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'منشئ ملفات Readme المتقدم هو أداة قوية لإنشاء ملفات README احترافية لمشاريعك.';
+      'Readme Creator هو أداة قوية لتوليد ملفات README احترافية لمشاريعك. تعمل جميع الميزات عبر سطح المكتب والهاتف والويب.';
 
   @override
   String get enterGeminiKey =>
@@ -289,7 +289,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get githubRepo => 'مستودع GitHub';
 
   @override
-  String get scanLocalFolder => 'مسح مجلد مشروع محلي لإنشاء README.';
+  String get scanLocalFolder => 'مسح مجلد مشروع محلي لتوليد README.';
 
   @override
   String get scanGithubRepo => 'مسح مستودع GitHub عام.';
@@ -298,18 +298,77 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fetchingRepo => 'جاري جلب بيانات المستودع...';
 
   @override
-  String get analyzingAI => 'جاري التحليل باستخدام الذكاء الاصطناعي...';
+  String get analyzingAI => 'جاري التحليل باستخدام AI...';
 
   @override
-  String get readmeGenerated => 'تم إنشاء README بنجاح!';
+  String get readmeGenerated => 'تم توليد README بنجاح!';
 
   @override
   String get projectImported => 'تم استيراد المشروع بنجاح';
 
   @override
   String get contentFetched =>
-      'تم جلب المحتوى! انتقل إلى علامة التبويب \"نص / ملف\" للمراجعة.';
+      'تم جلب المحتوى! انتقل إلى علامة تبويب \"نص / ملف\" للمراجعة.';
 
   @override
   String get fetchFailed => 'فشل الجلب';
+
+  @override
+  String get generateExtraFiles => 'توليد ملفات إضافية';
+
+  @override
+  String get publishToGithub => 'نشر على GitHub';
+
+  @override
+  String get contributionGuidelinesBuilder => 'منشئ إرشادات المساهمة';
+
+  @override
+  String get contributionGuidelinesDesc => 'توليد ملفات مجتمع قياسية لمشروعك.';
+
+  @override
+  String get contributingMdDesc => 'إرشادات حول كيفية المساهمة في المشروع.';
+
+  @override
+  String get generate => 'توليد';
+
+  @override
+  String get codeOfConductDesc => 'مدونة قواعد السلوك للمساهمين.';
+
+  @override
+  String get githubTokenMissing =>
+      'رمز GitHub مفقود. يرجى تعيينه في إعدادات AI.';
+
+  @override
+  String get owner => 'المالك (اسم المستخدم/المنظمة)';
+
+  @override
+  String get repoName => 'اسم المستودع';
+
+  @override
+  String get branchName => 'اسم الفرع الجديد';
+
+  @override
+  String get commitMessage => 'رسالة الالتزام (Commit)';
+
+  @override
+  String get publishDialogDesc =>
+      'سيؤدي هذا إلى إنشاء فرع جديد وطلب سحب (Pull Request).';
+
+  @override
+  String get ownerRepoRequired => 'المالك والمستودع مطلوبان';
+
+  @override
+  String get prCreated => 'تم إنشاء طلب السحب بنجاح.';
+
+  @override
+  String get viewPrs => 'عرض طلبات السحب';
+
+  @override
+  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
+
+  @override
+  String get download => 'تنزيل';
+
+  @override
+  String get copy => 'نسخ';
 }

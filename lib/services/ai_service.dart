@@ -128,4 +128,8 @@ $codeContext
     await Future.delayed(const Duration(seconds: 2));
     return '# Mock README\n\nThis is a mock README generated because no API key was provided.\n\n## Features\n- Feature 1\n- Feature 2';
   }
+
+  static Future<String> generateReadmeFromStructure(String structure, {String? apiKey}) async {
+    return generateReadmeFromCodebase(structure, apiKey: apiKey);
+  }
 }

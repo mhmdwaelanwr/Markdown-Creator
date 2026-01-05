@@ -711,8 +711,122 @@ abstract class AppLocalizations {
   /// No description provided for @fetchFailed.
   ///
   /// In en, this message translates to:
-  /// **'Failed to fetch'**
+  /// **'Fetch Failed'**
   String get fetchFailed;
+
+  /// No description provided for @generateExtraFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Extra Files'**
+  String get generateExtraFiles;
+
+  /// No description provided for @publishToGithub.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish to GitHub'**
+  String get publishToGithub;
+
+  /// No description provided for @contributionGuidelinesBuilder.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution Guidelines Builder'**
+  String get contributionGuidelinesBuilder;
+
+  /// No description provided for @contributionGuidelinesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate standard community files for your project.'**
+  String get contributionGuidelinesDesc;
+
+  /// No description provided for @contributingMdDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Guidelines for how to contribute to the project.'**
+  String get contributingMdDesc;
+
+  /// No description provided for @generate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get generate;
+
+  /// No description provided for @codeOfConductDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributor Covenant Code of Conduct.'**
+  String get codeOfConductDesc;
+
+  /// No description provided for @githubTokenMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Token is missing. Please set it in AI Settings.'**
+  String get githubTokenMissing;
+
+  /// No description provided for @owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner (Username/Org)'**
+  String get owner;
+
+  /// No description provided for @repoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Repository Name'**
+  String get repoName;
+
+  /// No description provided for @branchName.
+  ///
+  /// In en, this message translates to:
+  /// **'New Branch Name'**
+  String get branchName;
+
+  /// No description provided for @commitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit Message'**
+  String get commitMessage;
+
+  /// No description provided for @publishDialogDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This will create a new branch and a Pull Request.'**
+  String get publishDialogDesc;
+
+  /// No description provided for @ownerRepoRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner and Repo are required'**
+  String get ownerRepoRequired;
+
+  /// No description provided for @prCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull Request created successfully.'**
+  String get prCreated;
+
+  /// No description provided for @viewPrs.
+  ///
+  /// In en, this message translates to:
+  /// **'View PRs'**
+  String get viewPrs;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
 }
 
 class _AppLocalizationsDelegate

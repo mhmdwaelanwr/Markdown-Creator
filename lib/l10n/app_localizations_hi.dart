@@ -9,7 +9,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'उन्नत Readme निर्माता';
+  String get appTitle => 'Readme निर्माता';
 
   @override
   String get saveToLibrary => 'लाइब्रेरी में सहेजें';
@@ -27,7 +27,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get socialPreviewDesigner => 'सोशल प्रीव्यू डिज़ाइनर';
 
   @override
-  String get githubActionsGenerator => 'GitHub Actions जेनरेटर';
+  String get githubActionsGenerator => 'GitHub Actions जनरेटर';
 
   @override
   String get exportProjectJson => 'प्रोजेक्ट निर्यात करें (JSON)';
@@ -103,7 +103,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get confirmClearWorkspaceContent =>
-      'यह सभी तत्वों को हटा देगा। इस क्रिया को पूर्ववत नहीं किया जा सकता (जब तक कि आपके पास स्नैपशॉट न हो)।';
+      'यह सभी तत्वों को हटा देगा। यह क्रिया पूर्ववत नहीं की जा सकती (जब तक कि आपके पास स्नैपशॉट न हो)।';
 
   @override
   String get pickProjectFolder => 'प्रोजेक्ट फ़ोल्डर चुनें';
@@ -163,7 +163,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get colors => 'रंग';
 
   @override
-  String get formatting => 'फॉर्मेटिंग';
+  String get formatting => 'फ़ॉर्मेटिंग';
 
   @override
   String get primaryColor => 'प्राथमिक रंग';
@@ -202,115 +202,176 @@ class AppLocalizationsHi extends AppLocalizations {
   String get settingsSaved => 'सेटिंग्स सहेजी गईं!';
 
   @override
-  String get commonShortcuts => 'Common Shortcuts';
+  String get commonShortcuts => 'सामान्य शॉर्टकट';
 
   @override
-  String get elementShortcuts => 'Element Shortcuts';
+  String get elementShortcuts => 'तत्व शॉर्टकट';
 
   @override
-  String get newProject => 'New Project';
+  String get newProject => 'नया प्रोजेक्ट';
 
   @override
-  String get openProject => 'Open Project';
+  String get openProject => 'प्रोजेक्ट खोलें';
 
   @override
-  String get saveProject => 'Save Project';
+  String get saveProject => 'प्रोजेक्ट सहेजें';
 
   @override
-  String get exportProject => 'Export Project';
+  String get exportProject => 'प्रोजेक्ट निर्यात करें';
 
   @override
-  String get print => 'Print';
+  String get print => 'प्रिंट';
 
   @override
-  String get undo => 'Undo';
+  String get undo => 'पूर्ववत करें';
 
   @override
-  String get redo => 'Redo';
+  String get redo => 'फिर से करें';
 
   @override
-  String get showPreview => 'Show Preview';
+  String get showPreview => 'पूर्वावलोकन दिखाएं';
 
   @override
-  String get toggleGrid => 'Toggle Grid';
+  String get toggleGrid => 'ग्रिड टॉगल करें';
 
   @override
-  String get toggleTheme => 'Toggle Theme';
+  String get toggleTheme => 'थीम टॉगल करें';
 
   @override
-  String get openSettings => 'Open Settings';
+  String get openSettings => 'सेटिंग्स खोलें';
 
   @override
-  String get help => 'Help';
+  String get help => 'मदद';
 
   @override
-  String get addHeading => 'Add Heading';
+  String get addHeading => 'शीर्षक जोड़ें';
 
   @override
-  String get addSubheading => 'Add Subheading';
+  String get addSubheading => 'उपशीर्षक जोड़ें';
 
   @override
-  String get addParagraph => 'Add Paragraph';
+  String get addParagraph => 'पैराग्राफ जोड़ें';
 
   @override
-  String get addImage => 'Add Image';
+  String get addImage => 'छवि जोड़ें';
 
   @override
-  String get addTable => 'Add Table';
+  String get addTable => 'तालिका जोड़ें';
 
   @override
-  String get addList => 'Add List';
+  String get addList => 'सूची जोड़ें';
 
   @override
-  String get addQuote => 'Add Quote';
+  String get addQuote => 'उद्धरण जोड़ें';
 
   @override
-  String get addLink => 'Add Link';
+  String get addLink => 'लिंक जोड़ें';
 
   @override
   String get aboutDescription =>
-      'Readme Creator is a powerful tool for generating professional README files for your projects. All features work across desktop, mobile and web.';
+      'Readme Creator आपके प्रोजेक्ट्स के लिए पेशेवर README फ़ाइलें बनाने के लिए एक शक्तिशाली उ���करण है। सभी सुविधाएँ डेस्कटॉप, मोबाइल और वेब पर काम करती हैं।';
 
   @override
   String get enterGeminiKey =>
-      'Enter your Gemini API Key to enable real AI features.';
+      'वास्तविक AI सुविधाओं को सक्षम करने के लिए अपनी Gemini API कुंजी दर्ज करें।';
 
   @override
-  String get githubIntegration => 'GitHub Integration';
+  String get githubIntegration => 'GitHub एकीकरण';
 
   @override
   String get enterGithubToken =>
-      'Optional: Enter GitHub Token for higher rate limits when scanning repos.';
+      'वैकल्पिक: रिपॉजिटरी स्कैन करते समय उच्च दर सीमा के लिए GitHub टोकन दर्ज करें।';
 
   @override
-  String get localFolder => 'Local Folder';
+  String get localFolder => 'स्थानीय फ़ोल्डर';
 
   @override
-  String get githubRepo => 'GitHub Repo';
+  String get githubRepo => 'GitHub रिपॉजिटरी';
 
   @override
   String get scanLocalFolder =>
-      'Scan a local project folder to generate a README.';
+      'README उत्पन्न करने के लिए स्थानीय प्रोजेक्ट फ़ोल्डर को स्कैन करें।';
 
   @override
-  String get scanGithubRepo => 'Scan a public GitHub repository.';
+  String get scanGithubRepo => 'सार्वजनिक GitHub रिपॉजिटरी को स्कैन करें।';
 
   @override
-  String get fetchingRepo => 'Fetching repository data...';
+  String get fetchingRepo => 'रिपॉजिटरी डेटा प्राप्त कर रहा है...';
 
   @override
-  String get analyzingAI => 'Analyzing with AI...';
+  String get analyzingAI => 'AI के साथ विश्लेषण ��र रहा है...';
 
   @override
-  String get readmeGenerated => 'README generated successfully!';
+  String get readmeGenerated => 'README सफलतापूर्वक उत्पन्न हुआ!';
 
   @override
-  String get projectImported => 'Project imported successfully';
+  String get projectImported => 'प्रोजेक्ट सफलतापूर्वक आयात किया गया';
 
   @override
   String get contentFetched =>
-      'Content fetched! Switch to \"Text / File\" tab to review.';
+      'सामग्री प्राप्त की गई! समीक्षा करने के लिए \"पाठ / फ़ाइल\" टैब पर स्विच करें।';
 
   @override
-  String get fetchFailed => 'Failed to fetch';
+  String get fetchFailed => 'प्राप्त करने में विफल';
+
+  @override
+  String get generateExtraFiles => 'अतिरिक्त फ़ाइलें उत्पन्न करें';
+
+  @override
+  String get publishToGithub => 'GitHub पर प्रकाशित करें';
+
+  @override
+  String get contributionGuidelinesBuilder => 'योगदान दिशानिर्देश निर्माता';
+
+  @override
+  String get contributionGuidelinesDesc =>
+      'अपने प्रोजेक्ट के लिए मानक समुदाय फ़ाइलें उत्पन्न करें।';
+
+  @override
+  String get contributingMdDesc =>
+      'प्रोजेक्ट में योगदान करने के तरीके के लिए दिशानिर्देश।';
+
+  @override
+  String get generate => 'उत्पन्न करें';
+
+  @override
+  String get codeOfConductDesc => 'योगदानकर्ता वाचा आचार संहिता।';
+
+  @override
+  String get githubTokenMissing =>
+      'GitHub टोकन गायब है। कृपया इसे AI सेटिंग्स में सेट करें।';
+
+  @override
+  String get owner => 'मालिक (उपयोगकर्ता नाम/संगठन)';
+
+  @override
+  String get repoName => 'रिपॉजिटरी का नाम';
+
+  @override
+  String get branchName => 'नई शाखा का नाम';
+
+  @override
+  String get commitMessage => 'कमिट संदेश';
+
+  @override
+  String get publishDialogDesc =>
+      'यह एक नई शाखा और एक पुल अनुरोध (Pull Request) बनाएगा।';
+
+  @override
+  String get ownerRepoRequired => 'मालिक और रिपॉजिटरी आवश्यक हैं';
+
+  @override
+  String get prCreated => 'पुल अनुरोध सफलतापूर्वक बनाया गया।';
+
+  @override
+  String get viewPrs => 'PRs देखें';
+
+  @override
+  String get copiedToClipboard => 'क्लिपबोर्ड पर कॉपी किया गया';
+
+  @override
+  String get download => 'डाउनलोड';
+
+  @override
+  String get copy => 'कॉपी';
 }

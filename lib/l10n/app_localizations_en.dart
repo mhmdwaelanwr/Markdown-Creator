@@ -312,5 +312,66 @@ class AppLocalizationsEn extends AppLocalizations {
       'Content fetched! Switch to \"Text / File\" tab to review.';
 
   @override
-  String get fetchFailed => 'Failed to fetch';
+  String get fetchFailed => 'Fetch Failed';
+
+  @override
+  String get generateExtraFiles => 'Generate Extra Files';
+
+  @override
+  String get publishToGithub => 'Publish to GitHub';
+
+  @override
+  String get contributionGuidelinesBuilder => 'Contribution Guidelines Builder';
+
+  @override
+  String get contributionGuidelinesDesc =>
+      'Generate standard community files for your project.';
+
+  @override
+  String get contributingMdDesc =>
+      'Guidelines for how to contribute to the project.';
+
+  @override
+  String get generate => 'Generate';
+
+  @override
+  String get codeOfConductDesc => 'Contributor Covenant Code of Conduct.';
+
+  @override
+  String get githubTokenMissing =>
+      'GitHub Token is missing. Please set it in AI Settings.';
+
+  @override
+  String get owner => 'Owner (Username/Org)';
+
+  @override
+  String get repoName => 'Repository Name';
+
+  @override
+  String get branchName => 'New Branch Name';
+
+  @override
+  String get commitMessage => 'Commit Message';
+
+  @override
+  String get publishDialogDesc =>
+      'This will create a new branch and a Pull Request.';
+
+  @override
+  String get ownerRepoRequired => 'Owner and Repo are required';
+
+  @override
+  String get prCreated => 'Pull Request created successfully.';
+
+  @override
+  String get viewPrs => 'View PRs';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get download => 'Download';
+
+  @override
+  String get copy => 'Copy';
 }

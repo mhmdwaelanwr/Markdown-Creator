@@ -149,6 +149,10 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       _textController.text = e.summary;
       _codeController.text = e.content;
     }
+    if (e is DynamicWidgetElement) {
+      _textController.text = e.identifier;
+      _typeNameController.text = e.theme;
+    }
   }
 
   void _syncControllersIfChanged() {
@@ -194,6 +198,10 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     if (e is CollapsibleElement) {
       _syncText(_textController, e.summary);
       _syncText(_codeController, e.content);
+    }
+    if (e is DynamicWidgetElement) {
+      _syncText(_textController, e.identifier);
+      _syncText(_typeNameController, e.theme);
     }
   }
 
@@ -265,6 +273,9 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
       _debounceUpdate();
     } else if (e is CollapsibleElement && e.summary != _textController.text) {
       e.summary = _textController.text;
+      _debounceUpdate();
+    } else if (e is DynamicWidgetElement && e.identifier != _textController.text) {
+      e.identifier = _textController.text;
       _debounceUpdate();
     }
   }
@@ -352,6 +363,9 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
     final e = widget.element;
     if (e is EmbedElement && e.typeName != _typeNameController.text) {
       e.typeName = _typeNameController.text;
+      _debounceUpdate();
+    } else if (e is DynamicWidgetElement && e.theme != _typeNameController.text) {
+      e.theme = _typeNameController.text;
       _debounceUpdate();
     }
   }
@@ -1266,6 +1280,62 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
             controller: _codeController,
             decoration: const InputDecoration(labelText: 'Content (Markdown supported)'),
             maxLines: 10,
+          ),
+        ],
+      );
+    } else if (element is DynamicWidgetElement) {
+      String label = 'Identifier';
+      String hint = '';
+      switch (element.widgetType) {
+        case DynamicWidgetType.spotify:
+          label = 'Spotify UID';
+          hint = 'e.g. 1234567890';
+          break;
+        case DynamicWidgetType.youtube:
+          label = 'YouTube Channel ID';
+          hint = 'e.g. UCxxxxxxxxxxxx';
+          break;
+        case DynamicWidgetType.medium:
+          label = 'Medium Username';
+          hint = 'e.g. username';
+          break;
+        case DynamicWidgetType.activity:
+          label = 'GitHub Username';
+          hint = 'e.g. octocat';
+          break;
+      }
+
+      return Column(
+        children: [
+          DropdownButtonFormField<DynamicWidgetType>(
+            value: element.widgetType,
+            decoration: const InputDecoration(labelText: 'Widget Type'),
+            items: DynamicWidgetType.values.map((type) {
+              return DropdownMenuItem(
+                value: type,
+                child: Text(type.name.toUpperCase(), style: GoogleFonts.inter()),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  element.widgetType = value;
+                });
+                _notifyUpdate();
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _textController,
+            decoration: InputDecoration(labelText: label, hintText: hint),
+            style: GoogleFonts.inter(),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _typeNameController,
+            decoration: const InputDecoration(labelText: 'Theme (Optional)', hintText: 'default, dark, light, etc.'),
+            style: GoogleFonts.inter(),
           ),
         ],
       );

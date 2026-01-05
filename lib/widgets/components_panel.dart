@@ -70,6 +70,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
       ComponentItem(ReadmeElementType.embed, 'Embed', Icons.code_off),
       ComponentItem(ReadmeElementType.githubStats, 'GitHub Stats', Icons.bar_chart),
       ComponentItem(ReadmeElementType.contributors, 'Contributors', Icons.people),
+      ComponentItem(ReadmeElementType.dynamicWidget, 'Dynamic Widget', Icons.extension),
     ];
 
     final structureItems = [

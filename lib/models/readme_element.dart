@@ -35,7 +35,11 @@ abstract class ReadmeElement {
   Map<String, dynamic> toJson();
 
   factory ReadmeElement.fromJson(Map<String, dynamic> json) {
-    final type = ReadmeElementType.values.firstWhere((e) => e.toString() == json['type']);
+    final typeStr = json['type'] as String;
+    final type = ReadmeElementType.values.firstWhere(
+      (e) => e.toString() == typeStr || e.name == typeStr,
+      orElse: () => throw Exception('Unknown element type: $typeStr'),
+    );
     switch (type) {
       case ReadmeElementType.heading:
         return HeadingElement.fromJson(json);

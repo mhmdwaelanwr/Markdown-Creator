@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -96,6 +97,16 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         id: 'template_contact',
         name: 'Contact Info',
         elementJson: '{"type":"socials","profiles":[{"platform":"github","username":"username"},{"platform":"linkedin","username":"username"}],"style":"for-the-badge","id":"temp_contact"}',
+      ),
+      Snippet(
+        id: 'template_faq',
+        name: 'FAQ Section',
+        elementJson: '{"type":"collapsible","summary":"Frequently Asked Questions","content":"Q: How do I install?\\n\\nA: Run `npm install`.","id":"temp_faq"}',
+      ),
+      Snippet(
+        id: 'template_spotify',
+        name: 'Spotify Status',
+        elementJson: '{"type":"dynamicWidget","widgetType":"spotify","identifier":"user_id","theme":"default","id":"temp_spotify"}',
       ),
     ];
 
@@ -302,6 +313,35 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     );
   }
 
+  IconData _getIconForSnippet(Snippet snippet) {
+    try {
+      final json = jsonDecode(snippet.elementJson);
+      final typeStr = json['type'] as String;
+      if (typeStr.contains('table')) return Icons.table_chart;
+      if (typeStr.contains('socials')) return Icons.share;
+      if (typeStr.contains('collapsible')) return Icons.expand_more;
+      if (typeStr.contains('dynamicWidget')) return Icons.extension;
+      if (typeStr.contains('heading')) return Icons.title;
+      if (typeStr.contains('paragraph')) return Icons.text_fields;
+      if (typeStr.contains('image')) return Icons.image;
+      if (typeStr.contains('codeBlock')) return Icons.code;
+      if (typeStr.contains('list')) return Icons.list;
+      if (typeStr.contains('badge')) return Icons.shield;
+      if (typeStr.contains('icon')) return Icons.emoji_emotions;
+      if (typeStr.contains('embed')) return Icons.code_off;
+      if (typeStr.contains('githubStats')) return Icons.bar_chart;
+      if (typeStr.contains('contributors')) return Icons.people;
+      if (typeStr.contains('mermaid')) return Icons.account_tree;
+      if (typeStr.contains('toc')) return Icons.list_alt;
+      if (typeStr.contains('blockquote')) return Icons.format_quote;
+      if (typeStr.contains('divider')) return Icons.horizontal_rule;
+      if (typeStr.contains('raw')) return Icons.code;
+    } catch (e) {
+      // ignore
+    }
+    return Icons.content_paste;
+  }
+
   Widget _buildDraggableSnippet(BuildContext context, Snippet snippet, bool isDark, {bool isTemplate = false}) {
     return Draggable<Snippet>(
       data: snippet,
@@ -321,7 +361,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.content_paste, color: AppColors.secondary, size: 20),
+              Icon(_getIconForSnippet(snippet), color: AppColors.secondary, size: 20),
               const SizedBox(width: 12),
               Expanded(child: Text(snippet.name, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14), overflow: TextOverflow.ellipsis)),
             ],
@@ -355,7 +395,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Row(
                 children: [
-                  const Icon(Icons.content_paste, color: AppColors.secondary, size: 20),
+                  Icon(_getIconForSnippet(snippet), color: AppColors.secondary, size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

@@ -127,6 +127,10 @@ Contributions are welcome! We want to make Readme Creator the best tool for deve
 
 If you find this project useful, please consider giving it a ⭐ on GitHub! It helps others find the project and motivates further development.
 
+## 🛡️ Security
+
+For security issues, please refer to our [Security Policy](SECURITY.md).
+
 ## 📄 License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.

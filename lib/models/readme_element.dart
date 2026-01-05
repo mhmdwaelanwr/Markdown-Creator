@@ -20,6 +20,7 @@ enum ReadmeElementType {
   blockquote,
   divider,
   collapsible,
+  dynamicWidget,
 }
 
 abstract class ReadmeElement {
@@ -71,6 +72,8 @@ abstract class ReadmeElement {
         return DividerElement.fromJson(json);
       case ReadmeElementType.collapsible:
         return CollapsibleElement.fromJson(json);
+      case ReadmeElementType.dynamicWidget:
+        return DynamicWidgetElement.fromJson(json);
     }
   }
 }
@@ -588,6 +591,44 @@ class CollapsibleElement extends ReadmeElement {
     return CollapsibleElement(
       summary: json['summary'],
       content: json['content'],
+      id: json['id'],
+    );
+  }
+}
+
+enum DynamicWidgetType { spotify, youtube, medium, activity }
+
+class DynamicWidgetElement extends ReadmeElement {
+  DynamicWidgetType widgetType;
+  String identifier; // Spotify ID, YouTube Channel ID, Medium Username, GitHub Username
+  String theme; // 'default', 'dark', 'light', etc.
+
+  DynamicWidgetElement({
+    this.widgetType = DynamicWidgetType.spotify,
+    this.identifier = '',
+    this.theme = 'default',
+    super.id,
+  }) : super(type: ReadmeElementType.dynamicWidget);
+
+  @override
+  String get description => 'Dynamic Widget: ${widgetType.name}';
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.toString(),
+        'widgetType': widgetType.toString(),
+        'identifier': identifier,
+        'theme': theme,
+      };
+
+  factory DynamicWidgetElement.fromJson(Map<String, dynamic> json) {
+    return DynamicWidgetElement(
+      widgetType: DynamicWidgetType.values.firstWhere(
+          (e) => e.toString() == json['widgetType'],
+          orElse: () => DynamicWidgetType.spotify),
+      identifier: json['identifier'] ?? '',
+      theme: json['theme'] ?? 'default',
       id: json['id'],
     );
   }

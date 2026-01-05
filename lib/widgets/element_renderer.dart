@@ -500,13 +500,14 @@ class ElementRenderer extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
         decoration: BoxDecoration(
-          border: Border(left: BorderSide(color: Colors.grey[400]!, width: 4)),
+          border: Border(left: BorderSide(color: Colors.grey.shade400, width: 4)),
         ),
         child: Text(
           e.text,
-          style: TextStyle(
+          style: GoogleFonts.inter(
+            color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
             fontStyle: FontStyle.italic,
-            color: isDark ? Colors.grey[300] : Colors.grey[700],
+            fontSize: 16,
           ),
         ),
       );
@@ -515,16 +516,111 @@ class ElementRenderer extends StatelessWidget {
     } else if (element is CollapsibleElement) {
       final e = element as CollapsibleElement;
       return ExpansionTile(
-        title: Text(e.summary, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+        title: Text(e.summary, style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: textColor)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(e.content, style: TextStyle(color: textColor)),
+            child: Text(e.content, style: GoogleFonts.inter(color: textColor)),
           ),
         ],
       );
+    } else if (element is DynamicWidgetElement) {
+      final e = element as DynamicWidgetElement;
+      String imageUrl = '';
+      String altText = '';
+
+      switch (e.widgetType) {
+        case DynamicWidgetType.spotify:
+          // Using novatorem for Spotify
+          // https://github.com/novatorem/novatorem
+          // URL: https://novatorem.vercel.app/api/spotify?background_color=0d1117&border_color=ffffff&spotify_client_id=...
+          // Simplified for demo:
+          // We can use https://spotify-github-profile.vercel.app/api/view?uid={identifier}&cover_image=true&theme={theme}
+          // Or https://github-readme-stats.vercel.app/api/pin/?username={identifier}&repo={repo} (not spotify)
+          // Let's use a generic placeholder or a known service if identifier is present.
+          if (e.identifier.isNotEmpty) {
+            // Example service: https://github.com/novatorem/novatorem
+            // Note: This usually requires user to deploy their own instance or use a public one.
+            // Let's use a common public one for demo purposes or fallback to a placeholder.
+            // https://spotify-github-profile.vercel.app/api/view?uid=...
+            imageUrl = 'https://spotify-github-profile.vercel.app/api/view?uid=${e.identifier}&cover_image=true&theme=${e.theme}&bar_color=53b14f&bar_color_cover=true';
+            altText = 'Spotify Status';
+          } else {
+            return _buildPlaceholderWidget(context, 'Spotify Status', Icons.music_note, 'Enter Spotify UID');
+          }
+          break;
+        case DynamicWidgetType.youtube:
+          // https://github.com/DenverCoder1/github-readme-youtube-cards
+          if (e.identifier.isNotEmpty) {
+            imageUrl = 'https://ytcards.demolab.com/?id=${e.identifier}&theme=${e.theme}&layout=wide';
+            altText = 'Latest YouTube Video';
+          } else {
+            return _buildPlaceholderWidget(context, 'Latest YouTube Video', Icons.video_library, 'Enter Channel ID');
+          }
+          break;
+        case DynamicWidgetType.medium:
+          // https://github.com/DenverCoder1/github-readme-medium-recent-article
+          // Or https://github.com/vn7n24fzkq/github-profile-summary-cards
+          // Let's use: https://github-readme-medium-recent-article.vercel.app/medium/@{username}/0
+          if (e.identifier.isNotEmpty) {
+            imageUrl = 'https://github-readme-medium-recent-article.vercel.app/medium/@${e.identifier}/0';
+            altText = 'Latest Medium Article';
+          } else {
+            return _buildPlaceholderWidget(context, 'Latest Medium Article', Icons.article, 'Enter Medium Username');
+          }
+          break;
+        case DynamicWidgetType.activity:
+          // https://github.com/ashutosh00710/github-readme-activity-graph
+          if (e.identifier.isNotEmpty) {
+            imageUrl = 'https://github-readme-activity-graph.vercel.app/graph?username=${e.identifier}&theme=${e.theme}';
+            altText = 'GitHub Activity Graph';
+          } else {
+            return _buildPlaceholderWidget(context, 'Activity Graph', Icons.show_chart, 'Enter GitHub Username');
+          }
+          break;
+      }
+
+      return Center(
+        child: Semantics(
+          label: altText,
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Column(
+              children: [
+                const Icon(Icons.error, color: Colors.red),
+                Text('Failed to load widget. Check ID.', style: GoogleFonts.inter(color: Colors.red, fontSize: 12)),
+              ],
+            ),
+          ),
+        ),
+      );
     }
-    return Text('Unknown Element: ${element.type}');
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildPlaceholderWidget(BuildContext context, String title, IconData icon, String message) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!, style: BorderStyle.solid),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 48, color: Colors.grey),
+          const SizedBox(height: 12),
+          Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black)),
+          const SizedBox(height: 4),
+          Text(message, style: GoogleFonts.inter(color: Colors.grey)),
+        ],
+      ),
+    );
   }
 
   Widget _buildRichText(String text, Color textColor) {
@@ -642,3 +738,5 @@ class ElementRenderer extends StatelessWidget {
     );
   }
 }
+
+

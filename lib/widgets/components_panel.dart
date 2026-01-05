@@ -388,6 +388,8 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         return 'Divider: Adds a horizontal rule';
       case ReadmeElementType.collapsible:
         return 'Collapsible: Adds a details/summary section';
+      case ReadmeElementType.dynamicWidget:
+        return 'Dynamic Widget: Spotify, YouTube, etc.';
     }
   }
 }

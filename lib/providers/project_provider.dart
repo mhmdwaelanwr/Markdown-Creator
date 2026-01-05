@@ -395,6 +395,8 @@ class ProjectProvider with ChangeNotifier {
         return DividerElement();
       case ReadmeElementType.collapsible:
         return CollapsibleElement();
+      case ReadmeElementType.dynamicWidget:
+        return DynamicWidgetElement();
     }
   }
 

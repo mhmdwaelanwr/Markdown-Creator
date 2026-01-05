@@ -32,7 +32,7 @@ class OnboardingHelper {
         final attached = targets.every((t) {
           final key = t.keyTarget;
           if (key == null) return false;
-          final ctx = (key as GlobalKey).currentContext;
+          final ctx = key.currentContext;
           return ctx != null && ctx.findRenderObject() != null;
         });
 
@@ -85,7 +85,7 @@ class OnboardingHelper {
         final attached = targets.every((t) {
           final key = t.keyTarget;
           if (key == null) return false;
-          final ctx = (key as GlobalKey).currentContext;
+          final ctx = key.currentContext;
           return ctx != null && ctx.findRenderObject() != null;
         });
 

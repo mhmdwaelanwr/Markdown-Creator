@@ -179,12 +179,15 @@ class ElementRenderer extends StatelessWidget {
                   const CircleAvatar(radius: 5, backgroundColor: Color(0xFF27C93F)),
                   const Spacer(),
                   if (e.language.isNotEmpty)
-                    Text(
-                      e.language.toUpperCase(),
-                      style: GoogleFonts.firaCode(
-                        fontSize: 10,
-                        color: isDark ? Colors.white54 : Colors.black54,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Text(
+                        e.language.toUpperCase(),
+                        style: GoogleFonts.firaCode(
+                          fontSize: 10,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                 ],

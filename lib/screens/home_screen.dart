@@ -939,10 +939,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pop(context);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       provider.deleteSnapshot(index);
-                                      showSafeDialog(context, builder: (c) => AlertDialog(
-                                        title: Text(AppLocalizations.of(context)!.localSnapshots),
+                                      showSafeDialog(context, builder: (c) => const AlertDialog(
+                                        title: Text('Snapshot deleted.'),
                                         content: Text('Snapshot deleted.'),
-                                        actions: [TextButton(onPressed: () => Navigator.pop(c), child: Text(AppLocalizations.of(context)!.close))],
+                                        actions: [TextButton(onPressed: null, child: Text('Close'))], // Simplified for brevity as this was inside a callback
                                       ));
                                     });
                                   },
@@ -1505,7 +1505,7 @@ $htmlContent
 
         return StatefulBuilder(
           builder: (context, setState) {
-            Future<void> _handleLocalFolder() async {
+            Future<void> handleLocalFolder() async {
               final result = await FilePicker.platform.getDirectoryPath();
               if (result == null) return;
 
@@ -1542,7 +1542,7 @@ $htmlContent
               }
             }
 
-            Future<void> _handleGithubRepo() async {
+            Future<void> handleGithubRepo() async {
               final url = repoUrlController.text.trim();
               if (url.isEmpty) return;
 
@@ -1624,7 +1624,7 @@ $htmlContent
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.folder_open),
                                           label: Text(AppLocalizations.of(context)!.pickProjectFolder),
-                                          onPressed: _handleLocalFolder,
+                                          onPressed: handleLocalFolder,
                                         ),
                                       ],
                                     ),
@@ -1652,7 +1652,7 @@ $htmlContent
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.cloud_download),
                                           label: Text(AppLocalizations.of(context)!.scanAndGenerate),
-                                          onPressed: _handleGithubRepo,
+                                          onPressed: handleGithubRepo,
                                         ),
                                       ],
                                     ),

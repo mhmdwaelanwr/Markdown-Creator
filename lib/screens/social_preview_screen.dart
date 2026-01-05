@@ -22,6 +22,9 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   final GlobalKey _previewKey = GlobalKey();
   Color _backgroundColor = AppColors.socialPreviewDark; // Dark GitHub-like
   Color _textColor = Colors.white;
+  bool _useGradient = false;
+  Color _gradientStart = const Color(0xFF2196F3);
+  Color _gradientEnd = const Color(0xFF9C27B0);
   double _titleSize = 64;
   double _descSize = 32;
   bool _showBorder = true;
@@ -140,7 +143,20 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
               children: [
                 Text('APPEARANCE', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey, letterSpacing: 1.2)),
                 const SizedBox(height: 16),
-                _buildColorPickerTile('Background', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
+                SwitchListTile(
+                  title: Text('Use Gradient', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+                  value: _useGradient,
+                  onChanged: (val) => setState(() => _useGradient = val),
+                  contentPadding: EdgeInsets.zero,
+                  activeTrackColor: AppColors.primary,
+                ),
+                const SizedBox(height: 12),
+                if (_useGradient) ...[
+                  _buildColorPickerTile('Start Color', _gradientStart, (c) => setState(() => _gradientStart = c)),
+                  const SizedBox(height: 12),
+                  _buildColorPickerTile('End Color', _gradientEnd, (c) => setState(() => _gradientEnd = c)),
+                ] else
+                  _buildColorPickerTile('Background', _backgroundColor, (c) => setState(() => _backgroundColor = c)),
                 const SizedBox(height: 12),
                 _buildColorPickerTile('Text Color', _textColor, (c) => setState(() => _textColor = c)),
 
@@ -195,7 +211,14 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
                                 width: 1280,
                                 height: 640,
                                 decoration: BoxDecoration(
-                                  color: _backgroundColor,
+                                  color: _useGradient ? null : _backgroundColor,
+                                  gradient: _useGradient
+                                      ? LinearGradient(
+                                          colors: [_gradientStart, _gradientEnd],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        )
+                                      : null,
                                   border: _showBorder ? Border.all(color: Colors.white.withAlpha(50), width: 20) : null,
                                 ),
                                 padding: const EdgeInsets.all(80),

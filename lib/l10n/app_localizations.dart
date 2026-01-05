@@ -204,6 +204,12 @@ abstract class AppLocalizations {
   /// **'About App'**
   String get aboutApp;
 
+  /// No description provided for @changeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Language'**
+  String get changeLanguage;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

@@ -59,6 +59,10 @@
   "load": "読み込む",
   "viewOnGithub": "GitHubで表示",
   "version": "バージョン",
-  "rightsReserved": "全著作権所有。"
+  "rightsReserved": "全著作権所有。",
+  "changeLanguage": "言語を変更",
+  "systemDefault": "システムデフォルト",
+  "settingsSaved": "設定を保存しました！"
+}
 }
 

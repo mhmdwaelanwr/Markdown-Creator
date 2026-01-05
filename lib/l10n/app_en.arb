@@ -14,6 +14,7 @@
   "keyboardShortcuts": "Keyboard Shortcuts",
   "aboutDeveloper": "About Developer",
   "aboutApp": "About App",
+  "changeLanguage": "Change Language",
   "settings": "Settings",
   "cancel": "Cancel",
   "save": "Save",
@@ -96,5 +97,6 @@
   "projectImported": "Project imported successfully",
   "contentFetched": "Content fetched! Switch to \"Text / File\" tab to review.",
   "fetchFailed": "Failed to fetch",
-  "settingsSaved": "Settings saved!"
+  "settingsSaved": "Settings saved!",
+  "systemDefault": "System Default"
 }

@@ -54,6 +54,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutApp => '关于应用';
 
   @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get settings => '设置';
 
   @override

@@ -59,6 +59,9 @@
   "load": "Charger",
   "viewOnGithub": "Voir sur GitHub",
   "version": "Version",
-  "rightsReserved": "Tous droits réservés."
+  "rightsReserved": "Tous droits réservés.",
+  "changeLanguage": "Changer de langue",
+  "systemDefault": "Défaut système",
+  "settingsSaved": "Paramètres enregistrés !"
 }
 

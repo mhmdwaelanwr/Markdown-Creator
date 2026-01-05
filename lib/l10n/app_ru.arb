@@ -59,6 +59,9 @@
   "load": "Загрузить",
   "viewOnGithub": "Посмотреть на GitHub",
   "version": "Версия",
-  "rightsReserved": "Все права защищены."
+  "rightsReserved": "Все права защищены.",
+  "changeLanguage": "Сменить язык",
+  "systemDefault": "Системный по умолчанию",
+  "settingsSaved": "Настройки сохранены!"
 }
 

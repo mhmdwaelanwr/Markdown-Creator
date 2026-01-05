@@ -358,6 +358,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(children: [const Icon(Icons.auto_awesome, color: Colors.purple), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.generateFromCodebase)]),
         ),
         PopupMenuItem(
+          value: 'change_language',
+          child: Row(children: [const Icon(Icons.language, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.changeLanguage)]),
+        ),
+        PopupMenuItem(
           value: 'help',
           child: Row(children: [const Icon(Icons.help_outline, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.showTour)]),
         ),
@@ -445,6 +449,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _showAISettingsDialog(context, provider);
         } else if (value == 'generate_codebase') {
           _showGenerateFromCodebaseDialog(context, provider);
+        } else if (value == 'change_language') {
+          _showLanguageDialog(context, provider);
         } else if (value == 'help') {
           OnboardingHelper.restartOnboarding(
             context: context,
@@ -842,7 +848,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
-      ),
+      },
     );
     debouncer.dispose();
   }
@@ -1294,73 +1300,54 @@ $htmlContent
     );
   }
 
-  Widget _buildShortcutRow(BuildContext context, String action, String windowsShortcut, String macShortcut) {
+  Widget _buildShortcutRow(BuildContext context, String label, String windowsKey, String macKey) {
+    final isMac = Theme.of(context).platform == TargetPlatform.macOS;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(action, style: GoogleFonts.inter())),
-          const SizedBox(width: 16),
-          Text(windowsShortcut, style: GoogleFonts.inter()),
-          const SizedBox(width: 8),
-          Text(macShortcut, style: GoogleFonts.inter()),
+          Text(label),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Text(
+              isMac ? macKey : windowsKey,
+              style: GoogleFonts.firaCode(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
+  void _showDeveloperInfoDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.aboutApp, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.aboutDescription,
-                style: GoogleFonts.inter(),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: () => launchUrl(Uri.parse('https://github.com/mhmdwaelanwr/Readme-Creator')),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.code, size: 20, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppLocalizations.of(context)!.viewOnGithub,
-                      style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '${AppLocalizations.of(context)!.version} 1.0.0',
-                style: GoogleFonts.inter(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '© 2023 Advanced Readme Creator. ${AppLocalizations.of(context)!.rightsReserved}',
-                style: GoogleFonts.inter(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      builder: (context) => const DeveloperInfoDialog(),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: 'Readme Creator',
+      applicationVersion: '1.0.0',
+      applicationIcon: const Icon(Icons.description, size: 48),
+      children: [
+        Text(AppLocalizations.of(context)!.aboutDescription),
+        const SizedBox(height: 16),
+        const Text('Built with Flutter & Gemini AI.'),
+        const SizedBox(height: 16),
+        InkWell(
+          child: const Text('View on GitHub', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline)),
+          onTap: () => launchUrl(Uri.parse('https://github.com/mhmdwaelanwr/Readme-Creator.git')),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.close),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -1640,23 +1627,76 @@ $htmlContent
       },
     );
   }
+
+  void _showLanguageDialog(BuildContext context, ProjectProvider provider) {
+    final languages = [
+      {'code': 'en', 'name': 'English', 'nativeName': 'English'},
+      {'code': 'ar', 'name': 'Arabic', 'nativeName': 'العربية'},
+      {'code': 'de', 'name': 'German', 'nativeName': 'Deutsch'},
+      {'code': 'es', 'name': 'Spanish', 'nativeName': 'Español'},
+      {'code': 'fr', 'name': 'French', 'nativeName': 'Français'},
+      {'code': 'hi', 'name': 'Hindi', 'nativeName': 'हिन्दी'},
+      {'code': 'ja', 'name': 'Japanese', 'nativeName': '日本語'},
+      {'code': 'pt', 'name': 'Portuguese', 'nativeName': 'Português'},
+      {'code': 'ru', 'name': 'Russian', 'nativeName': 'Русский'},
+      {'code': 'zh', 'name': 'Chinese', 'nativeName': '中文'},
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.changeLanguage, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: 300,
+          height: 400,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context)!.systemDefault),
+                leading: Radio<String?>(
+                  value: null,
+                  groupValue: provider.locale?.languageCode,
+                  onChanged: (value) {
+                    provider.setLocale(null);
+                    Navigator.pop(context);
+                  },
+                ),
+                onTap: () {
+                  provider.setLocale(null);
+                  Navigator.pop(context);
+                },
+              ),
+              const Divider(),
+              ...languages.map((lang) {
+                return ListTile(
+                  title: Text(lang['name']!),
+                  subtitle: Text(lang['nativeName']!),
+                  leading: Radio<String?>(
+                    value: lang['code'],
+                    groupValue: provider.locale?.languageCode,
+                    onChanged: (value) {
+                      provider.setLocale(Locale(value!));
+                      Navigator.pop(context);
+                    },
+                  ),
+                  onTap: () {
+                    provider.setLocale(Locale(lang['code']!));
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.close),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

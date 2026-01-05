@@ -59,6 +59,9 @@
   "load": "लोड करें",
   "viewOnGithub": "GitHub पर देखें",
   "version": "संस्करण",
-  "rightsReserved": "सर्वाधिकार सुरक्षित।"
+  "rightsReserved": "सर्वाधिकार सुरक्षित।",
+  "changeLanguage": "भाषा बदलें",
+  "systemDefault": "सिस्टम डिफ़ॉल्ट",
+  "settingsSaved": "सेटिंग्स सहेजी गईं!"
 }
 

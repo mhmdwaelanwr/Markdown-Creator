@@ -54,6 +54,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aboutApp => 'アプリについて';
 
   @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get settings => '設定';
 
   @override

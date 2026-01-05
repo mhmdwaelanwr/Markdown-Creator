@@ -59,6 +59,10 @@
   "load": "加载",
   "viewOnGithub": "在 GitHub 上查看",
   "version": "版本",
-  "rightsReserved": "版权所有。"
+  "rightsReserved": "版权所有。",
+  "changeLanguage": "更改语言",
+  "systemDefault": "系统默认",
+  "settingsSaved": "设置已保存！"
+}
 }
 

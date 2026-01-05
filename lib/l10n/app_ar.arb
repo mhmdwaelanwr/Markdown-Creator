@@ -14,6 +14,7 @@
   "keyboardShortcuts": "اختصارات لوحة المفاتيح",
   "aboutDeveloper": "عن المطور",
   "aboutApp": "عن التطبيق",
+  "changeLanguage": "تغيير اللغة",
   "settings": "الإعدادات",
   "cancel": "إلغاء",
   "save": "حفظ",
@@ -96,5 +97,6 @@
   "projectImported": "تم استيراد المشروع بنجاح",
   "contentFetched": "تم جلب المحتوى! انتقل إلى علامة التبويب \"نص / ملف\" للمراجعة.",
   "fetchFailed": "فشل الجلب",
-  "settingsSaved": "تم حفظ الإعدادات!"
+  "settingsSaved": "تم حفظ الإعدادات!",
+  "systemDefault": "النظام الافتراضي"
 }

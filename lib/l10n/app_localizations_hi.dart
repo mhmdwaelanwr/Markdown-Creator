@@ -54,6 +54,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aboutApp => 'ऐप के बारे में';
 
   @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get settings => 'सेटिंग्स';
 
   @override

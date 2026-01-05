@@ -59,6 +59,9 @@
   "load": "Cargar",
   "viewOnGithub": "Ver en GitHub",
   "version": "Versión",
-  "rightsReserved": "Todos los derechos reservados."
+  "rightsReserved": "Todos los derechos reservados.",
+  "changeLanguage": "Cambiar Idioma",
+  "systemDefault": "Predeterminado del Sistema",
+  "settingsSaved": "¡Configuración guardada!"
 }
 

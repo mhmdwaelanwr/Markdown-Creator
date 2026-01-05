@@ -54,6 +54,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutApp => 'About App';
 
   @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get settings => 'Settings';
 
   @override

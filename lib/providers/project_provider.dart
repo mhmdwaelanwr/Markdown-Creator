@@ -30,6 +30,7 @@ class ProjectProvider with ChangeNotifier {
   bool _exportHtml = false;
   String? _geminiApiKey;
   String? _githubToken;
+  Locale? _locale;
 
   final List<String> _undoStack = [];
   final List<String> _redoStack = [];
@@ -50,6 +51,7 @@ class ProjectProvider with ChangeNotifier {
   bool get exportHtml => _exportHtml;
   String? get geminiApiKey => _geminiApiKey;
   String? get githubToken => _githubToken;
+  Locale? get locale => _locale;
 
   ProjectProvider() {
     _loadPreferences();
@@ -100,7 +102,22 @@ class ProjectProvider with ChangeNotifier {
     _exportHtml = prefs.getBool('exportHtml') ?? false;
     _geminiApiKey = prefs.getString('gemini_api_key');
     _githubToken = prefs.getString('github_token');
+    final localeCode = prefs.getString('locale');
+    if (localeCode != null) {
+      _locale = Locale(localeCode);
+    }
     notifyListeners();
+  }
+
+  void setLocale(Locale? locale) async {
+    _locale = locale;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    if (locale != null) {
+      await prefs.setString('locale', locale.languageCode);
+    } else {
+      await prefs.remove('locale');
+    }
   }
 
   Future<void> _saveState() async {
@@ -610,7 +627,7 @@ class ProjectProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setGeminiApiKey(String key) {
+  void setGeminiApiKey(String key) async {
     _geminiApiKey = key;
     _saveState();
     notifyListeners();

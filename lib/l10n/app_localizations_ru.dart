@@ -54,6 +54,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aboutApp => 'О приложении';
 
   @override
+  String get changeLanguage => 'Change Language';
+
+  @override
   String get settings => 'Настройки';
 
   @override

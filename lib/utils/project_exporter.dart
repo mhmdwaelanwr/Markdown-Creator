@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:archive/archive.dart';
 import 'package:markdown/markdown.dart' as md;
 import '../models/readme_element.dart';
@@ -110,7 +111,7 @@ $htmlContent
       final archive = Archive();
       files.forEach((filename, content) {
         if (content is String) {
-          final bytes = content.codeUnits;
+          final bytes = utf8.encode(content);
           archive.addFile(ArchiveFile(filename, bytes.length, bytes));
         } else if (content is List<int>) {
           archive.addFile(ArchiveFile(filename, content.length, content));

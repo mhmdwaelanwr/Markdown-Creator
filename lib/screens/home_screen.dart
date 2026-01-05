@@ -1667,13 +1667,14 @@ $htmlContent
                   value: null,
                   groupValue: provider.locale?.languageCode,
                   onChanged: (value) {
-                    provider.setLocale(null);
+                    // Close dialog first, then update provider to avoid rebuilds during modal scope
                     Navigator.pop(context);
+                    WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(null));
                   },
                 ),
                 onTap: () {
-                  provider.setLocale(null);
                   Navigator.pop(context);
+                  WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(null));
                 },
               ),
               const Divider(),
@@ -1685,13 +1686,14 @@ $htmlContent
                     value: lang['code'],
                     groupValue: provider.locale?.languageCode,
                     onChanged: (value) {
-                      provider.setLocale(Locale(value!));
+                      // Pop first to avoid triggering widget rebuild inside dialog's build scope
                       Navigator.pop(context);
+                      WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(Locale(value!)));
                     },
                   ),
                   onTap: () {
-                    provider.setLocale(Locale(lang['code']!));
                     Navigator.pop(context);
+                    WidgetsBinding.instance.addPostFrameCallback((_) => provider.setLocale(Locale(lang['code']!)));
                   },
                 );
               }).toList(),
@@ -1708,4 +1710,8 @@ $htmlContent
     );
   }
 }
+
+
+
+
 

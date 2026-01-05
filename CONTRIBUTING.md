@@ -35,6 +35,18 @@ Before you begin, ensure you have the following installed:
     flutter run
     ```
 
+## 🏗️ Project Structure
+
+Understanding the project structure will help you navigate the codebase:
+
+*   **`lib/main.dart`**: Entry point, sets up themes, localization, and providers.
+*   **`lib/models/`**: Data classes. `readme_element.dart` is the core model for all UI elements.
+*   **`lib/providers/`**: State management. `ProjectProvider` manages the workspace state.
+*   **`lib/screens/`**: Full-page widgets (`HomeScreen`, `ProjectsLibraryScreen`, etc.).
+*   **`lib/widgets/`**: Reusable UI components (`EditorCanvas`, `ComponentsPanel`, `SettingsPanel`).
+*   **`lib/generator/`**: Logic for converting models to Markdown (`markdown_generator.dart`).
+*   **`lib/services/`**: External integrations (AI, GitHub, File System).
+
 ## 🛠️ How to Contribute
 
 ### Reporting Bugs
@@ -72,6 +84,37 @@ Have an idea for a new feature? We'd love to hear it! Open an issue with the tag
     git push origin feature/amazing-feature
     ```
 6.  **Open a PR**: Go to the original repository and open a Pull Request. Provide a clear description of your changes.
+
+## 🧩 Guide: Adding a New Element
+
+Want to add a new component (e.g., a "Twitter Feed" or "Calendar")? Follow these steps:
+
+1.  **Define the Model**:
+    - Go to `lib/models/readme_element.dart`.
+    - Add a new value to the `ReadmeElementType` enum.
+    - Create a new class extending `ReadmeElement` (e.g., `TwitterFeedElement`).
+    - Implement `toJson`, `fromJson`, and `description`.
+    - Update `ReadmeElement.fromJson` factory to handle the new type.
+
+2.  **Update the Generator**:
+    - Go to `lib/generator/markdown_generator.dart`.
+    - In the `generate` method, add a case for your new element type.
+    - Implement the logic to convert your element's properties into a Markdown string.
+
+3.  **Update the UI (Components Panel)**:
+    - Go to `lib/widgets/components_panel.dart`.
+    - Add a `ComponentItem` for your new element in the appropriate list (e.g., `mediaItems` or `advancedItems`).
+    - Add a tooltip message in `_getTooltipMessage`.
+
+4.  **Update the UI (Settings Panel)**:
+    - Go to `lib/widgets/settings_panel.dart`.
+    - In `_buildSettingsForm`, add a case for your new element type.
+    - Create a new widget (e.g., `TwitterFeedSettings`) to allow users to edit properties.
+
+5.  **Update the UI (Canvas Rendering)**:
+    - Go to `lib/widgets/canvas_item.dart`.
+    - In `_buildElementContent`, add a case for your new element type.
+    - Return a widget that represents how the element looks in the editor (it doesn't have to be perfect Markdown, just a visual representation).
 
 ## 🎨 Style Guide
 

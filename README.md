@@ -1,5 +1,7 @@
 # Readme Creator
 
+<div align="center">
+
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:mhmdwaelanwr@gmail.com)
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/mhmdwaelanwr)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -7,9 +9,30 @@
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
 [![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Web%20%7C%20Android%20%7C%20iOS-blue?style=for-the-badge)](https://flutter.dev/multi-platform)
 
-**Readme Creator** is the ultimate developer tool for crafting stunning, professional `README.md` files in minutes. Stop wrestling with Markdown syntax and start documenting your projects with style and efficiency.
+</div>
 
-Leveraging a powerful visual drag-and-drop editor, AI-powered content generation, and extensive customization options, Readme Creator empowers developers, open-source contributors, and technical writers to focus on their code while ensuring their documentation makes a lasting impression.
+<p align="center">
+  <strong>The ultimate developer tool for crafting stunning, professional README.md files in minutes.</strong>
+  <br>
+  Stop wrestling with Markdown syntax and start documenting your projects with style and efficiency.
+</p>
+
+---
+
+## 📖 Table of Contents
+
+- [🚀 Why Readme Creator?](#-why-readme-creator)
+- [🎥 Demo & Screenshots](#-demo--screenshots)
+- [✨ Key Features](#-key-features)
+- [🛠️ Tech Stack](#-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [📖 Usage Guide](#-usage-guide)
+- [🤖 AI & Integrations](#-ai--integrations)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🌐 Connect](#-connect-with-the-developer)
+
+---
 
 ## 🚀 Why Readme Creator?
 
@@ -25,36 +48,47 @@ Leveraging a powerful visual drag-and-drop editor, AI-powered content generation
 | ![Editor Canvas](assets/screenshots/editor.png) | ![Live Preview](assets/screenshots/preview.png) |
 *(Placeholders - Add your screenshots in `assets/screenshots/`)*
 
-## ✨ Features
+## ✨ Key Features
 
-*   **🎨 Visual Drag-and-Drop Editor**: Build your README by dragging and dropping elements like headings, images, code blocks, lists, tables, and badges directly onto a live canvas.
-*   **👁️ Live Markdown Preview**: Instantly see how your Markdown will render with a side-by-side live preview.
-*   **🤖 AI-Powered Generation**:
-    *   **Generate from Codebase**: Automatically create an initial README by scanning your local project folder or a public GitHub repository using Google Gemini AI.
-    *   **AI Assistant**: Improve text, fix grammar, or generate descriptions for specific elements.
-*   **📚 Comprehensive Element Library**:
-    *   **GitHub Stats**: Dynamic badges for stars, forks, and issues.
-    *   **Contributors**: Generate grids or lists of project contributors.
-    *   **Social Links**: Customizable social media badges.
-    *   **Dev Icons**: Popular technology and language icons.
-    *   **Embeds**: Integrate GitHub Gists, CodePen, and YouTube.
-    *   **Mermaid Diagrams**: Create flowcharts and diagrams.
-    *   **Table of Contents**: Auto-generated clickable TOC.
-*   **🎨 Theming & Customization**: Light/Dark modes, custom colors, bullet styles, and spacing.
-*   **🖼️ Social Preview Designer**: Create visually appealing Open Graph/Twitter Card images.
-*   **⚙️ GitHub Actions Generator**: Automate README updates with pre-configured workflows.
-*   **💾 Project Management**: Save/load projects, create snapshots, import existing Markdown, and export as JSON, Markdown, HTML, or ZIP.
-*   **⌨️ Keyboard Shortcuts**: Speed up your workflow with extensive shortcuts.
-*   **🏥 Health Check**: Analyze your README for issues like missing alt text or broken links.
-*   **🌍 Internationalization**: Available in 10+ languages including Arabic, English, Spanish, French, and Japanese.
+### 🎨 Visual Drag-and-Drop Editor
+Build your README by dragging and dropping elements directly onto a live canvas. No more guessing how your Markdown will look.
+- **Typography**: Headings, Paragraphs, Blockquotes.
+- **Media**: Images, Icons, Badges.
+- **Structure**: Tables, Lists, Dividers, Collapsible Sections.
+
+### 👁️ Live Markdown Preview
+Instantly see how your Markdown will render with a side-by-side live preview that updates in real-time as you edit.
+
+### 🤖 AI-Powered Generation
+- **Generate from Codebase**: Automatically create an initial README by scanning your local project folder or a public GitHub repository using Google Gemini AI.
+- **AI Assistant**: Improve text, fix grammar, or generate descriptions for specific elements.
+
+### 📚 Comprehensive Element Library
+- **GitHub Stats**: Dynamic badges for stars, forks, and issues.
+- **Contributors**: Generate grids or lists of project contributors automatically.
+- **Social Links**: Customizable social media badges for your profile.
+- **Dev Icons**: Popular technology and language icons.
+- **Embeds**: Integrate GitHub Gists, CodePen, and YouTube videos.
+- **Mermaid Diagrams**: Create flowcharts and diagrams with text.
+- **Table of Contents**: Auto-generated clickable TOC based on your headings.
+
+### 🛠️ Advanced Tools
+- **Social Preview Designer**: Create visually appealing Open Graph/Twitter Card images for your repo.
+- **GitHub Actions Generator**: Automate README updates with pre-configured workflows.
+- **Health Check**: Analyze your README for issues like missing alt text or broken links.
+
+### 💾 Project Management
+- **Save/Load**: Keep your projects organized in a local library.
+- **Snapshots**: Create restore points to undo changes safely.
+- **Export**: Download as `README.md`, JSON, HTML, or a ZIP bundle.
 
 ## 🛠️ Tech Stack
 
 Built with **Flutter** and **Dart**.
 
-*   **Frontend**: Flutter
+*   **Frontend**: Flutter (Material 3)
 *   **State Management**: Provider
-*   **AI**: Google Generative AI SDK
+*   **AI**: Google Generative AI SDK (Gemini)
 *   **Markdown**: `markdown` package, custom generators
 *   **Utils**: `file_picker`, `archive`, `share_plus`, `printing`
 
@@ -83,49 +117,31 @@ Built with **Flutter** and **Dart**.
     flutter run
     ```
 
-### AI & GitHub Setup (Optional)
+## 📖 Usage Guide
+
+1.  **Start**: Create a blank project or load a template.
+2.  **Drag & Drop**: Use the **Components Panel** (left) to add elements.
+3.  **Edit**: Click an element on the canvas to customize its properties in the **Settings Panel** (right).
+4.  **Preview**: Toggle "Live Preview" to see the result.
+5.  **Export**: Click the download icon to export your `README.md` and related files.
+
+For detailed technical documentation, see [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## 🤖 AI & Integrations
 
 To unlock full AI capabilities and higher GitHub API limits:
 1.  **Gemini API Key**: Get a key from [Google AI Studio](https://aistudio.google.com/app/apikey) and enter it in **Settings > AI Settings**.
 2.  **GitHub Token**: Generate a [Personal Access Token](https://github.com/settings/tokens) and enter it in **Settings > AI Settings**.
 
-## 📖 Usage
-
-1.  **Start**: Create a blank project or load a template.
-2.  **Drag & Drop**: Use the **Components Panel** to add elements.
-3.  **Edit**: Click an element to customize its properties in the **Settings Panel**.
-4.  **Preview**: Toggle "Live Preview" to see the result.
-5.  **Export**: Click the download icon to export your `README.md` and related files.
-
-## 🗺️ Roadmap
-
-- [ ] **Cloud Sync**: Sync projects across devices using Google Drive/Dropbox.
-- [ ] **Team Collaboration**: Real-time collaborative editing.
-- [ ] **Custom Templates**: Create and share your own templates with the community.
-- [ ] **Plugin System**: Extend functionality with community plugins.
-
-## 📂 Project Structure
-
-```
-lib/
-├── core/          # Constants, themes
-├── generator/     # Markdown & License generation logic
-├── l10n/          # Localization files
-├── models/        # Data models
-├── providers/     # State management
-├── screens/       # UI Screens
-├── services/      # API services (AI, GitHub)
-├── utils/         # Helpers (export, download, dialogs)
-└── widgets/       # Reusable UI components
-```
-
 ## 🤝 Contributing
 
-Contributions are welcome! We want to make Readme Creator the best tool for developers. Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
+Contributions are welcome! We want to make Readme Creator the best tool for developers.
+Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ## 💖 Support
 
 If you find this project useful, please consider giving it a ⭐ on GitHub! It helps others find the project and motivates further development.
+Check out [SUPPORT.md](SUPPORT.md) for help channels.
 
 ## 🛡️ Security
 

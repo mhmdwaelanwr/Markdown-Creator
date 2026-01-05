@@ -11,6 +11,7 @@ import 'package:printing/printing.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/readme_element.dart';
 import '../widgets/components_panel.dart';
 import '../widgets/editor_canvas.dart';
@@ -33,6 +34,7 @@ import '../utils/toast_helper.dart';
 import '../utils/debouncer.dart';
 import '../widgets/developer_info_dialog.dart';
 import '../utils/dialog_helper.dart';
+import '../generator/file_generators.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -366,6 +368,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(children: [const Icon(Icons.auto_awesome, color: Colors.purple), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.generateFromCodebase)]),
         ),
         PopupMenuItem(
+          value: 'extra_files',
+          child: Row(children: [const Icon(Icons.library_add, color: Colors.grey), const SizedBox(width: 8), Text('Generate Extra Files')]),
+        ),
+        PopupMenuItem(
           value: 'change_language',
           child: Row(children: [const Icon(Icons.language, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.changeLanguage)]),
         ),
@@ -457,6 +463,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _showAISettingsDialog(context, provider);
         } else if (value == 'generate_codebase') {
           _showGenerateFromCodebaseDialog(context, provider);
+        } else if (value == 'extra_files') {
+          _showExtraFilesDialog(context, provider);
         } else if (value == 'change_language') {
           _showLanguageDialog(context, provider);
         } else if (value == 'help') {
@@ -505,17 +513,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   flex: 4,
                   child: Container(
-                    color: Theme.of(context).brightness == Brightness.dark ? Colors.grey[900] : Colors.grey[50],
+                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0D1117) : Colors.white, // GitHub Dark/Light bg
                     child: Consumer<ProjectProvider>(
                       builder: (context, provider, _) {
                         final generator = MarkdownGenerator();
-                        final markdown = generator.generate(provider.elements);
-                        return SingleChildScrollView(
-                          padding: const EdgeInsets.all(16),
-                          child: SelectableText(
-                            markdown,
-                            style: const TextStyle(fontFamily: 'monospace'),
+                        final markdown = generator.generate(
+                          provider.elements,
+                          variables: provider.variables,
+                          listBullet: provider.listBullet,
+                          sectionSpacing: provider.sectionSpacing,
+                          targetLanguage: provider.targetLanguage,
+                        );
+
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+                        return Markdown(
+                          data: markdown,
+                          selectable: true,
+                          padding: const EdgeInsets.all(32),
+                          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                            p: GoogleFonts.inter(fontSize: 16, height: 1.5, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h1: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h1Padding: const EdgeInsets.only(bottom: 8),
+                            h2: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h2Padding: const EdgeInsets.only(bottom: 8, top: 24),
+                            h3: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h3Padding: const EdgeInsets.only(bottom: 8, top: 24),
+                            h4: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h5: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                            h6: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, height: 1.25, color: isDark ? const Color(0xFF777B83) : const Color(0xFF57606A)),
+                            blockquote: GoogleFonts.inter(fontSize: 16, color: isDark ? const Color(0xFF8B949E) : const Color(0xFF57606A)),
+                            blockquoteDecoration: BoxDecoration(
+                              border: Border(left: BorderSide(color: isDark ? const Color(0xFF30363D) : const Color(0xFFD0D7DE), width: 4)),
+                              color: Colors.transparent,
+                            ),
+                            code: GoogleFonts.firaCode(fontSize: 14, backgroundColor: isDark ? const Color.fromRGBO(110, 118, 129, 0.4) : const Color.fromRGBO(175, 184, 193, 0.2)),
+                            codeblockDecoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF161B22) : const Color(0xFFF6F8FA),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            horizontalRuleDecoration: BoxDecoration(
+                              border: Border(top: BorderSide(color: isDark ? const Color(0xFF30363D) : const Color(0xFFD8DEE4), width: 1)),
+                            ),
                           ),
+                          onTapLink: (text, href, title) {
+                            if (href != null) {
+                              launchUrl(Uri.parse(href));
+                            }
+                          },
                         );
                       },
                     ),
@@ -1756,6 +1801,93 @@ $htmlContent
           ],
         );
       },
+    );
+  }
+
+  void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) {
+    showSafeDialog(
+      context,
+      builder: (context) => AlertDialog(
+        title: Text('Contribution Guidelines Builder', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: 500,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Generate standard community files for your project.', style: GoogleFonts.inter()),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.handshake, color: Colors.blue),
+                title: Text('CONTRIBUTING.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                subtitle: Text('Guidelines for how to contribute to the project.', style: GoogleFonts.inter(fontSize: 12)),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    final content = FileGenerators.generateContributing(provider.variables);
+                    _showFilePreviewDialog(context, 'CONTRIBUTING.md', content);
+                  },
+                  child: const Text('Generate'),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.gavel, color: Colors.purple),
+                title: Text('CODE_OF_CONDUCT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                subtitle: Text('Contributor Covenant Code of Conduct.', style: GoogleFonts.inter(fontSize: 12)),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    final content = FileGenerators.generateCodeOfConduct(provider.variables);
+                    _showFilePreviewDialog(context, 'CODE_OF_CONDUCT.md', content);
+                  },
+                  child: const Text('Generate'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.close),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFilePreviewDialog(BuildContext context, String filename, String content) {
+    showSafeDialog(
+      context,
+      builder: (context) => AlertDialog(
+        title: Text(filename, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: 600,
+          height: 400,
+          child: SingleChildScrollView(
+            child: SelectableText(content, style: GoogleFonts.firaCode(fontSize: 12)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.close),
+          ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: content));
+              ToastHelper.show(context, 'Copied to clipboard');
+            },
+          ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.download),
+            label: const Text('Download'),
+            onPressed: () {
+              downloadTextFile(filename, content);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

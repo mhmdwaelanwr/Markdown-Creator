@@ -1,18 +1,20 @@
 import '../models/readme_element.dart';
 import '../core/constants/social_platforms.dart';
+import '../core/constants/readme_translations.dart';
 
 class MarkdownGenerator {
   String generate(List<ReadmeElement> elements, {
     Map<String, String>? variables,
     String listBullet = '*',
     int sectionSpacing = 1,
+    String targetLanguage = 'en',
   }) {
     final buffer = StringBuffer();
     final spacing = '\n' * (sectionSpacing + 1); // 1 means \n\n (one empty line)
 
     for (int i = 0; i < elements.length; i++) {
       final element = elements[i];
-      buffer.write(_generateElement(element, listBullet: listBullet));
+      buffer.write(_generateElement(element, listBullet: listBullet, targetLanguage: targetLanguage));
       if (i < elements.length - 1) {
         buffer.write(spacing);
       }
@@ -23,7 +25,7 @@ class MarkdownGenerator {
     // Generate TOC if marker exists
     if (markdown.contains('<!-- TOC -->')) {
       final tocBuffer = StringBuffer();
-      tocBuffer.writeln('## Table of Contents');
+      tocBuffer.writeln('## ${ReadmeTranslations.get('Table of Contents', targetLanguage)}');
       for (final element in elements) {
         if (element is HeadingElement) {
           final indent = '  ' * (element.level - 1);
@@ -42,9 +44,11 @@ class MarkdownGenerator {
     return markdown;
   }
 
-  String _generateElement(ReadmeElement element, {String listBullet = '*'}) {
+  String _generateElement(ReadmeElement element, {String listBullet = '*', String targetLanguage = 'en'}) {
     if (element is HeadingElement) {
-      return '${'#' * element.level} ${element.text}';
+      // Try to translate common headers if they match exactly
+      final translatedText = ReadmeTranslations.get(element.text, targetLanguage);
+      return '${'#' * element.level} $translatedText';
     } else if (element is ParagraphElement) {
       return element.text;
     } else if (element is ImageElement) {

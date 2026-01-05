@@ -35,6 +35,7 @@ class ProjectProvider with ChangeNotifier {
   String? _geminiApiKey;
   String? _githubToken;
   Locale? _locale;
+  String _targetLanguage = 'en';
 
   final List<String> _undoStack = [];
   final List<String> _redoStack = [];
@@ -60,6 +61,7 @@ class ProjectProvider with ChangeNotifier {
   String? get geminiApiKey => _geminiApiKey;
   String? get githubToken => _githubToken;
   Locale? get locale => _locale;
+  String get targetLanguage => _targetLanguage;
 
   // Helper to call notifyListeners safely after the current frame.
   void _safeNotify() {
@@ -134,6 +136,7 @@ class ProjectProvider with ChangeNotifier {
     if (localeCode != null) {
       _locale = Locale(localeCode);
     }
+    _targetLanguage = prefs.getString('targetLanguage') ?? 'en';
     _safeNotify();
   }
 
@@ -145,6 +148,12 @@ class ProjectProvider with ChangeNotifier {
     } else {
       await prefs.remove('locale');
     }
+    _safeNotify();
+  }
+
+  void setTargetLanguage(String languageCode) {
+    _targetLanguage = languageCode;
+    _saveState();
     _safeNotify();
   }
 
@@ -201,6 +210,7 @@ class ProjectProvider with ChangeNotifier {
     } else {
       await prefs.remove('github_token');
     }
+    await prefs.setString('targetLanguage', _targetLanguage);
   }
 
   String exportToJson() {

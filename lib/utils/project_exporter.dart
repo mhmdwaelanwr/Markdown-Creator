@@ -21,6 +21,7 @@ class ProjectExporter {
     String listBullet = '*',
     int sectionSpacing = 1,
     bool exportHtml = false,
+    String targetLanguage = 'en',
   }) {
     final markdownGenerator = MarkdownGenerator();
     final readmeContent = markdownGenerator.generate(
@@ -28,6 +29,7 @@ class ProjectExporter {
       variables: variables,
       listBullet: listBullet,
       sectionSpacing: sectionSpacing,
+      targetLanguage: targetLanguage,
     );
 
     final files = <String, dynamic>{

@@ -9,3 +9,4 @@ Future<void> downloadImageFile(List<int> bytes, String filename) => downloadZip(
 
 Future<void> downloadJsonFile(String content, String filename) => downloadFile(content, filename);
 
+Future<void> downloadTextFile(String content, String filename) => downloadFile(content, filename);

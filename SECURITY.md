@@ -21,7 +21,7 @@ Publicly disclosing a vulnerability can put the community at risk. Instead, plea
 
 ### How to Report
 
-Please send an email to **[mhmdwaelanwr@gmail.com](mailto:mhmdwaelanwr@gmail.com)** with the subject line `[SECURITY] Vulnerability Report`.
+Please send an email to [![Email](https://img.shields.io/badge/Email-D14836?style=plastic&logo=gmail&logoColor=white)](mailto:mhmdwaelanwr@gmail.com) Or [![Email](https://img.shields.io/badge/Email-D14836?style=plastic&logo=gmail&logoColor=white)](mailto:mhmdwaelanwr@outlook.com) with the subject line `[SECURITY] Vulnerability Report`.
 
 Include the following details in your report:
 1.  **Type of Vulnerability**: (e.g., XSS, RCE, Information Disclosure).

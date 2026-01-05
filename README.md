@@ -162,7 +162,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/mhmdwaelanwar)
 
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@mhmdwaelanwr)
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/mhmdwaelanwr)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/1329663884650610769)
 [![Telegram](https://img.shields.io/badge/Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/mhmdwaelanwr)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/201010412724)
 
@@ -174,7 +174,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 [![Reddit](https://img.shields.io/badge/Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white)](https://reddit.com/user/mhmdwaelanwar)
 [![Twitch](https://img.shields.io/badge/Twitch-9146FF?style=for-the-badge&logo=twitch&logoColor=white)](https://twitch.tv/mhmdwaelanwr)
-[![Spotify](https://img.shields.io/badge/Spotify-1ED760?style=for-the-badge&logo=spotify&logoColor=white)(https://open.spotify.com/user/31k7r3lakd4q7nzvdaht57vcp37y?si=02930906a0674a20))
+[![Spotify](https://img.shields.io/badge/Spotify-1DB954?style=plastic&logo=spotify&logoColor=white)](https://open.spotify.com/user/https://discord.gg/eNpUVUzp)
 
 </div>
 

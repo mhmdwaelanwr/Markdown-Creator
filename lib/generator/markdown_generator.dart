@@ -1,5 +1,5 @@
 import '../models/readme_element.dart';
-import '../utils/social_platforms.dart';
+import '../core/constants/social_platforms.dart';
 
 class MarkdownGenerator {
   String generate(List<ReadmeElement> elements, {

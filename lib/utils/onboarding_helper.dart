@@ -75,7 +75,7 @@ class OnboardingHelper {
     required GlobalKey settingsKey,
     required GlobalKey exportKey,
   }) {
-    final textColor = Colors.white;
+    const textColor = Colors.white;
 
     return [
       TargetFocus(

@@ -8,6 +8,7 @@ import '../models/snippet.dart';
 import '../providers/project_provider.dart';
 import '../utils/templates.dart';
 import 'canvas_item.dart';
+import '../core/constants/app_colors.dart';
 
 class EditorCanvas extends StatelessWidget {
   const EditorCanvas({super.key});
@@ -50,7 +51,7 @@ class EditorCanvas extends StatelessWidget {
             return Container(
               color: candidateData.isNotEmpty
                   ? colorScheme.primary.withAlpha(30)
-                  : (isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9)), // Slate 900 / Slate 100
+                  : (isDark ? AppColors.editorBackgroundDark : AppColors.editorBackgroundLight),
               child: Stack(
                 children: [
                   if (provider.showGrid)
@@ -69,7 +70,7 @@ class EditorCanvas extends StatelessWidget {
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white, // Slate 800 / White
+                            color: isDark ? AppColors.canvasBackgroundDark : AppColors.canvasBackgroundLight,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(

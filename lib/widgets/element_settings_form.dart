@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
-import '../utils/dev_icons.dart';
+import '../core/constants/dev_icons.dart';
 import '../services/github_service.dart';
 import 'giphy_picker_dialog.dart';
-import '../utils/social_platforms.dart';
-import '../utils/country_codes.dart';
+import '../core/constants/social_platforms.dart';
+import '../core/constants/country_codes.dart';
 import '../services/ai_service.dart';
 
 class ElementSettingsForm extends StatefulWidget {
@@ -1837,11 +1837,11 @@ class _GistHelperDialogState extends State<_GistHelperDialog> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.green),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.check_circle, color: Colors.green),
-                    const SizedBox(width: 8),
-                    const Expanded(child: Text('Valid Gist URL format')),
+                    Icon(Icons.check_circle, color: Colors.green),
+                    SizedBox(width: 8),
+                    Expanded(child: Text('Valid Gist URL format')),
                   ],
                 ),
               ),

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/project_provider.dart';
 import '../utils/downloader.dart';
+import '../core/constants/app_colors.dart';
 
 class SocialPreviewScreen extends StatefulWidget {
   const SocialPreviewScreen({super.key});
@@ -17,7 +18,7 @@ class SocialPreviewScreen extends StatefulWidget {
 
 class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   final GlobalKey _previewKey = GlobalKey();
-  Color _backgroundColor = const Color(0xFF1A202C); // Dark GitHub-like
+  Color _backgroundColor = AppColors.socialPreviewDark; // Dark GitHub-like
   Color _textColor = Colors.white;
   double _titleSize = 64;
   double _descSize = 32;
@@ -105,7 +106,7 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context);
     final projectName = provider.variables['PROJECT_NAME'] ?? 'Project Name';
-    final projectDesc = 'A short description of your project.'; // We could fetch this from a paragraph if we want
+    const projectDesc = 'A short description of your project.'; // We could fetch this from a paragraph if we want
 
     return Scaffold(
       appBar: AppBar(

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/dracula.dart';
+import '../core/constants/app_colors.dart';
 
 class GitHubActionsGenerator extends StatefulWidget {
   const GitHubActionsGenerator({super.key});
@@ -173,7 +174,7 @@ class _GitHubActionsGeneratorState extends State<GitHubActionsGenerator> {
           // Preview
           Expanded(
             child: Container(
-              color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F8F8),
+              color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

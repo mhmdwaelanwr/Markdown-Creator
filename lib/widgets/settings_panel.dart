@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../providers/project_provider.dart';
 import '../generator/markdown_generator.dart';
 import 'element_settings_form.dart';
+import '../core/constants/app_colors.dart';
 
 class SettingsPanel extends StatelessWidget {
   const SettingsPanel({super.key});
@@ -148,7 +149,7 @@ class SettingsPanel extends StatelessWidget {
     final markdown = generator.generate([element]);
 
     return Container(
-      color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F8F8),
+      color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : AppColors.lightBackground,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

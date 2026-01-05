@@ -1,6 +1,6 @@
 import 'package:markdown/markdown.dart' as md;
 import '../models/readme_element.dart';
-import '../utils/social_platforms.dart';
+import '../core/constants/social_platforms.dart';
 
 class MarkdownImporter {
   List<ReadmeElement> parse(String markdown) {

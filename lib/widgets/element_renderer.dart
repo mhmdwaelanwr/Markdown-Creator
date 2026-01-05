@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
-import '../utils/social_platforms.dart';
+import '../core/constants/social_platforms.dart';
 
 class ElementRenderer extends StatelessWidget {
   final ReadmeElement element;
@@ -82,7 +82,7 @@ class ElementRenderer extends StatelessWidget {
           ],
         );
       }
-      if (e.url.isEmpty) return Text('Empty Image URL', style: GoogleFonts.inter(color: Colors.red));
+      if (e.url.isEmpty) return const Text('Empty Image URL', style: TextStyle(color: Colors.red));
 
       Widget imageWidget;
       if (e.url.toLowerCase().endsWith('.svg')) {
@@ -275,10 +275,10 @@ class ElementRenderer extends StatelessWidget {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: List.generate(5, (index) => CircleAvatar(
+              children: List.generate(5, (index) => const CircleAvatar(
                 radius: 16,
                 backgroundColor: Colors.grey,
-                child: const Icon(Icons.person, size: 20, color: Colors.white),
+                child: Icon(Icons.person, size: 20, color: Colors.white),
               )),
             ),
             const SizedBox(height: 8),
@@ -554,7 +554,7 @@ class ElementRenderer extends StatelessWidget {
           return SizedBox(
             width: width ?? 50,
             height: height ?? 20,
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2))
+            child: const Center(child: CircularProgressIndicator(strokeWidth: 2))
           );
         },
         errorBuilder: (context, error, stackTrace) {
@@ -571,7 +571,7 @@ class ElementRenderer extends StatelessWidget {
       placeholderBuilder: (_) => SizedBox(
         width: width ?? 50,
         height: height ?? 20,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2))
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2))
       ),
     );
   }

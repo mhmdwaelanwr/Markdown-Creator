@@ -692,6 +692,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 DropdownMenuItem(value: 'None', child: Text('None', style: GoogleFonts.inter())),
                                 DropdownMenuItem(value: 'MIT', child: Text('MIT License', style: GoogleFonts.inter())),
                                 DropdownMenuItem(value: 'Apache 2.0', child: Text('Apache License 2.0', style: GoogleFonts.inter())),
+                                DropdownMenuItem(value: 'GPLv3', child: Text('GNU GPLv3', style: GoogleFonts.inter())),
+                                DropdownMenuItem(value: 'BSD 3-Clause', child: Text('BSD 3-Clause License', style: GoogleFonts.inter())),
                               ],
                               onChanged: (value) {
                                 if (value != null) provider.setLicenseType(value);

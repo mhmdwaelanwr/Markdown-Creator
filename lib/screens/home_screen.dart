@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:readme_creator/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -141,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Icon(Icons.description, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 12),
-                const Text('Advanced Readme Creator'),
+                Text(AppLocalizations.of(context)!.appTitle),
               ],
             ),
             actions: isDesktop ? _buildDesktopActions(context) : _buildMobileActions(context),
@@ -316,61 +317,61 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: const Icon(Icons.more_vert),
       tooltip: 'More Options',
       itemBuilder: (context) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'save_library',
-          child: Row(children: [Icon(Icons.save_alt, color: Colors.grey), SizedBox(width: 8), Text('Save to Library')]),
+          child: Row(children: [const Icon(Icons.save_alt, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.saveToLibrary)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'snapshots',
-          child: Row(children: [Icon(Icons.history, color: Colors.grey), SizedBox(width: 8), Text('Local Snapshots')]),
+          child: Row(children: [const Icon(Icons.history, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.localSnapshots)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'clear_workspace',
-          child: Row(children: [Icon(Icons.delete_forever, color: Colors.red), SizedBox(width: 8), Text('Clear Workspace', style: TextStyle(color: Colors.red))]),
+          child: Row(children: [const Icon(Icons.delete_forever, color: Colors.red), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.clearWorkspace, style: const TextStyle(color: Colors.red))]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'import_markdown',
-          child: Row(children: [Icon(Icons.file_upload, color: Colors.grey), SizedBox(width: 8), Text('Import Markdown')]),
+          child: Row(children: [const Icon(Icons.file_upload, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.importMarkdown)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'social_preview',
-          child: Row(children: [Icon(Icons.image, color: Colors.grey), SizedBox(width: 8), Text('Social Preview Designer')]),
+          child: Row(children: [const Icon(Icons.image, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.socialPreviewDesigner)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'github_actions',
-          child: Row(children: [Icon(Icons.build, color: Colors.grey), SizedBox(width: 8), Text('GitHub Actions Generator')]),
+          child: Row(children: [const Icon(Icons.build, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.githubActionsGenerator)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'export_json',
-          child: Row(children: [Icon(Icons.javascript, color: Colors.grey), SizedBox(width: 8), Text('Export Project (JSON)')]),
+          child: Row(children: [const Icon(Icons.javascript, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.exportProjectJson)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'import_json',
-          child: Row(children: [Icon(Icons.data_object, color: Colors.grey), SizedBox(width: 8), Text('Import Project (JSON)')]),
+          child: Row(children: [const Icon(Icons.data_object, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.importProjectJson)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'ai_settings',
-          child: Row(children: [Icon(Icons.psychology, color: Colors.grey), SizedBox(width: 8), Text('AI Settings')]),
+          child: Row(children: [const Icon(Icons.psychology, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aiSettings)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'generate_codebase',
-          child: Row(children: [Icon(Icons.auto_awesome, color: Colors.purple), SizedBox(width: 8), Text('Generate from Codebase (AI)')]),
+          child: Row(children: [const Icon(Icons.auto_awesome, color: Colors.purple), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.generateFromCodebase)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'help',
-          child: Row(children: [Icon(Icons.help_outline, color: Colors.grey), SizedBox(width: 8), Text('Show Tour')]),
+          child: Row(children: [const Icon(Icons.help_outline, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.showTour)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'shortcuts',
-          child: Row(children: [Icon(Icons.keyboard, color: Colors.grey), SizedBox(width: 8), Text('Keyboard Shortcuts')]),
+          child: Row(children: [const Icon(Icons.keyboard, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.keyboardShortcuts)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'about_dev',
-          child: Row(children: [Icon(Icons.person, color: Colors.grey), SizedBox(width: 8), Text('About Developer')]),
+          child: Row(children: [const Icon(Icons.person, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aboutDeveloper)]),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'about',
-          child: Row(children: [Icon(Icons.info_outline, color: Colors.grey), SizedBox(width: 8), Text('About App')]),
+          child: Row(children: [const Icon(Icons.info_outline, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aboutApp)]),
         ),
       ],
       onSelected: (value) async {
@@ -431,13 +432,13 @@ class _HomeScreenState extends State<HomeScreen> {
               if (content != null) {
                 provider.importFromJson(content);
                 if (context.mounted) {
-                  ToastHelper.show(context, 'Project imported successfully');
+                  ToastHelper.show(context, AppLocalizations.of(context)!.projectImported);
                 }
               }
             }
           } catch (e) {
             if (context.mounted) {
-              ToastHelper.show(context, 'Error importing: $e', isError: true);
+              ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
             }
           }
         } else if (value == 'ai_settings') {
@@ -571,11 +572,11 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Icon(Icons.widgets_outlined, size: 14, color: isDark ? Colors.white70 : Colors.black54),
               const SizedBox(width: 6),
-              Text('$elementCount Elements', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
+              Text('$elementCount ${AppLocalizations.of(context)!.elements}', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
               const SizedBox(width: 24),
               Icon(Icons.text_fields, size: 14, color: isDark ? Colors.white70 : Colors.black54),
               const SizedBox(width: 6),
-              Text('$wordCount Words', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
+              Text('$wordCount ${AppLocalizations.of(context)!.words}', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
               const SizedBox(width: 24),
               if (errorCount > 0 || warningCount > 0)
                 InkWell(
@@ -585,13 +586,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (errorCount > 0) ...[
                         const Icon(Icons.error, size: 14, color: Colors.redAccent),
                         const SizedBox(width: 6),
-                        Text('$errorCount Errors', style: GoogleFonts.inter(fontSize: 12, color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                        Text('$errorCount ${AppLocalizations.of(context)!.errors}', style: GoogleFonts.inter(fontSize: 12, color: Colors.redAccent, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 12),
                       ],
                       if (warningCount > 0) ...[
                         const Icon(Icons.warning, size: 14, color: Colors.orangeAccent),
                         const SizedBox(width: 6),
-                        Text('$warningCount Warnings', style: GoogleFonts.inter(fontSize: 12, color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
+                        Text('$warningCount ${AppLocalizations.of(context)!.warnings}', style: GoogleFonts.inter(fontSize: 12, color: Colors.orangeAccent, fontWeight: FontWeight.bold)),
                       ],
                     ],
                   ),
@@ -601,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Icon(Icons.check_circle, size: 14, color: Colors.green),
                     const SizedBox(width: 6),
-                    Text('Healthy', style: GoogleFonts.inter(fontSize: 12, color: Colors.green[700], fontWeight: FontWeight.bold)),
+                    Text(AppLocalizations.of(context)!.healthy, style: GoogleFonts.inter(fontSize: 12, color: Colors.green[700], fontWeight: FontWeight.bold)),
                   ],
                 ),
               const Spacer(),
@@ -612,12 +613,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.blue.withAlpha(30),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text('FOCUS MODE', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue)),
+                  child: Text(AppLocalizations.of(context)!.focusMode, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blue)),
                 ),
               const SizedBox(width: 16),
               Icon(Icons.cloud_done, size: 14, color: isDark ? Colors.white54 : Colors.black45),
               const SizedBox(width: 6),
-              Text('Auto-saved', style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white54 : Colors.black45)),
+              Text(AppLocalizations.of(context)!.autoSaved, style: GoogleFonts.inter(fontSize: 12, color: isDark ? Colors.white54 : Colors.black45)),
             ],
           );
         },
@@ -630,7 +631,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Project Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.projectSettings, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 500,
           child: DefaultTabController(
@@ -638,15 +639,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const TabBar(
+                TabBar(
                   labelColor: Colors.blue,
                   isScrollable: true,
                   tabs: [
-                    Tab(text: 'Variables'),
-                    Tab(text: 'License'),
-                    Tab(text: 'Contributing'),
-                    Tab(text: 'Colors'),
-                    Tab(text: 'Formatting'),
+                    Tab(text: AppLocalizations.of(context)!.variables),
+                    Tab(text: AppLocalizations.of(context)!.license),
+                    Tab(text: AppLocalizations.of(context)!.contributing),
+                    Tab(text: AppLocalizations.of(context)!.colors),
+                    Tab(text: AppLocalizations.of(context)!.formatting),
                   ],
                 ),
                 SizedBox(
@@ -724,7 +725,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             ListTile(
-                              title: Text('Primary Color', style: GoogleFonts.inter()),
+                              title: Text(AppLocalizations.of(context)!.primaryColor, style: GoogleFonts.inter()),
                               subtitle: Text('#${provider.primaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
                               trailing: CircleAvatar(backgroundColor: provider.primaryColor),
                               onTap: () {
@@ -750,7 +751,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                             ListTile(
-                              title: Text('Secondary Color', style: GoogleFonts.inter()),
+                              title: Text(AppLocalizations.of(context)!.secondaryColor, style: GoogleFonts.inter()),
                               subtitle: Text('#${provider.secondaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
                               trailing: CircleAvatar(backgroundColor: provider.secondaryColor),
                               onTap: () {
@@ -784,14 +785,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             SwitchListTile(
-                              title: Text('Export HTML', style: GoogleFonts.inter()),
+                              title: Text(AppLocalizations.of(context)!.exportHtml, style: GoogleFonts.inter()),
                               subtitle: Text('Include a formatted HTML file in the export.', style: GoogleFonts.inter()),
                               value: provider.exportHtml,
                               onChanged: (value) => provider.setExportHtml(value),
                             ),
                             const Divider(),
                             InputDecorator(
-                              decoration: const InputDecoration(labelText: 'List Bullet Style', border: OutlineInputBorder()),
+                              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.listBulletStyle, border: const OutlineInputBorder()),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: provider.listBullet,
@@ -809,7 +810,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 16),
                             InputDecorator(
-                              decoration: const InputDecoration(labelText: 'Section Spacing (Newlines)', border: OutlineInputBorder()),
+                              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.sectionSpacing, border: const OutlineInputBorder()),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<int>(
                                   value: provider.sectionSpacing,
@@ -838,7 +839,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -850,7 +851,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Local Snapshots', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.localSnapshots, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           height: 400,
@@ -858,7 +859,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               ElevatedButton.icon(
                 icon: const Icon(Icons.save),
-                label: const Text('Create New Snapshot'),
+                label: const Text('Create New Snapshot'), // Missing l10n key, keeping English for now or adding later if critical
                 onPressed: () {
                   provider.saveSnapshot();
                   Navigator.pop(context);
@@ -868,7 +869,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Divider(),
               Expanded(
                 child: provider.snapshots.isEmpty
-                    ? Center(child: Text('No snapshots saved.', style: GoogleFonts.inter()))
+                    ? Center(child: Text('No snapshots saved.', style: GoogleFonts.inter())) // Missing l10n key
                     : ListView.builder(
                         itemCount: provider.snapshots.length,
                         itemBuilder: (context, index) {
@@ -878,23 +879,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           return ListTile(
                             leading: const Icon(Icons.history),
                             title: Text('Snapshot ${provider.snapshots.length - index}', style: GoogleFonts.inter()),
-                            subtitle: index == 0 ? Text('Latest', style: GoogleFonts.inter()) : null,
+                            subtitle: index == 0 ? Text('Latest', style: GoogleFonts.inter()) : null, // Missing l10n key
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.restore),
-                                  tooltip: 'Restore',
+                                  tooltip: AppLocalizations.of(context)!.restore,
                                   onPressed: () {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: Text('Restore Snapshot?', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                        content: Text('Current work will be replaced.', style: GoogleFonts.inter()),
+                                        title: Text('${AppLocalizations.of(context)!.restore} Snapshot?', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                                        content: Text('Current work will be replaced.', style: GoogleFonts.inter()), // Missing l10n key
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(context),
-                                            child: const Text('Cancel'),
+                                            child: Text(AppLocalizations.of(context)!.cancel),
                                           ),
                                           TextButton(
                                             onPressed: () {
@@ -902,7 +903,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Navigator.pop(context); // Close confirm
                                               Navigator.pop(context); // Close list
                                             },
-                                            child: const Text('Restore'),
+                                            child: Text(AppLocalizations.of(context)!.restore),
                                           ),
                                         ],
                                       ),
@@ -911,7 +912,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete, color: Colors.red),
-                                  tooltip: 'Delete',
+                                  tooltip: AppLocalizations.of(context)!.delete,
                                   onPressed: () {
                                     provider.deleteSnapshot(index);
                                     Navigator.pop(context);
@@ -930,7 +931,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -995,7 +996,7 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Save to Library', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.saveToLibrary, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           child: Column(
@@ -1003,19 +1004,19 @@ $htmlContent
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Project Name'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.projectName),
                 style: GoogleFonts.inter(),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: descController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.description),
                 style: GoogleFonts.inter(),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: tagsController,
-                decoration: const InputDecoration(labelText: 'Tags (comma separated)'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.tags),
                 style: GoogleFonts.inter(),
               ),
             ],
@@ -1024,7 +1025,7 @@ $htmlContent
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1036,9 +1037,9 @@ $htmlContent
                 jsonContent: provider.exportToJson(),
               );
               Navigator.pop(context);
-              ToastHelper.show(context, 'Project saved to library');
+              ToastHelper.show(context, AppLocalizations.of(context)!.projectSaved);
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -1049,7 +1050,7 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Health Check', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text('Health Check', style: GoogleFonts.inter(fontWeight: FontWeight.bold)), // Missing l10n key
         content: SizedBox(
           width: 400,
           height: 300,
@@ -1077,7 +1078,7 @@ $htmlContent
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)!.close)),
         ],
       ),
     );
@@ -1094,7 +1095,7 @@ $htmlContent
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Import Markdown', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              title: Text(AppLocalizations.of(context)!.importMarkdown, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
                 width: 600,
                 height: 450,
@@ -1105,8 +1106,8 @@ $htmlContent
                       const TabBar(
                         labelColor: Colors.blue,
                         tabs: [
-                          Tab(text: 'Text / File'),
-                          Tab(text: 'URL (GitHub/Pastebin)'),
+                          Tab(text: 'Text / File'), // Missing l10n key
+                          Tab(text: 'URL (GitHub/Pastebin)'), // Missing l10n key
                         ],
                       ),
                       Expanded(
@@ -1117,7 +1118,7 @@ $htmlContent
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
                                 children: [
-                                  Text('Paste your Markdown content below or pick a file.', style: GoogleFonts.inter()),
+                                  Text('Paste your Markdown content below or pick a file.', style: GoogleFonts.inter()), // Missing l10n key
                                   const SizedBox(height: 16),
                                   Expanded(
                                     child: TextField(
@@ -1135,7 +1136,7 @@ $htmlContent
                                   const SizedBox(height: 16),
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.upload_file),
-                                    label: const Text('Pick Markdown File'),
+                                    label: const Text('Pick Markdown File'), // Missing l10n key
                                     onPressed: () async {
                                       final result = await FilePicker.platform.pickFiles(
                                         type: FileType.custom,
@@ -1159,15 +1160,15 @@ $htmlContent
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('Enter a raw URL from GitHub or Pastebin.', style: GoogleFonts.inter()),
+                                  Text('Enter a raw URL from GitHub or Pastebin.', style: GoogleFonts.inter()), // Missing l10n key
                                   const SizedBox(height: 16),
                                   TextField(
                                     controller: urlController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(),
                                       hintText: 'https://raw.githubusercontent.com/...',
-                                      labelText: 'URL',
-                                      prefixIcon: Icon(Icons.link),
+                                      labelText: AppLocalizations.of(context)!.repoUrl, // Reusing repoUrl or similar if available, otherwise keep English
+                                      prefixIcon: const Icon(Icons.link),
                                     ),
                                     style: GoogleFonts.inter(),
                                   ),
@@ -1177,7 +1178,7 @@ $htmlContent
                                   else
                                     ElevatedButton.icon(
                                       icon: const Icon(Icons.cloud_download),
-                                      label: const Text('Fetch Content'),
+                                      label: const Text('Fetch Content'), // Missing l10n key
                                       onPressed: () async {
                                         if (urlController.text.isEmpty) return;
                                         setState(() => isLoading = true);
@@ -1193,16 +1194,16 @@ $htmlContent
                                           if (response.statusCode == 200) {
                                             textController.text = response.body;
                                             if (context.mounted) {
-                                              ToastHelper.show(context, 'Content fetched! Switch to "Text / File" tab to review.');
+                                              ToastHelper.show(context, AppLocalizations.of(context)!.contentFetched);
                                             }
                                           } else {
                                             if (context.mounted) {
-                                              ToastHelper.show(context, 'Failed to fetch: ${response.statusCode}', isError: true);
+                                              ToastHelper.show(context, '${AppLocalizations.of(context)!.fetchFailed}: ${response.statusCode}', isError: true);
                                             }
                                           }
                                         } catch (e) {
                                           if (context.mounted) {
-                                            ToastHelper.show(context, 'Error: $e', isError: true);
+                                            ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
                                           }
                                         } finally {
                                           if (context.mounted) {
@@ -1224,17 +1225,17 @@ $htmlContent
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     if (textController.text.isNotEmpty) {
                       provider.importMarkdown(textController.text);
                       Navigator.pop(context);
-                      ToastHelper.show(context, 'Markdown imported successfully');
+                      ToastHelper.show(context, AppLocalizations.of(context)!.projectImported); // Reusing projectImported or similar
                     }
                   },
-                  child: const Text('Import'),
+                  child: Text(AppLocalizations.of(context)!.import),
                 ),
               ],
             );
@@ -1248,45 +1249,45 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Keyboard Shortcuts', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.keyboardShortcuts, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Common Shortcuts:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              Text('${AppLocalizations.of(context)!.commonShortcuts}:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              _buildShortcutRow(context, 'New Project', 'Ctrl + N', '⌘ + N'),
-              _buildShortcutRow(context, 'Open Project', 'Ctrl + O', '⌘ + O'),
-              _buildShortcutRow(context, 'Save Project', 'Ctrl + S', '⌘ + S'),
-              _buildShortcutRow(context, 'Export Project', 'Ctrl + E', '⌘ + E'),
-              _buildShortcutRow(context, 'Print', 'Ctrl + P', '⌘ + P'),
-              _buildShortcutRow(context, 'Undo', 'Ctrl + Z', '⌘ + Z'),
-              _buildShortcutRow(context, 'Redo', 'Ctrl + Y', '⌘ + Y'),
-              _buildShortcutRow(context, 'Focus Mode', 'F11', 'F11'),
-              _buildShortcutRow(context, 'Show Preview', 'Ctrl + Shift + H', '⌘ + Shift + H'),
-              _buildShortcutRow(context, 'Toggle Grid', 'Ctrl + G', '⌘ + G'),
-              _buildShortcutRow(context, 'Toggle Theme', 'Ctrl + T', '⌘ + T'),
-              _buildShortcutRow(context, 'Open Settings', 'Ctrl + ,', '⌘ + ,'),
-              _buildShortcutRow(context, 'Help', 'F1', 'F1'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.newProject, 'Ctrl + N', '⌘ + N'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.openProject, 'Ctrl + O', '⌘ + O'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.saveProject, 'Ctrl + S', '⌘ + S'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.exportProject, 'Ctrl + E', '⌘ + E'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.print, 'Ctrl + P', '⌘ + P'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.undo, 'Ctrl + Z', '⌘ + Z'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.redo, 'Ctrl + Y', '⌘ + Y'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.focusMode, 'F11', 'F11'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.showPreview, 'Ctrl + Shift + H', '⌘ + Shift + H'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.toggleGrid, 'Ctrl + G', '⌘ + G'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.toggleTheme, 'Ctrl + T', '⌘ + T'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.openSettings, 'Ctrl + ,', '⌘ + ,'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.help, 'F1', 'F1'),
               const SizedBox(height: 16),
-              Text('Element Shortcuts:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              Text('${AppLocalizations.of(context)!.elementShortcuts}:', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              _buildShortcutRow(context, 'Add Heading', 'Ctrl + Alt + 1', '⌘ + Option + 1'),
-              _buildShortcutRow(context, 'Add Subheading', 'Ctrl + Alt + 2', '⌘ + Option + 2'),
-              _buildShortcutRow(context, 'Add Paragraph', 'Ctrl + Alt + 3', '⌘ + Option + 3'),
-              _buildShortcutRow(context, 'Add Image', 'Ctrl + Alt + I', '⌘ + Option + I'),
-              _buildShortcutRow(context, 'Add Table', 'Ctrl + Alt + T', '⌘ + Option + T'),
-              _buildShortcutRow(context, 'Add List', 'Ctrl + Alt + L', '⌘ + Option + L'),
-              _buildShortcutRow(context, 'Add Quote', 'Ctrl + Alt + Q', '⌘ + Option + Q'),
-              _buildShortcutRow(context, 'Add Link', 'Ctrl + Alt + K', '⌘ + Option + K'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addHeading, 'Ctrl + Alt + 1', '⌘ + Option + 1'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addSubheading, 'Ctrl + Alt + 2', '⌘ + Option + 2'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addParagraph, 'Ctrl + Alt + 3', '⌘ + Option + 3'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addImage, 'Ctrl + Alt + I', '⌘ + Option + I'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addTable, 'Ctrl + Alt + T', '⌘ + Option + T'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addList, 'Ctrl + Alt + L', '⌘ + Option + L'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addQuote, 'Ctrl + Alt + Q', '⌘ + Option + Q'),
+              _buildShortcutRow(context, AppLocalizations.of(context)!.addLink, 'Ctrl + Alt + K', '⌘ + Option + K'),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -1313,14 +1314,14 @@ $htmlContent
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('About Advanced Readme Creator', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.aboutApp, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: 400,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Advanced Readme Creator is a powerful tool for generating professional README files for your projects.',
+                AppLocalizations.of(context)!.aboutDescription,
                 style: GoogleFonts.inter(),
                 textAlign: TextAlign.center,
               ),
@@ -1333,7 +1334,7 @@ $htmlContent
                     const Icon(Icons.code, size: 20, color: Colors.blue),
                     const SizedBox(width: 8),
                     Text(
-                      'View on GitHub',
+                      AppLocalizations.of(context)!.viewOnGithub,
                       style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline),
                     ),
                   ],
@@ -1341,12 +1342,12 @@ $htmlContent
               ),
               const SizedBox(height: 16),
               Text(
-                'Version 1.0.0',
+                '${AppLocalizations.of(context)!.version} 1.0.0',
                 style: GoogleFonts.inter(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(
-                '© 2023 Advanced Readme Creator. All rights reserved.',
+                '© 2023 Advanced Readme Creator. ${AppLocalizations.of(context)!.rightsReserved}',
                 style: GoogleFonts.inter(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -1356,7 +1357,7 @@ $htmlContent
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -1375,7 +1376,7 @@ $htmlContent
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('AI & Integrations', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              title: Text(AppLocalizations.of(context)!.aiSettings, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
                 width: 400,
                 child: SingleChildScrollView(
@@ -1385,13 +1386,13 @@ $htmlContent
                     children: [
                       Text('Gemini AI', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      Text('Enter your Gemini API Key to enable real AI features.', style: GoogleFonts.inter(fontSize: 12)),
+                      Text(AppLocalizations.of(context)!.enterGeminiKey, style: GoogleFonts.inter(fontSize: 12)),
                       const SizedBox(height: 8),
                       TextField(
                         controller: apiKeyController,
                         obscureText: isObscured,
                         decoration: InputDecoration(
-                          labelText: 'Gemini API Key',
+                          labelText: AppLocalizations.of(context)!.geminiApiKey,
                           border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(isObscured ? Icons.visibility : Icons.visibility_off),
@@ -1406,20 +1407,20 @@ $htmlContent
                           launchUrl(Uri.parse('https://aistudio.google.com/app/apikey'));
                         },
                         child: Text(
-                          'Get your API key from Google AI Studio',
+                          AppLocalizations.of(context)!.getApiKey,
                           style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12),
                         ),
                       ),
                       const SizedBox(height: 24),
                       Text('GitHub Integration', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
-                      Text('Optional: Enter GitHub Token for higher rate limits when scanning repos.', style: GoogleFonts.inter(fontSize: 12)),
+                      Text(AppLocalizations.of(context)!.enterGithubToken, style: GoogleFonts.inter(fontSize: 12)),
                       const SizedBox(height: 8),
                       TextField(
                         controller: githubTokenController,
                         obscureText: isGithubObscured,
                         decoration: InputDecoration(
-                          labelText: 'GitHub Token (Optional)',
+                          labelText: AppLocalizations.of(context)!.githubToken,
                           border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(isGithubObscured ? Icons.visibility : Icons.visibility_off),
@@ -1434,7 +1435,7 @@ $htmlContent
                           launchUrl(Uri.parse('https://github.com/settings/tokens'));
                         },
                         child: Text(
-                          'Generate a Personal Access Token',
+                          AppLocalizations.of(context)!.generateToken,
                           style: GoogleFonts.inter(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12),
                         ),
                       ),
@@ -1445,16 +1446,16 @@ $htmlContent
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     provider.setGeminiApiKey(apiKeyController.text.trim());
                     provider.setGitHubToken(githubTokenController.text.trim());
                     Navigator.pop(context);
-                    ToastHelper.show(context, 'Settings saved!');
+                    ToastHelper.show(context, AppLocalizations.of(context)!.settingsSaved);
                   },
-                  child: const Text('Save'),
+                  child: Text(AppLocalizations.of(context)!.save),
                 ),
               ],
             );
@@ -1476,7 +1477,7 @@ $htmlContent
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Generate from Codebase', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+              title: Text(AppLocalizations.of(context)!.generateFromCodebase, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
               content: SizedBox(
                 width: 500,
                 height: 300,
@@ -1484,11 +1485,11 @@ $htmlContent
                   length: 2,
                   child: Column(
                     children: [
-                      const TabBar(
+                      TabBar(
                         labelColor: Colors.blue,
                         tabs: [
-                          Tab(text: 'Local Folder'),
-                          Tab(text: 'GitHub Repo'),
+                          Tab(text: AppLocalizations.of(context)!.localFolder),
+                          Tab(text: AppLocalizations.of(context)!.githubRepo),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -1511,27 +1512,27 @@ $htmlContent
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Scan a local project folder to generate a README.',
+                                  AppLocalizations.of(context)!.scanLocalFolder,
                                   style: GoogleFonts.inter(),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 24),
                                 ElevatedButton.icon(
                                   icon: const Icon(Icons.folder_open),
-                                  label: const Text('Pick Project Folder'),
+                                  label: Text(AppLocalizations.of(context)!.pickProjectFolder),
                                   onPressed: () async {
                                     final result = await FilePicker.platform.getDirectoryPath();
                                     if (result != null) {
                                       setState(() {
                                         isLoading = true;
-                                        statusMessage = 'Scanning local codebase...';
+                                        statusMessage = AppLocalizations.of(context)!.scanLocalFolder; // Reusing string or should use specific status string
                                       });
 
                                       try {
                                         final codeContext = await CodebaseScannerService.scanDirectory(result);
                                         if (codeContext.isEmpty) throw Exception('No suitable source code found.');
 
-                                        setState(() => statusMessage = 'Analyzing with AI...');
+                                        setState(() => statusMessage = AppLocalizations.of(context)!.analyzingAI);
                                         final apiKey = provider.geminiApiKey;
                                         final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
 
@@ -1540,15 +1541,15 @@ $htmlContent
                                         if (context.mounted) {
                                           provider.importMarkdown(markdown);
                                           Navigator.pop(context);
-                                          ToastHelper.show(context, 'README generated successfully!');
+                                          ToastHelper.show(context, AppLocalizations.of(context)!.readmeGenerated);
                                         }
                                       } catch (e) {
                                         if (context.mounted) {
                                           setState(() {
                                             isLoading = false;
-                                            statusMessage = 'Error: $e';
+                                            statusMessage = '${AppLocalizations.of(context)!.error}: $e';
                                           });
-                                          ToastHelper.show(context, 'Error: $e', isError: true);
+                                          ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
                                         }
                                       }
                                     }
@@ -1561,31 +1562,31 @@ $htmlContent
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Scan a public GitHub repository.',
+                                  AppLocalizations.of(context)!.scanGithubRepo,
                                   style: GoogleFonts.inter(),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 16),
                                 TextField(
                                   controller: repoUrlController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Repository URL',
+                                  decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!.repoUrl,
                                     hintText: 'https://github.com/username/repo',
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.link),
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon: const Icon(Icons.link),
                                   ),
                                   style: GoogleFonts.inter(),
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton.icon(
                                   icon: const Icon(Icons.cloud_download),
-                                  label: const Text('Scan & Generate'),
+                                  label: Text(AppLocalizations.of(context)!.scanAndGenerate),
                                   onPressed: () async {
                                     if (repoUrlController.text.isEmpty) return;
 
                                     setState(() {
                                       isLoading = true;
-                                      statusMessage = 'Fetching repository data...';
+                                      statusMessage = AppLocalizations.of(context)!.fetchingRepo;
                                     });
 
                                     try {
@@ -1595,7 +1596,7 @@ $htmlContent
 
                                       if (codeContext.isEmpty) throw Exception('No suitable source code found or repo is empty.');
 
-                                      setState(() => statusMessage = 'Analyzing with AI...');
+                                      setState(() => statusMessage = AppLocalizations.of(context)!.analyzingAI);
                                       final apiKey = provider.geminiApiKey;
                                       final markdown = await AIService.generateReadmeFromCodebase(codeContext, apiKey: apiKey);
 
@@ -1604,15 +1605,15 @@ $htmlContent
                                       if (context.mounted) {
                                         provider.importMarkdown(markdown);
                                         Navigator.pop(context);
-                                        ToastHelper.show(context, 'README generated successfully!');
+                                        ToastHelper.show(context, AppLocalizations.of(context)!.readmeGenerated);
                                       }
                                     } catch (e) {
                                       if (context.mounted) {
                                         setState(() {
                                           isLoading = false;
-                                          statusMessage = 'Error: $e';
+                                          statusMessage = '${AppLocalizations.of(context)!.error}: $e';
                                         });
-                                        ToastHelper.show(context, 'Error: $e', isError: true);
+                                        ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
                                       }
                                     }
                                   },
@@ -1630,7 +1631,7 @@ $htmlContent
                 if (!isLoading)
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                    child: Text(AppLocalizations.of(context)!.close),
                   ),
               ],
             );
@@ -1640,5 +1641,22 @@ $htmlContent
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

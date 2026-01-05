@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:readme_creator/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'providers/project_provider.dart';
 import 'providers/library_provider.dart';
@@ -44,6 +46,13 @@ class MyApp extends StatelessWidget {
       builder: (context, provider, child) {
         return MaterialApp(
           title: 'Advanced Readme Creator',
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           themeMode: provider.themeMode,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,

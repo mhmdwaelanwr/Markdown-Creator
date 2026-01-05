@@ -58,6 +58,9 @@ dependencies:
   path: ^1.9.1
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +80,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -207,41 +207,59 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
           ),
         ),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 8.0),
+          margin: const EdgeInsets.only(bottom: 10.0),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withAlpha(5) : Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: isDark ? Colors.white.withAlpha(10) : Colors.grey.withAlpha(20)),
+            color: isDark ? Colors.white.withAlpha(10) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isDark ? Colors.white.withAlpha(15) : Colors.grey.withAlpha(20)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(isDark ? 20 : 5),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+                color: Colors.black.withAlpha(isDark ? 40 : 10),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
+            gradient: isDark
+                ? LinearGradient(
+                    colors: [Colors.white.withAlpha(12), Colors.white.withAlpha(5)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : const LinearGradient(
+                    colors: [Colors.white, Color(0xFFF8F9FA)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
           ),
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
             child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: colorScheme.primary.withAlpha(10),
+              borderRadius: BorderRadius.circular(12),
+              hoverColor: colorScheme.primary.withAlpha(15),
               onTap: () {
                 Provider.of<ProjectProvider>(context, listen: false).addElement(type);
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Row(
                   children: [
-                    Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
-                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withAlpha(20),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: colorScheme.primary, size: 20),
+                    ),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         label,
-                        style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14, color: isDark ? Colors.white : Colors.black87),
+                        style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14, color: isDark ? Colors.white : Colors.black87),
                       ),
                     ),
-                    Icon(Icons.drag_indicator, size: 16, color: isDark ? Colors.white24 : Colors.black26),
+                    Icon(Icons.drag_indicator, size: 18, color: isDark ? Colors.white24 : Colors.black26),
                   ],
                 ),
               ),

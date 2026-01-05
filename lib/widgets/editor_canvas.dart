@@ -62,6 +62,35 @@ class EditorCanvas extends StatelessWidget {
                       ),
                     ),
 
+                  if (candidateData.isNotEmpty)
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(50),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.add_circle, color: Colors.white),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Drop to Add',
+                              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   Center(
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -312,9 +341,9 @@ class GridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final color = isDark ? Colors.white.withAlpha(30) : Colors.black.withAlpha(25);
+    final color = isDark ? Colors.white.withAlpha(30) : Colors.black.withAlpha(40);
     final paintWeak = Paint()..color = color..strokeWidth = 1.0;
-    final paintStrong = Paint()..color = (isDark ? Colors.white : Colors.black).withAlpha(45)..strokeWidth = 1.5;
+    final paintStrong = Paint()..color = (isDark ? Colors.white : Colors.black).withAlpha(80)..strokeWidth = 1.5;
 
     const double gridSize = 20.0;
     // Draw vertical lines

@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => _showProjectSettingsDialog(context, provider),
               ),
               IconButton(
-                icon: Icon(provider.themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+                icon: Icon(Theme.of(context).brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode),
                 tooltip: 'Toggle Theme',
                 onPressed: () => provider.toggleTheme(),
               ),
@@ -470,10 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (value == 'shortcuts') {
           _showKeyboardShortcutsDialog(context);
         } else if (value == 'about_dev') {
-          showSafeDialog(
-            context,
-            builder: (context) => const DeveloperInfoDialog(),
-          );
+          _showDeveloperInfoDialog(context);
         } else if (value == 'about') {
           _showAboutDialog(context);
         }
@@ -1377,7 +1374,7 @@ $htmlContent
           onTap: () {
             Navigator.pop(context);
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              showSafeDialog(context, builder: (c) => const DeveloperInfoDialog());
+              _showDeveloperInfoDialog(context);
             });
           },
         ),

@@ -1,0 +1,26 @@
+name: readme-creator
+base: core22
+version: '1.0.0'
+summary: A tool to generate Markdown README files
+website: https://www.readmecreator.studio/
+description: |
+  A tool to generate Markdown README files.
+  This application helps you create professional README files for your projects effortlessly.
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+environment:
+  GTK_USE_PORTAL: '1'
+
+parts:
+  readme-creator:
+    plugin: flutter
+    flutter-target: lib/main.dart
+    source: .
+apps:
+  readme-creator:
+    command: readme_creator
+    extensions: [gnome]
+    plugs:
+      - network

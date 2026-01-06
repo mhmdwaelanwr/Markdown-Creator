@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = readme_creator
+PRODUCT_NAME = Readme Creator
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = anwar.readme.creator.readmeCreator
+PRODUCT_BUNDLE_IDENTIFIER = com.anwar.readme_creator
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 anwar.readme.creator. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 Anwar. All rights reserved.

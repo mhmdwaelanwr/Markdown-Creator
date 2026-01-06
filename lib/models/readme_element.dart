@@ -653,22 +653,25 @@ class DynamicWidgetElement extends ReadmeElement {
 
 class RawElement extends ReadmeElement {
   String content;
+  String css;
 
-  RawElement({this.content = '', super.id}) : super(type: ReadmeElementType.raw);
+  RawElement({this.content = '', this.css = '', super.id}) : super(type: ReadmeElementType.raw);
 
   @override
-  String get description => 'Raw Content';
+  String get description => 'Raw Markdown / HTML';
 
   @override
   Map<String, dynamic> toJson() => {
     'id': id,
     'type': type.toString(),
     'content': content,
+    'css': css,
   };
 
   factory RawElement.fromJson(Map<String, dynamic> json) {
     return RawElement(
       content: json['content'] ?? '',
+      css: json['css'] ?? '',
       id: json['id'],
     );
   }

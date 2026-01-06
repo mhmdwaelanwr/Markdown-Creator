@@ -150,6 +150,15 @@ class MarkdownGenerator {
       } else {
         return '[Contributors](https://github.com/${e.repoName}/graphs/contributors)';
       }
+    } else if (element is GitHubStatsElement) {
+      final e = element;
+      final buffer = StringBuffer();
+      // Generate badge links
+      if (e.showStars) buffer.write('[![Stars](https://img.shields.io/github/stars/${e.repoName}?style=social)](https://github.com/${e.repoName}) ');
+      if (e.showForks) buffer.write('[![Forks](https://img.shields.io/github/forks/${e.repoName}?style=social)](https://github.com/${e.repoName}/network/members) ');
+      if (e.showIssues) buffer.write('[![Issues](https://img.shields.io/github/issues/${e.repoName})](https://github.com/${e.repoName}/issues) ');
+      if (e.showLicense) buffer.write('[![License](https://img.shields.io/github/license/${e.repoName})](https://github.com/${e.repoName}/blob/master/LICENSE) ');
+      return buffer.toString().trim();
     } else if (element is MermaidElement) {
       return '```mermaid\n${element.code}\n```';
     } else if (element is TOCElement) {
@@ -174,6 +183,9 @@ class MarkdownGenerator {
     } else if (element is DividerElement) {
       return '---';
     } else if (element is RawElement) {
+      if (element.css.isNotEmpty) {
+        return '<style>\n${element.css}\n</style>\n\n${element.content}';
+      }
       return element.content;
     } else if (element is CollapsibleElement) {
       return '<details>\n<summary>${element.summary}</summary>\n\n${element.content}\n</details>';

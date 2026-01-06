@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher.dart';
 import '../models/readme_element.dart';
 import '../providers/project_provider.dart';
 import '../core/constants/social_platforms.dart';
@@ -77,7 +80,36 @@ class ElementRenderer extends StatelessWidget {
       return content;
     } else if (element is ParagraphElement) {
       final e = element as ParagraphElement;
-      return _buildRichText(e.text, textColor);
+      // Use MarkdownBody for rich text support including images and links
+      return MarkdownBody(
+        data: e.text,
+        styleSheet: MarkdownStyleSheet(
+          p: GoogleFonts.inter(color: textColor, fontSize: 16, height: 1.5),
+          strong: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          em: GoogleFonts.inter(fontStyle: FontStyle.italic),
+          code: GoogleFonts.firaCode(
+            backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+            color: textColor,
+          ),
+          a: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+          blockquote: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+        ),
+        onTapLink: (text, href, title) async {
+          if (href != null) {
+            final uri = Uri.tryParse(href);
+            if (uri != null && await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            }
+          }
+        },
+        // imageBuilder is deprecated, but we use it for simplicity for now as simple replacement isn't obvious without more context
+        // or we can use builders: {'img': ...}
+        // Let's stick to imageBuilder as it works, but suppress warning if possible? No.
+        // Let's try to use builders.
+        builders: {
+          'img': BadgeImageBuilder(builder: _buildBadgeImage),
+        },
+      );
     } else if (element is ImageElement) {
       final e = element as ImageElement;
       if (e.localData != null) {
@@ -612,15 +644,38 @@ class ElementRenderer extends StatelessWidget {
                 const Icon(Icons.code, size: 16, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text('Raw Markdown / HTML', style: GoogleFonts.firaCode(fontSize: 12, color: Colors.grey)),
+                if (e.css.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withAlpha(50),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text('CSS', style: GoogleFonts.firaCode(fontSize: 10, color: Colors.blue)),
+                  ),
+                ],
               ],
             ),
             const SizedBox(height: 8),
             Text(
               e.content.isEmpty ? '(Empty)' : e.content,
               style: GoogleFonts.firaCode(fontSize: 14, color: textColor),
-              maxLines: 5,
+              maxLines: 10,
               overflow: TextOverflow.ellipsis,
             ),
+            if (e.css.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const Divider(height: 1),
+              const SizedBox(height: 8),
+              Text('CSS:', style: GoogleFonts.firaCode(fontSize: 10, color: Colors.grey)),
+              Text(
+                e.css,
+                style: GoogleFonts.firaCode(fontSize: 12, color: Colors.grey[600]),
+                maxLines: 5,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ],
         ),
       );
@@ -652,51 +707,6 @@ class ElementRenderer extends StatelessWidget {
     );
   }
 
-  Widget _buildRichText(String text, Color textColor) {
-    final spans = <TextSpan>[];
-    final exp = RegExp(r'(\*\*(.*?)\*\*)|(\*(.*?)\*)|(`(.*?)`)');
-    int start = 0;
-
-    for (final match in exp.allMatches(text)) {
-      if (match.start > start) {
-        spans.add(TextSpan(
-          text: text.substring(start, match.start),
-          style: GoogleFonts.inter(color: textColor, height: 1.6),
-        ));
-      }
-
-      if (match.group(1) != null) { // Bold **text**
-        spans.add(TextSpan(
-          text: match.group(2),
-          style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: textColor, height: 1.6),
-        ));
-      } else if (match.group(3) != null) { // Italic *text*
-        spans.add(TextSpan(
-          text: match.group(4),
-          style: GoogleFonts.inter(fontStyle: FontStyle.italic, color: textColor, height: 1.6),
-        ));
-      } else if (match.group(5) != null) { // Code `text`
-        spans.add(TextSpan(
-          text: match.group(6),
-          style: GoogleFonts.firaCode(
-            backgroundColor: Colors.grey.withAlpha(50),
-            color: textColor,
-            fontSize: 13,
-          ),
-        ));
-      }
-      start = match.end;
-    }
-
-    if (start < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(start),
-        style: GoogleFonts.inter(color: textColor, height: 1.6),
-      ));
-    }
-
-    return RichText(text: TextSpan(children: spans));
-  }
 
   Widget _buildCellContent(String text, Color textColor) {
     // Check for Markdown image: ![alt](url)
@@ -721,7 +731,16 @@ class ElementRenderer extends StatelessWidget {
       }
     }
 
-    return _buildRichText(text, textColor);
+    // Use MarkdownBody for rich text in cells
+    return MarkdownBody(
+      data: text,
+      styleSheet: MarkdownStyleSheet(
+       p: GoogleFonts.inter(fontSize: 14, color: textColor),
+      ),
+      builders: {
+        'img': BadgeImageBuilder(builder: _buildBadgeImage),
+      },
+    );
   }
 
   Widget _buildBadgeImage(String url, {double? height, double? width}) {
@@ -768,4 +787,18 @@ class ElementRenderer extends StatelessWidget {
   }
 }
 
+class BadgeImageBuilder extends MarkdownElementBuilder {
+  final Widget Function(String url, {double? width, double? height}) builder;
 
+  BadgeImageBuilder({required this.builder});
+
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final url = element.attributes['src'] ?? '';
+    // Basic attempt to parse width/height if present in style (unlikely in simple markdown) or html attributes
+    // In typical markdown ![alt](url), no attributes.
+    // If it's HTML <img>, we might get them.
+    // But flutter_markdown handles HTML tags by converting them.
+    return builder(url);
+  }
+}

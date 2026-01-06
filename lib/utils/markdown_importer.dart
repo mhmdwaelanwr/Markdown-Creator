@@ -44,22 +44,89 @@ class MarkdownImporter {
 
     final List<ReadmeElement> processed = [];
 
+    // Check for Socials
     for (int i = 0; i < elements.length; i++) {
       final element = elements[i];
 
-      // Check for Socials
       if (element is ParagraphElement) {
-        // Check if paragraph text is just a collection of social links
-        // This is hard because we only have the text representation.
-        // We need to parse the text back to check for links?
-        // Or we should have detected it during parsing.
-        // Let's try to detect it during parsing instead.
-        processed.add(element);
+        // Try to convert to more specific elements
+        final statsElement = _tryParseGitHubStats(element.text);
+        if (statsElement != null) {
+          processed.add(statsElement);
+          continue;
+        }
+
+        final contribElement = _tryParseContributors(element.text);
+        if (contribElement != null) {
+          processed.add(contribElement);
+          continue;
+        }
+
+         // Existing social check logic is inside _parseElement which is not ideal,
+         // but here we only have text.
+         // Let's assume if the paragraph was parsed as SocialsElement during _parseElement (it wasn't, wait).
+         // _parseElement in the current code calls _isSocialsParagraph and adds SocialsElement.
+         // So Socials are already handled?
+         // Let's check _parseElement.
+         // Yes: if (_isSocialsParagraph(node)) { elements.add(_parseSocials(node)); }
+         // So we don't need to do it here for Socials.
+
+         processed.add(element);
       } else {
         processed.add(element);
       }
     }
     return processed;
+  }
+
+  GitHubStatsElement? _tryParseGitHubStats(String text) {
+    // Basic heuristic: check for multiple GitHub badge links
+    if (!text.contains('img.shields.io/github/') && !text.contains('github.com')) return null;
+
+    final repoRegex = RegExp(r'github\.com/([^/]+)/([^/]+?)(?:/|\)|"|\?|$)', caseSensitive: false);
+    final match = repoRegex.firstMatch(text);
+    if (match == null) return null;
+
+    final user = match.group(1);
+    final repo = match.group(2);
+    final repoName = '$user/$repo';
+
+    // Check which badges are present
+    bool stars = text.contains('/stars/') || text.contains('Stars');
+    bool forks = text.contains('/forks/') || text.contains('Forks');
+    bool issues = text.contains('/issues/') || text.contains('Issues');
+    bool license = text.contains('/license/') || text.contains('LicenseHTML') || text.contains('License');
+
+    // If matches repo pattern and has at least one stat badge or is just a collection of them
+    if (stars || forks || issues) {
+       return GitHubStatsElement(
+         repoName: repoName,
+         showStars: stars,
+         showForks: forks,
+         showIssues: issues,
+         showLicense: license,
+       );
+    }
+    return null;
+  }
+
+  ContributorsElement? _tryParseContributors(String text) {
+     if (text.contains('contrib.rocks')) {
+        // Extract repo from url parameter
+        final repoMatch = RegExp(r'repo=([^&"]+)').firstMatch(text);
+        if (repoMatch != null) {
+           return ContributorsElement(repoName: repoMatch.group(1)!, style: 'grid');
+        }
+     }
+
+     if (text.contains('graphs/contributors')) {
+         final repoRegex = RegExp(r'github\.com/([^/]+)/([^/]+?)/graphs/contributors', caseSensitive: false);
+         final match = repoRegex.firstMatch(text);
+         if (match != null) {
+            return ContributorsElement(repoName: '${match.group(1)}/${match.group(2)}', style: 'list');
+         }
+     }
+     return null;
   }
 
   void _parseElement(md.Element node, List<ReadmeElement> elements) {

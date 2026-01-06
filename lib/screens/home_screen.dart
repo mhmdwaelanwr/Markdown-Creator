@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui'; // Add this import
 import 'package:flutter/services.dart';
 import 'package:readme_creator/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -187,7 +188,45 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           drawer: isDesktop ? null : const Drawer(child: ComponentsPanel()),
           endDrawer: isDesktop ? null : const Drawer(child: SettingsPanel()),
-          body: isDesktop ? _buildDesktopBody(context) : _buildMobileBody(context),
+          body: Stack(
+            children: [
+              // Background Gradients
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(20),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                    child: Container(color: Colors.transparent),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -100,
+                left: -100,
+                child: Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(13),
+                  ),
+                  child: BackdropFilter(
+                     filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                     child: Container(color: Colors.transparent),
+                  ),
+                ),
+              ),
+              // Main Content
+              isDesktop ? _buildDesktopBody(context) : _buildMobileBody(context),
+            ],
+          ),
         ),
       ),
     );
@@ -376,7 +415,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const PopupMenuDivider(),
         _buildMenuHeader('App'),
         _buildMenuItem(context, 'change_language', Icons.language, AppLocalizations.of(context)!.changeLanguage, color: Colors.grey),
-        _buildMenuItem(context, 'help', Icons.help_outline, AppLocalizations.of(context)!.showTour, color: Colors.grey),
         _buildMenuItem(context, 'shortcuts', Icons.keyboard, AppLocalizations.of(context)!.keyboardShortcuts, color: Colors.grey),
         _buildMenuItem(context, 'about_dev', Icons.person, AppLocalizations.of(context)!.aboutDeveloper, color: Colors.grey),
         _buildMenuItem(context, 'about', Icons.info_outline, AppLocalizations.of(context)!.aboutApp, color: Colors.grey),

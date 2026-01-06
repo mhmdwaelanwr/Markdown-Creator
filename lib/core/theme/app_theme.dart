@@ -3,13 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
 class AppTheme {
+  static const Color primaryColor = Color(0xFF0175C2);
+  static const Color primaryDark = Color(0xFF015a96);
+
   static ThemeData get lightTheme {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF6366F1), // Indigo
+        seedColor: primaryColor,
         brightness: Brightness.light,
         surface: const Color(0xFFF8FAFC), // Slate 50
-        primary: AppColors.primary,
+        primary: primaryColor,
         secondary: AppColors.secondary,
       ),
       useMaterial3: true,
@@ -19,7 +22,7 @@ class AppTheme {
         foregroundColor: const Color(0xFF1E293B),
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: GoogleFonts.poppins( // Changed to Poppins
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: const Color(0xFF1E293B),
@@ -91,25 +94,25 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF6366F1), // Indigo
+        seedColor: primaryColor,
         brightness: Brightness.dark,
-        surface: const Color(0xFF0F172A), // Slate 900
-        primary: AppColors.primary,
+        surface: const Color(0xFF0D1117), // GitHub Dark Dimmed
+        primary: primaryColor,
         secondary: AppColors.secondary,
       ),
       useMaterial3: true,
       textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF1E293B), // Slate 800
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF161B22),
+        foregroundColor: const Color(0xFFC9D1D9),
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.white,
+          color: const Color(0xFFC9D1D9),
         ),
-        iconTheme: const IconThemeData(color: Color(0xFF94A3B8)),
+        iconTheme: const IconThemeData(color: Color(0xFF8B949E)),
       ),
       cardTheme: CardThemeData(
         elevation: 0,

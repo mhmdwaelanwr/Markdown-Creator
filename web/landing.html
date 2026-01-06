@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readme Creator - The Ultimate Developer Tool</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Create professional README.md files in minutes. Available on Web, Windows, macOS, Linux, Android, and iOS.">
+    <meta property="og:title" content="Readme Creator">
+    <meta property="og:description" content="The ultimate developer tool for crafting stunning, professional README.md files.">
+    <meta property="og:image" content="icons/Icon-192.png">
+    <meta property="og:url" content="https://www.readmecreator.studio/">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0175C2;
+            --primary-dark: #015a96;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: rgba(0,0,0,0.08);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 12px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+            --nav-glass: rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-main: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: rgba(240,246,252,0.1);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 12px 24px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.6);
+            --nav-glass: rgba(13, 17, 23, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image:
+                radial-gradient(circle at 100% 0%, rgba(1, 117, 194, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 0% 100%, rgba(1, 117, 194, 0.05) 0%, transparent 25%);
+            background-attachment: fixed;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 60px;
+            width: 100%;
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 20px 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: var(--nav-glass);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary);
+            background-color: var(--border-color);
+        }
+
+        .nav-launch {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px 24px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 12px rgba(1, 117, 194, 0.25);
+            transition: all 0.2s;
+        }
+
+        .nav-launch:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(1, 117, 194, 0.35);
+        }
+
+        /* Header / Hero */
+        header {
+            text-align: center;
+            margin-top: 140px;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+
+        header p {
+            font-size: 1.35rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeInDown 0.8s ease-out 0.2s forwards;
+            font-weight: 500;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            opacity: 0;
+            animation: fadeInDown 0.8s ease-out 0.3s forwards;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.4s forwards;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: transparent;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 40px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 32px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(1, 117, 194, 0.3);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(1, 117, 194, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(1, 117, 194, 0.05);
+        }
+
+        /* Platform specific styles */
+        .platform-web { --accent: #448AFF; }
+        .platform-web .icon-wrapper { background-color: rgba(68, 138, 255, 0.1); color: var(--accent); }
+
+        .platform-windows { --accent: #0078D4; }
+        .platform-windows .icon-wrapper { background-color: rgba(0, 120, 212, 0.1); color: var(--accent); }
+
+        .platform-mac { --accent: #333333; }
+        .platform-mac .icon-wrapper { background-color: rgba(51, 51, 51, 0.1); color: var(--accent); }
+
+        .platform-linux { --accent: #E95420; }
+        .platform-linux .icon-wrapper { background-color: rgba(233, 84, 32, 0.1); color: var(--accent); }
+
+        .platform-android { --accent: #3DDC84; }
+        .platform-android .icon-wrapper { background-color: rgba(61, 220, 132, 0.1); color: var(--accent); }
+
+        .platform-ios { --accent: #000000; }
+        .platform-ios .icon-wrapper { background-color: rgba(0, 0, 0, 0.1); color: var(--accent); }
+
+        @media (prefers-color-scheme: dark) {
+            .platform-mac { --accent: #ffffff; }
+            .platform-mac .icon-wrapper { background-color: rgba(255, 255, 255, 0.1); color: white; }
+            .platform-ios { --accent: #ffffff; }
+            .platform-ios .icon-wrapper { background-color: rgba(255, 255, 255, 0.1); color: white; }
+        }
+
+        [data-theme="dark"] .platform-mac { --accent: #ffffff; }
+        [data-theme="dark"] .platform-mac .icon-wrapper { background-color: rgba(255, 255, 255, 0.1); color: white; }
+        [data-theme="dark"] .platform-ios { --accent: #ffffff; }
+        [data-theme="dark"] .platform-ios .icon-wrapper { background-color: rgba(255, 255, 255, 0.1); color: white; }
+
+        .open-source-badge {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.6s forwards;
+            transition: transform 0.3s;
+        }
+
+        .open-source-badge:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .open-source-badge h2 {
+            font-family: 'Poppins', sans-serif;
+            margin: 24px 0 16px;
+            color: var(--text-main);
+            font-size: 2.25rem;
+        }
+
+        .github-btn {
+            background-color: #24292e;
+            color: white;
+            border: none;
+            margin-top: 32px;
+            width: auto;
+            min-width: 220px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            padding: 16px 32px;
+        }
+
+        .github-btn:hover {
+            background-color: #161b22;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            margin-top: 80px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.25rem; }
+            header { margin-top: 100px; }
+            .container { padding-bottom: 40px; }
+            .open-source-badge { padding: 40px 24px; }
+            .nav-actions { gap: 12px; }
+            .nav-launch { padding: 8px 16px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="nav-logo">
+                <i class="fa-solid fa-file-code fa-lg" style="color: var(--primary)"></i>
+                Readme Creator
+            </a>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <a href="/app/" class="nav-launch">
+                    Launch App <i class="fa-solid fa-arrow-right" style="margin-left: 6px; font-size: 0.8em;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Simplify Your Documentation</h1>
+            <p>The ultimate open-source tool to generate professional README.md files in minutes. Stop struggling with Markdown.</p>
+            <div class="hero-badges">
+                 <span class="badge"><i class="fa-solid fa-check-circle" style="color: #4CAF50;"></i> Free & Open Source</span>
+                 <span class="badge"><i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> Cross Platform</span>
+                 <span class="badge"><i class="fa-solid fa-bolt" style="color: #FFC107;"></i> No Setup Required</span>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Web -->
+            <div class="card platform-web">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-chrome"></i>
+                </div>
+                <h3>Web Version</h3>
+                <p>Instant access in your browser. No installation required. Perfect for quick edits.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Web" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                    <a href="/app/" class="btn btn-primary">
+                        <i class="fa-solid fa-rocket"></i> Launch Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Windows -->
+            <div class="card platform-windows">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-windows"></i>
+                </div>
+                <h3>Windows</h3>
+                <p>Native performance and system integration for Windows 10/11.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Windows" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                     <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Windows/releases" class="btn btn-primary" target="_blank">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+
+            <!-- macOS -->
+            <div class="card platform-mac">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-apple"></i>
+                </div>
+                <h3>macOS</h3>
+                <p>Optimized for Apple Silicon & Intel. Smooth native look and feel.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-MacOs" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-MacOs/releases" class="btn btn-primary" target="_blank">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+
+            <!-- Linux -->
+            <div class="card platform-linux">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-linux"></i>
+                </div>
+                <h3>Linux</h3>
+                <p>Available as Snap, AppImage, and .deb for major distros.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Linux" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Linux/releases" class="btn btn-primary" target="_blank">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+
+            <!-- Android -->
+            <div class="card platform-android">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-android"></i>
+                </div>
+                <h3>Android</h3>
+                <p>Create and edit docs on the go. Optimized touch interface.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Android" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-Android/releases" class="btn btn-primary" target="_blank">
+                        <i class="fa-solid fa-download"></i> Download APK
+                    </a>
+                </div>
+            </div>
+
+            <!-- iOS -->
+            <div class="card platform-ios">
+                <div class="icon-wrapper">
+                    <i class="fa-brands fa-app-store-ios"></i>
+                </div>
+                <h3>iOS</h3>
+                <p>Seamless experience for iPhone and iPad.</p>
+                <div style="display: flex; gap: 12px; width: 100%;">
+                    <a href="https://github.com/mhmdwaelanwr/Readme-Creator-IOS" class="btn btn-outline" target="_blank">
+                        <i class="fa-brands fa-github"></i> Source
+                    </a>
+                     <a href="#" class="btn btn-outline" style="opacity: 0.6; cursor: not-allowed; border-style: dashed;">
+                        <i class="fa-solid fa-clock"></i> Coming Soon
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="open-source-badge">
+            <i class="fa-brands fa-github fa-4x" style="color: var(--primary)"></i>
+            <h2>100% Open Source</h2>
+            <p style="color: var(--text-secondary); font-size: 1.15rem; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+                We believe in community-driven development. Star the project, report issues, or contribute code to make Readme Creator better.
+            </p>
+            <a href="https://github.com/mhmdwaelanwr/Readme-Creator" class="btn github-btn" target="_blank">
+                <i class="fa-regular fa-star" style="margin-right: 10px;"></i> Star on GitHub
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Developed with ❤️ by <a href="https://github.com/mhmdwaelanwr" target="_blank">Mohamed Anwar</a></p>
+        <p style="margin-top: 8px; font-size: 0.85rem; opacity: 0.7;">© 2024 Readme Creator. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const icon = themeToggle.querySelector('i');
+        const body = document.body;
+
+        // Check local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            body.setAttribute('data-theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                icon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>
+

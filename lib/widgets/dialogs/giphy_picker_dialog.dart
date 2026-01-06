@@ -132,7 +132,7 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
                                         ),
                                       );
                                     },
-                                    errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                                    errorBuilder: (ctx, err, stack) => const Icon(Icons.broken_image),
                                   ),
                                 ),
                               );

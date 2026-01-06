@@ -7,7 +7,6 @@ import '../../providers/project_provider.dart';
 import '../../services/ai_service.dart';
 import '../../services/codebase_scanner_service.dart';
 import '../../services/github_scanner_service.dart';
-import '../../utils/dialog_helper.dart';
 import '../../utils/toast_helper.dart';
 
 class GenerateCodebaseDialog extends StatefulWidget {
@@ -165,16 +164,14 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
         apiKey: provider.geminiApiKey,
       );
 
-      if (mounted) {
-        Navigator.pop(context);
-        provider.importMarkdown(readmeContent);
-        ToastHelper.show(context, 'README generated successfully!');
-      }
+      if (!mounted) return;
+      Navigator.pop(context);
+      provider.importMarkdown(readmeContent);
+      ToastHelper.show(context, 'README generated successfully!');
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ToastHelper.show(context, 'Error: $e', isError: true);
-      }
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ToastHelper.show(context, 'Error: $e', isError: true);
     }
   }
 
@@ -199,16 +196,14 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
         apiKey: provider.geminiApiKey,
       );
 
-      if (mounted) {
-        Navigator.pop(context);
-        provider.importMarkdown(readmeContent);
-        ToastHelper.show(context, 'README generated successfully!');
-      }
+      if (!mounted) return;
+      Navigator.pop(context);
+      provider.importMarkdown(readmeContent);
+      ToastHelper.show(context, 'README generated successfully!');
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ToastHelper.show(context, 'Error: $e', isError: true);
-      }
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ToastHelper.show(context, 'Error: $e', isError: true);
     }
   }
 }

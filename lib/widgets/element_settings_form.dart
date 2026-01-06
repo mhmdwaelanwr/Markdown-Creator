@@ -481,9 +481,9 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
 
     String path;
     if (labelPart.isNotEmpty) {
-      path = '${safe(labelPart)}-${safe(messagePart)}-${colorPart}';
+      path = '${safe(labelPart)}-${safe(messagePart)}-$colorPart';
     } else {
-      path = '${safe(messagePart)}-${colorPart}';
+      path = '${safe(messagePart)}-$colorPart';
     }
 
     final uri = Uri.parse('https://img.shields.io/badge/$path');

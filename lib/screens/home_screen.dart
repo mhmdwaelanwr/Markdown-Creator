@@ -12,13 +12,12 @@ import 'package:markdown/markdown.dart' as md;
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/readme_element.dart';
 import '../widgets/components_panel.dart';
 import '../widgets/editor_canvas.dart';
 import '../widgets/settings_panel.dart';
 import '../providers/project_provider.dart';
-
+import '../services/preferences_service.dart';
 import '../utils/templates.dart';
 import '../utils/project_exporter.dart';
 import '../utils/downloader.dart';
@@ -73,8 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final prefs = await SharedPreferences.getInstance();
-      final hasSeenWizard = prefs.getBool('hasSeenSetupWizard') ?? false;
+      final prefs = PreferencesService();
+      final hasSeenWizard = await prefs.loadBool(PreferencesService.keyHasSeenSetupWizard) ?? false;
 
       if (!hasSeenWizard && mounted) {
         await showDialog(
@@ -82,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           barrierDismissible: false,
           builder: (context) => const OnboardingScreen(),
         );
-        await prefs.setBool('hasSeenSetupWizard', true);
+        await prefs.saveBool(PreferencesService.keyHasSeenSetupWizard, true);
       }
 
       if (mounted) {
@@ -583,7 +582,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                                 // Fallback to network image if not shield/svg or let default handler work?
                                 // MarkdownBuilder returns Widget.
-                                return Image.network(url, width: width, height: height, errorBuilder: (_, __, ___) => const SizedBox());
+                                return Image.network(url, width: width, height: height, errorBuilder: (ctx, err, stack) => const SizedBox());
                              }),
                           },
                           // We need to enable HTML to support the <a><img ...></a> structure generated for some elements
@@ -906,6 +905,8 @@ $htmlContent
     );
   }
 }
+
+
 
 
 

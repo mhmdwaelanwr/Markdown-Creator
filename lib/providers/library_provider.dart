@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../models/saved_project.dart';
 import '../models/snippet.dart';
+import '../services/preferences_service.dart';
 
 class LibraryProvider with ChangeNotifier {
+  final PreferencesService _prefsService = PreferencesService();
   List<SavedProject> _projects = [];
   List<Snippet> _snippets = [];
 
@@ -17,16 +18,14 @@ class LibraryProvider with ChangeNotifier {
   }
 
   Future<void> _loadLibrary() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final projectsJson = prefs.getStringList('saved_projects');
+    final projectsJson = await _prefsService.loadStringList(PreferencesService.keySavedProjects);
     if (projectsJson != null) {
       _projects = projectsJson
           .map((str) => SavedProject.fromJson(jsonDecode(str)))
           .toList();
     }
 
-    final snippetsJson = prefs.getStringList('saved_snippets');
+    final snippetsJson = await _prefsService.loadStringList(PreferencesService.keySavedSnippets);
     if (snippetsJson != null) {
       _snippets = snippetsJson
           .map((str) => Snippet.fromJson(jsonDecode(str)))
@@ -37,13 +36,11 @@ class LibraryProvider with ChangeNotifier {
   }
 
   Future<void> _saveLibrary() async {
-    final prefs = await SharedPreferences.getInstance();
-
     final projectsJson = _projects.map((p) => jsonEncode(p.toJson())).toList();
-    await prefs.setStringList('saved_projects', projectsJson);
+    await _prefsService.saveStringList(PreferencesService.keySavedProjects, projectsJson);
 
     final snippetsJson = _snippets.map((s) => jsonEncode(s.toJson())).toList();
-    await prefs.setStringList('saved_snippets', snippetsJson);
+    await _prefsService.saveStringList(PreferencesService.keySavedSnippets, snippetsJson);
   }
 
   void saveProject({

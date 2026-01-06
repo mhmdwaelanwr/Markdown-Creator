@@ -445,7 +445,6 @@ SOFTWARE.
   }
 
   static String generateSecurity(Map<String, String> variables) {
-    final projectName = variables['PROJECT_NAME'] ?? 'Project Name';
     final email = variables['EMAIL'] ?? 'email@example.com';
 
     return '''

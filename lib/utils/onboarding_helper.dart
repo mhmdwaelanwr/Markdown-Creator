@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../services/preferences_service.dart';
 
 class OnboardingHelper {
   static Future<void> showOnboarding({
@@ -11,8 +11,8 @@ class OnboardingHelper {
     required GlobalKey settingsKey,
     required GlobalKey exportKey,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenOnboarding = prefs.getBool('hasSeenOnboarding') ?? false;
+    final prefs = PreferencesService();
+    final hasSeenOnboarding = await prefs.loadBool(PreferencesService.keyHasSeenOnboarding) ?? false;
 
     if (hasSeenOnboarding) return;
 
@@ -38,7 +38,7 @@ class OnboardingHelper {
 
         if (!attached) {
           // If not attached, avoid showing to prevent build-scope errors.
-          prefs.setBool('hasSeenOnboarding', true);
+          prefs.saveBool(PreferencesService.keyHasSeenOnboarding, true);
           return;
         }
 
@@ -50,17 +50,17 @@ class OnboardingHelper {
           opacityShadow: 0.8,
           textStyleSkip: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
           onFinish: () {
-            prefs.setBool('hasSeenOnboarding', true);
+            prefs.saveBool(PreferencesService.keyHasSeenOnboarding, true);
           },
           onSkip: () {
-            prefs.setBool('hasSeenOnboarding', true);
+            prefs.saveBool(PreferencesService.keyHasSeenOnboarding, true);
             return true;
           },
         ).show(context: context);
       } catch (e, st) {
         // Don't crash the app if onboarding fails (e.g., due to layout changes after locale change).
         debugPrint('Onboarding failed: $e\n$st');
-        prefs.setBool('hasSeenOnboarding', true);
+        prefs.saveBool(PreferencesService.keyHasSeenOnboarding, true);
       }
     });
   }

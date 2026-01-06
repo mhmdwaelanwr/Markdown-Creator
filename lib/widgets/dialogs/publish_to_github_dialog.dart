@@ -212,34 +212,33 @@ class _PublishToGitHubDialogState extends State<PublishToGitHubDialog> {
         commitMessage: _messageController.text.trim(),
       );
 
-      if (mounted) {
-        Navigator.pop(context);
-        showSafeDialog(
-          context,
-          builder: (context) => AlertDialog(
-            title: const Text('Success!'),
-            content: const Text('Pull Request created successfully.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  launchUrl(Uri.parse(
-                      'https://github.com/${_ownerController.text.trim()}/${_repoController.text.trim()}/pulls'));
-                },
-                child: const Text('View PRs'),
-              ),
-            ],
-          ),
-        );
-      }
+      if (!mounted) return;
+
+      Navigator.pop(context);
+      showSafeDialog(
+        context,
+        builder: (context) => AlertDialog(
+          title: const Text('Success!'),
+          content: const Text('Pull Request created successfully.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                launchUrl(Uri.parse(
+                    'https://github.com/${_ownerController.text.trim()}/${_repoController.text.trim()}/pulls'));
+              },
+              child: const Text('View PRs'),
+            ),
+          ],
+        ),
+      );
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ToastHelper.show(context, 'Error: $e', isError: true);
-      }
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ToastHelper.show(context, 'Error: $e', isError: true);
     }
   }
 }

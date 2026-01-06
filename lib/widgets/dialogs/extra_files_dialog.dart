@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../l10n/app_localizations.dart';
-import '../../providers/project_provider.dart';
 import '../../utils/dialog_helper.dart';
+import '../../providers/project_provider.dart';
 import '../../utils/downloader.dart';
 import '../../utils/toast_helper.dart';
 import '../../generator/file_generators.dart';
@@ -95,4 +93,3 @@ class ExtraFilesDialog extends StatelessWidget {
     );
   }
 }
-

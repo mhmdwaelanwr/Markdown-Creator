@@ -149,9 +149,7 @@ $htmlContent
       });
       final zipEncoder = ZipEncoder();
       final zipBytes = zipEncoder.encode(archive);
-      if (zipBytes != null) {
-        downloadZipFile(zipBytes, 'project_files.zip');
-      }
+      downloadZipFile(zipBytes, 'project_files.zip');
     }
   }
 }

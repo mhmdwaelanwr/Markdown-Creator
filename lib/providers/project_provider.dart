@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../services/preferences_service.dart';
 import '../models/readme_element.dart';
 import '../models/snippet.dart';
 import '../utils/templates.dart';
@@ -10,6 +10,7 @@ import '../utils/markdown_importer.dart';
 enum DeviceMode { desktop, tablet, mobile }
 
 class ProjectProvider with ChangeNotifier {
+  final PreferencesService _prefsService = PreferencesService();
   final List<ReadmeElement> _elements = [];
   String? _selectedElementId;
   ThemeMode _themeMode = ThemeMode.system;
@@ -84,69 +85,56 @@ class ProjectProvider with ChangeNotifier {
   }
 
   Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
+    _themeMode = await _prefsService.loadThemeMode();
 
-    // Load Theme
-    if (prefs.containsKey('isDarkMode')) {
-      final isDark = prefs.getBool('isDarkMode') ?? false;
-      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
-    } else {
-      _themeMode = ThemeMode.system;
+    final loadedElements = await _prefsService.loadElements();
+    if (loadedElements.isNotEmpty) {
+      _elements.clear();
+      _elements.addAll(loadedElements);
     }
 
-    // Load Elements
-    final elementsJson = prefs.getString('elements');
-    if (elementsJson != null) {
-      try {
-        final List<dynamic> decoded = jsonDecode(elementsJson);
-        _elements.clear();
-        _elements.addAll(decoded.map((e) => ReadmeElement.fromJson(e)).toList());
-      } catch (e) {
-        debugPrint('Error loading elements: $e');
-      }
+    final loadedVariables = await _prefsService.loadVariables();
+    if (loadedVariables.isNotEmpty) {
+      _variables.addAll(loadedVariables);
     }
 
-    // Load Variables
-    final variablesJson = prefs.getString('variables');
-    if (variablesJson != null) {
-      try {
-        final Map<String, dynamic> decoded = jsonDecode(variablesJson);
-        _variables.addAll(decoded.cast<String, String>());
-      } catch (e) {
-        debugPrint('Error loading variables: $e');
-      }
-    }
+    _licenseType = await _prefsService.loadString(PreferencesService.keyLicenseType) ?? 'None';
+    _includeContributing = await _prefsService.loadBool(PreferencesService.keyIncludeContributing) ?? false;
+    _includeSecurity = await _prefsService.loadBool(PreferencesService.keyIncludeSecurity) ?? false;
+    _includeSupport = await _prefsService.loadBool(PreferencesService.keyIncludeSupport) ?? false;
+    _includeCodeOfConduct = await _prefsService.loadBool(PreferencesService.keyIncludeCodeOfConduct) ?? false;
+    _includeIssueTemplates = await _prefsService.loadBool(PreferencesService.keyIncludeIssueTemplates) ?? false;
 
-    _licenseType = prefs.getString('licenseType') ?? 'None';
-    _includeContributing = prefs.getBool('includeContributing') ?? false;
-    _includeSecurity = prefs.getBool('includeSecurity') ?? false;
-    _includeSupport = prefs.getBool('includeSupport') ?? false;
-    _includeCodeOfConduct = prefs.getBool('includeCodeOfConduct') ?? false;
-    _includeIssueTemplates = prefs.getBool('includeIssueTemplates') ?? false;
-    _primaryColor = Color(prefs.getInt('primaryColor') ?? Colors.blue.toARGB32());
-    _secondaryColor = Color(prefs.getInt('secondaryColor') ?? Colors.green.toARGB32());
-    _showGrid = prefs.getBool('showGrid') ?? false;
-    _snapshots = prefs.getStringList('snapshots') ?? [];
-    _listBullet = prefs.getString('listBullet') ?? '*';
-    _sectionSpacing = prefs.getInt('sectionSpacing') ?? 1;
-    _exportHtml = prefs.getBool('exportHtml') ?? false;
-    _geminiApiKey = prefs.getString('gemini_api_key');
-    _githubToken = prefs.getString('github_token');
-    final localeCode = prefs.getString('locale');
+    final pColor = await _prefsService.loadInt(PreferencesService.keyPrimaryColor);
+    _primaryColor = pColor != null ? Color(pColor) : Colors.blue;
+
+    final sColor = await _prefsService.loadInt(PreferencesService.keySecondaryColor);
+    _secondaryColor = sColor != null ? Color(sColor) : Colors.green;
+
+    _showGrid = await _prefsService.loadBool(PreferencesService.keyShowGrid) ?? false;
+    _snapshots = await _prefsService.loadStringList(PreferencesService.keySnapshots) ?? [];
+    _listBullet = await _prefsService.loadString(PreferencesService.keyListBullet) ?? '*';
+    _sectionSpacing = await _prefsService.loadInt(PreferencesService.keySectionSpacing) ?? 1;
+    _exportHtml = await _prefsService.loadBool(PreferencesService.keyExportHtml) ?? false;
+
+    _geminiApiKey = await _prefsService.loadString(PreferencesService.keyGeminiApiKey);
+    _githubToken = await _prefsService.loadString(PreferencesService.keyGithubToken);
+
+    final localeCode = await _prefsService.loadString(PreferencesService.keyLocale);
     if (localeCode != null) {
       _locale = Locale(localeCode);
     }
-    _targetLanguage = prefs.getString('targetLanguage') ?? 'en';
+    _targetLanguage = await _prefsService.loadString(PreferencesService.keyTargetLanguage) ?? 'en';
+
     _safeNotify();
   }
 
   void setLocale(Locale? locale) async {
     _locale = locale;
-    final prefs = await SharedPreferences.getInstance();
     if (locale != null) {
-      await prefs.setString('locale', locale.languageCode);
+      await _prefsService.saveString(PreferencesService.keyLocale, locale.languageCode);
     } else {
-      await prefs.remove('locale');
+      await _prefsService.remove(PreferencesService.keyLocale);
     }
     _safeNotify();
   }
@@ -158,59 +146,36 @@ class ProjectProvider with ChangeNotifier {
   }
 
   Future<void> _saveState() async {
-    final prefs = await SharedPreferences.getInstance();
+    await _prefsService.saveThemeMode(_themeMode);
 
-    // Save Theme
-    // We only save if it's explicitly set to dark or light, or we can save an int/string to represent system.
-    // But existing logic uses boolean 'isDarkMode'.
-    // If we want to support system, we should probably migrate to storing the enum index or string.
-    // For backward compatibility, let's stick to boolean but maybe add a 'themeMode' key.
-    // If user toggles, we switch between light and dark.
-    // If we want "dynamic with device" as default, we should allow resetting to system?
-    // The user asked for "Dark Mode default dynamic with device".
-    // This implies: Default = System.
-    // Toggle usually cycles Light -> Dark -> System -> Light? Or just Light <-> Dark.
-    // Let's keep simple toggle Light <-> Dark for now, but default is System.
-    // If user toggles, we save the preference.
+    await _prefsService.saveElements(_elements);
+    await _prefsService.saveVariables(_variables);
 
-    if (_themeMode == ThemeMode.system) {
-       await prefs.remove('isDarkMode'); // Remove preference to fallback to system
-    } else {
-       await prefs.setBool('isDarkMode', _themeMode == ThemeMode.dark);
-    }
+    await _prefsService.saveString(PreferencesService.keyLicenseType, _licenseType);
+    await _prefsService.saveBool(PreferencesService.keyIncludeContributing, _includeContributing);
+    await _prefsService.saveBool(PreferencesService.keyIncludeSecurity, _includeSecurity);
+    await _prefsService.saveBool(PreferencesService.keyIncludeSupport, _includeSupport);
+    await _prefsService.saveBool(PreferencesService.keyIncludeCodeOfConduct, _includeCodeOfConduct);
+    await _prefsService.saveBool(PreferencesService.keyIncludeIssueTemplates, _includeIssueTemplates);
+    await _prefsService.saveInt(PreferencesService.keyPrimaryColor, _primaryColor.toARGB32());
+    await _prefsService.saveInt(PreferencesService.keySecondaryColor, _secondaryColor.toARGB32());
+    await _prefsService.saveBool(PreferencesService.keyShowGrid, _showGrid);
+    await _prefsService.saveStringList(PreferencesService.keySnapshots, _snapshots);
+    await _prefsService.saveString(PreferencesService.keyListBullet, _listBullet);
+    await _prefsService.saveInt(PreferencesService.keySectionSpacing, _sectionSpacing);
+    await _prefsService.saveBool(PreferencesService.keyExportHtml, _exportHtml);
 
-    // Save Elements
-    final elementsJson = jsonEncode(_elements.map((e) => e.toJson()).toList());
-    await prefs.setString('elements', elementsJson);
-
-    // Save Variables
-    final variablesJson = jsonEncode(_variables);
-    await prefs.setString('variables', variablesJson);
-
-    await prefs.setString('licenseType', _licenseType);
-    await prefs.setBool('includeContributing', _includeContributing);
-    await prefs.setBool('includeSecurity', _includeSecurity);
-    await prefs.setBool('includeSupport', _includeSupport);
-    await prefs.setBool('includeCodeOfConduct', _includeCodeOfConduct);
-    await prefs.setBool('includeIssueTemplates', _includeIssueTemplates);
-    await prefs.setInt('primaryColor', _primaryColor.toARGB32());
-    await prefs.setInt('secondaryColor', _secondaryColor.toARGB32());
-    await prefs.setBool('showGrid', _showGrid);
-    await prefs.setStringList('snapshots', _snapshots);
-    await prefs.setString('listBullet', _listBullet);
-    await prefs.setInt('sectionSpacing', _sectionSpacing);
-    await prefs.setBool('exportHtml', _exportHtml);
     if (_geminiApiKey != null) {
-      await prefs.setString('gemini_api_key', _geminiApiKey!);
+      await _prefsService.saveString(PreferencesService.keyGeminiApiKey, _geminiApiKey!);
     } else {
-      await prefs.remove('gemini_api_key');
+      await _prefsService.remove(PreferencesService.keyGeminiApiKey);
     }
     if (_githubToken != null) {
-      await prefs.setString('github_token', _githubToken!);
+      await _prefsService.saveString(PreferencesService.keyGithubToken, _githubToken!);
     } else {
-      await prefs.remove('github_token');
+      await _prefsService.remove(PreferencesService.keyGithubToken);
     }
-    await prefs.setString('targetLanguage', _targetLanguage);
+    await _prefsService.saveString(PreferencesService.keyTargetLanguage, _targetLanguage);
   }
 
   String exportToJson() {

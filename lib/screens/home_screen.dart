@@ -344,86 +344,45 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMoreOptionsButton(BuildContext context) {
+
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert),
       tooltip: 'More Options',
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      offset: const Offset(0, 48),
       itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'save_library',
-          child: Row(children: [const Icon(Icons.save_alt, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.saveToLibrary)]),
-        ),
-        PopupMenuItem(
-          value: 'snapshots',
-          child: Row(children: [const Icon(Icons.history, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.localSnapshots)]),
-        ),
-        PopupMenuItem(
-          value: 'clear_workspace',
-          child: Row(children: [const Icon(Icons.delete_forever, color: Colors.red), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.clearWorkspace, style: const TextStyle(color: Colors.red))]),
-        ),
-        PopupMenuItem(
-          value: 'import_markdown',
-          child: Row(children: [const Icon(Icons.file_upload, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.importMarkdown)]),
-        ),
-        PopupMenuItem(
-          value: 'gallery',
-          child: Row(children: [const Icon(Icons.collections, color: Colors.orange), const SizedBox(width: 8), const Text('Showcase Gallery')]),
-        ),
-        PopupMenuItem(
-          value: 'social_preview',
-          child: Row(children: [const Icon(Icons.image, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.socialPreviewDesigner)]),
-        ),
-        PopupMenuItem(
-          value: 'github_actions',
-          child: Row(children: [const Icon(Icons.build, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.githubActionsGenerator)]),
-        ),
-        PopupMenuItem(
-          value: 'funding',
-          child: Row(children: [const Icon(Icons.volunteer_activism, color: Colors.pink), const SizedBox(width: 8), const Text('Funding Generator')]),
-        ),
-        PopupMenuItem(
-          value: 'publish_github',
-          child: Row(children: [const Icon(Icons.cloud_upload, color: Colors.blue), const SizedBox(width: 8), Text('Publish to GitHub')]),
-        ),
-        PopupMenuItem(
-          value: 'export_json',
-          child: Row(children: [const Icon(Icons.javascript, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.exportProjectJson)]),
-        ),
-        PopupMenuItem(
-          value: 'import_json',
-          child: Row(children: [const Icon(Icons.data_object, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.importProjectJson)]),
-        ),
-        PopupMenuItem(
-          value: 'ai_settings',
-          child: Row(children: [const Icon(Icons.psychology, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aiSettings)]),
-        ),
-        PopupMenuItem(
-          value: 'generate_codebase',
-          child: Row(children: [const Icon(Icons.auto_awesome, color: Colors.purple), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.generateFromCodebase)]),
-        ),
-        PopupMenuItem(
-          value: 'extra_files',
-          child: Row(children: [const Icon(Icons.library_add, color: Colors.grey), const SizedBox(width: 8), Text('Generate Extra Files')]),
-        ),
-        PopupMenuItem(
-          value: 'change_language',
-          child: Row(children: [const Icon(Icons.language, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.changeLanguage)]),
-        ),
-        PopupMenuItem(
-          value: 'help',
-          child: Row(children: [const Icon(Icons.help_outline, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.showTour)]),
-        ),
-        PopupMenuItem(
-          value: 'shortcuts',
-          child: Row(children: [const Icon(Icons.keyboard, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.keyboardShortcuts)]),
-        ),
-        PopupMenuItem(
-          value: 'about_dev',
-          child: Row(children: [const Icon(Icons.person, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aboutDeveloper)]),
-        ),
-        PopupMenuItem(
-          value: 'about',
-          child: Row(children: [const Icon(Icons.info_outline, color: Colors.grey), const SizedBox(width: 8), Text(AppLocalizations.of(context)!.aboutApp)]),
-        ),
+        _buildMenuHeader('Project & Files'),
+        _buildMenuItem(context, 'save_library', Icons.save_alt, AppLocalizations.of(context)!.saveToLibrary, color: Colors.blue),
+        _buildMenuItem(context, 'snapshots', Icons.history, AppLocalizations.of(context)!.localSnapshots, color: Colors.blue),
+        _buildMenuItem(context, 'import_markdown', Icons.file_upload, AppLocalizations.of(context)!.importMarkdown, color: Colors.blue),
+        _buildMenuItem(context, 'export_json', Icons.javascript, AppLocalizations.of(context)!.exportProjectJson, color: Colors.blue),
+        _buildMenuItem(context, 'import_json', Icons.data_object, AppLocalizations.of(context)!.importProjectJson, color: Colors.blue),
+        _buildMenuItem(context, 'clear_workspace', Icons.delete_forever, AppLocalizations.of(context)!.clearWorkspace, color: Colors.red, isDestructive: true),
+
+        const PopupMenuDivider(),
+        _buildMenuHeader('Tools & Generators'),
+        _buildMenuItem(context, 'gallery', Icons.collections, 'Showcase Gallery', color: Colors.orange),
+        _buildMenuItem(context, 'social_preview', Icons.image, AppLocalizations.of(context)!.socialPreviewDesigner, color: Colors.orange),
+        _buildMenuItem(context, 'github_actions', Icons.build, AppLocalizations.of(context)!.githubActionsGenerator, color: Colors.orange),
+        _buildMenuItem(context, 'funding', Icons.volunteer_activism, 'Funding Generator', color: Colors.pink),
+        _buildMenuItem(context, 'extra_files', Icons.library_add, 'Generate Extra Files', color: Colors.deepOrange),
+
+        const PopupMenuDivider(),
+        _buildMenuHeader('AI Features'),
+        _buildMenuItem(context, 'ai_settings', Icons.psychology, AppLocalizations.of(context)!.aiSettings, color: Colors.purple),
+        _buildMenuItem(context, 'generate_codebase', Icons.auto_awesome, AppLocalizations.of(context)!.generateFromCodebase, color: Colors.purple),
+
+        const PopupMenuDivider(),
+        _buildMenuHeader('Publish'),
+        _buildMenuItem(context, 'publish_github', Icons.cloud_upload, 'Publish to GitHub', color: Colors.teal),
+
+        const PopupMenuDivider(),
+        _buildMenuHeader('App'),
+        _buildMenuItem(context, 'change_language', Icons.language, AppLocalizations.of(context)!.changeLanguage, color: Colors.grey),
+        _buildMenuItem(context, 'help', Icons.help_outline, AppLocalizations.of(context)!.showTour, color: Colors.grey),
+        _buildMenuItem(context, 'shortcuts', Icons.keyboard, AppLocalizations.of(context)!.keyboardShortcuts, color: Colors.grey),
+        _buildMenuItem(context, 'about_dev', Icons.person, AppLocalizations.of(context)!.aboutDeveloper, color: Colors.grey),
+        _buildMenuItem(context, 'about', Icons.info_outline, AppLocalizations.of(context)!.aboutApp, color: Colors.grey),
       ],
       onSelected: (value) async {
         final provider = Provider.of<ProjectProvider>(context, listen: false);
@@ -525,6 +484,57 @@ class _HomeScreenState extends State<HomeScreen> {
           _showAboutDialog(context);
         }
       },
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuItem(
+    BuildContext context,
+    String value,
+    IconData icon,
+    String text,
+    {Color? color, bool isDestructive = false}
+  ) {
+    final themeColor = color ?? Theme.of(context).iconTheme.color;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (themeColor ?? Colors.grey).withAlpha(isDark ? 50 : 30),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: themeColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: GoogleFonts.inter(
+              color: isDestructive ? Colors.red : null,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildMenuHeader(String title) {
+    return PopupMenuItem<String>(
+      enabled: false,
+      height: 32,
+      child: Text(
+        title.toUpperCase(),
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+          letterSpacing: 1.2,
+        ),
+      ),
     );
   }
 
@@ -2134,5 +2144,4 @@ $htmlContent
     );
   }
 }
-
 

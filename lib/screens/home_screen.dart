@@ -42,6 +42,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/element_renderer.dart';
 import 'funding_generator_screen.dart';
 import '../generator/markdown_generator.dart'; // Added import
+import '../widgets/dialogs/project_settings_dialog.dart';
+import '../widgets/dialogs/import_markdown_dialog.dart';
+import '../widgets/dialogs/generate_codebase_dialog.dart';
+import '../widgets/dialogs/publish_to_github_dialog.dart';
+import '../widgets/dialogs/save_to_library_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -754,264 +759,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showProjectSettingsDialog(BuildContext context, ProjectProvider provider) async {
-    final debouncer = Debouncer(milliseconds: 500);
-
-    await showSafeDialog<void>(
+  void _showProjectSettingsDialog(BuildContext context, ProjectProvider provider) {
+    showSafeDialog(
       context,
-      builder: (context) {
-        // Use a block-style builder to avoid arrow/brace balance issues
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.projectSettings, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-          content: SizedBox(
-            width: 500,
-            child: DefaultTabController(
-              length: 5,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TabBar(
-                    labelColor: Colors.blue,
-                    isScrollable: true,
-                    tabs: [
-                      Tab(text: AppLocalizations.of(context)!.variables),
-                      Tab(text: AppLocalizations.of(context)!.license),
-                      const Tab(text: 'Community'),
-                      Tab(text: AppLocalizations.of(context)!.colors),
-                      Tab(text: AppLocalizations.of(context)!.formatting),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: TabBarView(
-                      children: [
-                        // Variables Tab
-                        SingleChildScrollView(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: provider.variables.entries.map((entry) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: TextFormField(
-                                  initialValue: entry.value,
-                                  decoration: InputDecoration(
-                                    labelText: entry.key,
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                  style: GoogleFonts.inter(),
-                                  onChanged: (value) {
-                                    debouncer.run(() {
-                                      provider.updateVariable(entry.key, value);
-                                    });
-                                  },
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-
-                        // License Tab
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Select License for your project:', style: GoogleFonts.inter()),
-                              const SizedBox(height: 16),
-                              DropdownButtonFormField<String>(
-                                initialValue: provider.licenseType,
-                                decoration: const InputDecoration(border: OutlineInputBorder()),
-                                items: [
-                                  DropdownMenuItem(value: 'None', child: Text('None', style: GoogleFonts.inter())),
-                                  DropdownMenuItem(value: 'MIT', child: Text('MIT License', style: GoogleFonts.inter())),
-                                  DropdownMenuItem(value: 'Apache 2.0', child: Text('Apache License 2.0', style: GoogleFonts.inter())),
-                                  DropdownMenuItem(value: 'GPLv3', child: Text('GNU GPLv3', style: GoogleFonts.inter())),
-                                  DropdownMenuItem(value: 'BSD 3-Clause', child: Text('BSD 3-Clause License', style: GoogleFonts.inter())),
-                                ],
-                                onChanged: (value) {
-                                  if (value != null) provider.setLicenseType(value);
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                              Text('A LICENSE file will be generated and included in the export.', style: GoogleFonts.inter(color: Colors.grey)),
-                            ],
-                          ),
-                        ),
-
-                        // Community Tab
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SwitchListTile(
-                                  title: Text('Include CONTRIBUTING.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                  subtitle: Text('Adds a standard contributing guide.', style: GoogleFonts.inter(fontSize: 12)),
-                                  value: provider.includeContributing,
-                                  onChanged: (value) => provider.setIncludeContributing(value),
-                                ),
-                                const Divider(),
-                                SwitchListTile(
-                                  title: Text('Include SECURITY.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                  subtitle: Text('Adds a security policy.', style: GoogleFonts.inter(fontSize: 12)),
-                                  value: provider.includeSecurity,
-                                  onChanged: (value) => provider.setIncludeSecurity(value),
-                                ),
-                                const Divider(),
-                                SwitchListTile(
-                                  title: Text('Include SUPPORT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                  subtitle: Text('Adds support information.', style: GoogleFonts.inter(fontSize: 12)),
-                                  value: provider.includeSupport,
-                                  onChanged: (value) => provider.setIncludeSupport(value),
-                                ),
-                                const Divider(),
-                                SwitchListTile(
-                                  title: Text('Include CODE_OF_CONDUCT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                  subtitle: Text('Adds a contributor covenant code of conduct.', style: GoogleFonts.inter(fontSize: 12)),
-                                  value: provider.includeCodeOfConduct,
-                                  onChanged: (value) => provider.setIncludeCodeOfConduct(value),
-                                ),
-                                const Divider(),
-                                SwitchListTile(
-                                  title: Text('Include Issue Templates', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                  subtitle: Text('Adds GitHub issue and PR templates.', style: GoogleFonts.inter(fontSize: 12)),
-                                  value: provider.includeIssueTemplates,
-                                  onChanged: (value) => provider.setIncludeIssueTemplates(value),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Colors Tab
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                title: Text(AppLocalizations.of(context)!.primaryColor, style: GoogleFonts.inter()),
-                                subtitle: Text('#${provider.primaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
-                                trailing: CircleAvatar(backgroundColor: provider.primaryColor),
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Pick Primary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                      content: SingleChildScrollView(
-                                        child: ColorPicker(
-                                          pickerColor: provider.primaryColor,
-                                          onColorChanged: (color) => provider.setPrimaryColor(color),
-                                          labelTypes: const [],
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('Done'),
-                                          onPressed: () => Navigator.of(context).pop(),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                              ListTile(
-                                title: Text(AppLocalizations.of(context)!.secondaryColor, style: GoogleFonts.inter()),
-                                subtitle: Text('#${provider.secondaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.inter()),
-                                trailing: CircleAvatar(backgroundColor: provider.secondaryColor),
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Pick Secondary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                                      content: SingleChildScrollView(
-                                        child: ColorPicker(
-                                          pickerColor: provider.secondaryColor,
-                                          onColorChanged: (color) => provider.setSecondaryColor(color),
-                                          labelTypes: const [],
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text('Done'),
-                                          onPressed: () => Navigator.of(context).pop(),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Formatting Tab
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              SwitchListTile(
-                                title: Text(AppLocalizations.of(context)!.exportHtml, style: GoogleFonts.inter()),
-                                subtitle: Text('Include a formatted HTML file in the export.', style: GoogleFonts.inter()),
-                                value: provider.exportHtml,
-                                onChanged: (value) => provider.setExportHtml(value),
-                              ),
-                              const Divider(),
-                              InputDecorator(
-                                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.listBulletStyle, border: const OutlineInputBorder()),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    value: provider.listBullet,
-                                    isDense: true,
-                                    items: [
-                                      DropdownMenuItem(value: '*', child: Text('* (Asterisk)', style: GoogleFonts.inter())),
-                                      DropdownMenuItem(value: '-', child: Text('- (Dash)', style: GoogleFonts.inter())),
-                                      DropdownMenuItem(value: '+', child: Text('+ (Plus)', style: GoogleFonts.inter())),
-                                    ],
-                                    onChanged: (value) {
-                                      if (value != null) provider.setListBullet(value);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              InputDecorator(
-                                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.sectionSpacing, border: const OutlineInputBorder()),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int>(
-                                    value: provider.sectionSpacing,
-                                    isDense: true,
-                                    items: [
-                                      DropdownMenuItem(value: 0, child: Text('0 (Compact)', style: GoogleFonts.inter())),
-                                      DropdownMenuItem(value: 1, child: Text('1 (Standard)', style: GoogleFonts.inter())),
-                                      DropdownMenuItem(value: 2, child: Text('2 (Spacious)', style: GoogleFonts.inter())),
-                                    ],
-                                    onChanged: (value) {
-                                      if (value != null) provider.setSectionSpacing(value);
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.close),
-            ),
-          ],
-        );
-      },
+      builder: (context) => const ProjectSettingsDialog(),
     );
-
-    debouncer.dispose();
   }
 
   void _showSnapshotsDialog(BuildContext context, ProjectProvider provider) {
@@ -1170,39 +922,52 @@ $htmlContent
 
     showSafeDialog(
       context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.saveToLibrary, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.projectName),
-                style: GoogleFonts.inter(),
+      builder: (context) => StyledDialog(
+        title: DialogHeader(title: AppLocalizations.of(context)!.saveToLibrary, icon: Icons.save_alt, color: Colors.blue),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Save your current project to the local library for quick access later.', style: GoogleFonts.inter(color: Colors.grey)),
+            const SizedBox(height: 24),
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.projectName,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.title),
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descController,
-                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.description),
-                style: GoogleFonts.inter(),
+              style: GoogleFonts.inter(),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descController,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.description,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.description),
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: tagsController,
-                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.tags),
-                style: GoogleFonts.inter(),
+              style: GoogleFonts.inter(),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: tagsController,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.tags,
+                hintText: 'flutter, readme, docs',
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.label),
               ),
-            ],
-          ),
+              style: GoogleFonts.inter(),
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(AppLocalizations.of(context)!.cancel),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               final tags = tagsController.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
               libraryProvider.saveProject(
@@ -1260,166 +1025,9 @@ $htmlContent
   }
 
   void _showImportMarkdownDialog(BuildContext context, ProjectProvider provider) {
-    final textController = TextEditingController();
-    final urlController = TextEditingController();
-
     showSafeDialog(
       context,
-      builder: (context) {
-        bool isLoading = false;
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.importMarkdown, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              content: SizedBox(
-                width: 600,
-                height: 450,
-                child: DefaultTabController(
-                  length: 2,
-                  child: Column(
-                    children: [
-                      const TabBar(
-                        labelColor: Colors.blue,
-                        tabs: [
-                          Tab(text: 'Text / File'), // Missing l10n key
-                          Tab(text: 'URL (GitHub/Pastebin)'), // Missing l10n key
-                        ],
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            // Tab 1: Text / File
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  Text('Paste your Markdown content below or pick a file.', style: GoogleFonts.inter()), // Missing l10n key
-                                  const SizedBox(height: 16),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: textController,
-                                      maxLines: null,
-                                      expands: true,
-                                      textAlignVertical: TextAlignVertical.top,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        hintText: '# My Project\n\nDescription...',
-                                      ),
-                                      style: GoogleFonts.firaCode(fontSize: 13),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton.icon(
-                                    icon: const Icon(Icons.upload_file),
-                                    label: const Text('Pick Markdown File'), // Missing l10n key
-                                    onPressed: () async {
-                                      final result = await FilePicker.platform.pickFiles(
-                                        type: FileType.custom,
-                                        allowedExtensions: ['md', 'txt'],
-                                        withData: true,
-                                      );
-                                      if (result != null && result.files.isNotEmpty) {
-                                        final bytes = result.files.first.bytes;
-                                        if (bytes != null) {
-                                          textController.text = utf8.decode(bytes);
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Tab 2: URL
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Enter a raw URL from GitHub or Pastebin.', style: GoogleFonts.inter()), // Missing l10n key
-                                  const SizedBox(height: 16),
-                                  TextField(
-                                    controller: urlController,
-                                    decoration: InputDecoration(
-                                      border: const OutlineInputBorder(),
-                                      hintText: 'https://raw.githubusercontent.com/...',
-                                      labelText: AppLocalizations.of(context)!.repoUrl, // Reusing repoUrl or similar if available, otherwise keep English
-                                      prefixIcon: const Icon(Icons.link),
-                                    ),
-                                    style: GoogleFonts.inter(),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  if (isLoading)
-                                    const CircularProgressIndicator()
-                                  else
-                                    ElevatedButton.icon(
-                                      icon: const Icon(Icons.cloud_download),
-                                      label: const Text('Fetch Content'), // Missing l10n key
-                                      onPressed: () async {
-                                        if (urlController.text.isEmpty) return;
-                                        setState(() => isLoading = true);
-                                        try {
-                                          final url = urlController.text;
-                                          // Basic check for github blob -> raw
-                                          String fetchUrl = url;
-                                          if (url.contains('github.com') && url.contains('/blob/')) {
-                                            fetchUrl = url.replaceFirst('/blob/', '/raw/');
-                                          }
-
-                                          final response = await http.get(Uri.parse(fetchUrl));
-                                          if (response.statusCode == 200) {
-                                            textController.text = response.body;
-                                            if (context.mounted) {
-                                              ToastHelper.show(context, AppLocalizations.of(context)!.contentFetched);
-                                            }
-                                          } else {
-                                            if (context.mounted) {
-                                              ToastHelper.show(context, '${AppLocalizations.of(context)!.fetchFailed}: ${response.statusCode}', isError: true);
-                                            }
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
-                                          }
-                                        } finally {
-                                          if (context.mounted) {
-                                            setState(() => isLoading = false);
-                                          }
-                                        }
-                                      },
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (textController.text.isNotEmpty) {
-                      final markdownText = textController.text;
-                      Navigator.pop(context);
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        provider.importMarkdown(markdownText);
-                        ToastHelper.show(context, AppLocalizations.of(context)!.projectImported);
-                      });
-                    }
-                  },
-                  child: Text(AppLocalizations.of(context)!.import),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (context) => const ImportMarkdownDialog(),
     );
   }
 
@@ -1618,338 +1226,18 @@ $htmlContent
     }
 
   void _showPublishToGitHubDialog(BuildContext context, ProjectProvider provider) {
-    final ownerController = TextEditingController();
-    final repoController = TextEditingController();
-    final branchController = TextEditingController(text: 'docs/update-readme');
-    final messageController = TextEditingController(text: 'docs: update README.md via Readme Creator');
-    final tokenController = TextEditingController(text: provider.githubToken); // Added
-    bool isLoading = false;
-    bool isTokenObscured = true; // Added
-
     showSafeDialog(
       context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text('Publish to GitHub', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              content: SizedBox(
-                width: 400,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // GitHub Token Field
-                      TextField(
-                        controller: tokenController,
-                        obscureText: isTokenObscured,
-                        decoration: InputDecoration(
-                          labelText: 'GitHub Personal Access Token',
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(isTokenObscured ? Icons.visibility : Icons.visibility_off),
-                            onPressed: () => setState(() => isTokenObscured = !isTokenObscured),
-                          ),
-                          helperText: 'Required to create Pull Request',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      TextField(
-                        controller: ownerController,
-                        decoration: const InputDecoration(
-                          labelText: 'Owner (Username/Org)',
-                          border: OutlineInputBorder(),
-                          hintText: 'e.g. mhmdwaelanwr',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: repoController,
-                        decoration: const InputDecoration(
-                          labelText: 'Repository Name',
-                          border: OutlineInputBorder(),
-                          hintText: 'e.g. Readme-Creator',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: branchController,
-                        decoration: const InputDecoration(
-                          labelText: 'New Branch Name',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: messageController,
-                        decoration: const InputDecoration(
-                          labelText: 'Commit Message',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (isLoading)
-                        const Center(child: CircularProgressIndicator())
-                      else
-                        const Text('This will create a new branch and a Pull Request.', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.cloud_upload),
-                  label: const Text('Publish'),
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          if (tokenController.text.isEmpty) {
-                             ToastHelper.show(context, 'GitHub Token is required', isError: true);
-                             return;
-                          }
-                          if (ownerController.text.isEmpty || repoController.text.isEmpty) {
-                            ToastHelper.show(context, 'Owner and Repo are required', isError: true);
-                            return;
-                          }
-
-                          setState(() => isLoading = true);
-
-                          // Save token
-                          provider.setGitHubToken(tokenController.text.trim());
-
-                          try {
-                            final generator = MarkdownGenerator();
-                            final content = generator.generate(
-                              provider.elements,
-                              variables: provider.variables,
-                              listBullet: provider.listBullet,
-                              sectionSpacing: provider.sectionSpacing,
-                              targetLanguage: provider.targetLanguage,
-                            );
-
-                            final publisher = GitHubPublisherService(provider.githubToken);
-                            await publisher.publishReadme(
-                              owner: ownerController.text.trim(),
-                              repo: repoController.text.trim(),
-                              content: content,
-                              branchName: branchController.text.trim(),
-                              commitMessage: messageController.text.trim(),
-                            );
-
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              showSafeDialog(
-                                context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Success!'),
-                                  content: const Text('Pull Request created successfully.'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Close'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        launchUrl(Uri.parse('https://github.com/${ownerController.text}/${repoController.text}/pulls'));
-                                      },
-                                      child: const Text('View PRs'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              setState(() => isLoading = false);
-                              ToastHelper.show(context, 'Error: $e', isError: true);
-                            }
-                          }
-                        },
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (context) => const PublishToGitHubDialog(),
     );
   }
 
-    void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) {
-    final pathController = TextEditingController();
-    final repoUrlController = TextEditingController();
-    bool isLoading = false;
-    String? statusMessage;
-
+  void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) {
     showSafeDialog(
       context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.generateFromCodebase, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              content: SizedBox(
-                width: 500,
-                child: DefaultTabController(
-                  length: 2,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const TabBar(
-                        labelColor: Colors.blue,
-                        tabs: [
-                          Tab(text: 'Local Folder'),
-                          Tab(text: 'GitHub Repo'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 200,
-                        child: TabBarView(
-                          children: [
-                            // Local Folder
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  TextField(
-                                    controller: pathController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Project Path',
-                                      border: const OutlineInputBorder(),
-                                      suffixIcon: IconButton(
-                                        icon: const Icon(Icons.folder_open),
-                                        onPressed: () async {
-                                          String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-                                          if (selectedDirectory != null) {
-                                            pathController.text = selectedDirectory;
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  if (isLoading)
-                                    Column(
-                                      children: [
-                                        const CircularProgressIndicator(),
-                                        const SizedBox(height: 8),
-                                        Text(statusMessage ?? 'Analyzing...', style: GoogleFonts.inter(fontSize: 12)),
-                                      ],
-                                    )
-                                  else
-                                    ElevatedButton.icon(
-                                      icon: const Icon(Icons.auto_awesome),
-                                      label: const Text('Generate README'),
-                                      onPressed: () async {
-                                        if (pathController.text.isEmpty) return;
-                                        setState(() {
-                                          isLoading = true;
-                                          statusMessage = 'Scanning codebase...';
-                                        });
-
-                                        try {
-                                          final structure = await CodebaseScannerService.scanDirectory(pathController.text);
-
-                                          setState(() => statusMessage = 'Generating content with AI...');
-
-                                          final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
-
-                                          if (context.mounted) {
-                                            Navigator.pop(context);
-                                            provider.importMarkdown(readmeContent);
-                                            ToastHelper.show(context, 'README generated successfully!');
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            setState(() => isLoading = false);
-                                            ToastHelper.show(context, 'Error: $e', isError: true);
-                                          }
-                                        }
-                                      },
-                                    ),
-                                ],
-                              ),
-                            ),
-                            // GitHub Repo
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  TextField(
-                                    controller: repoUrlController,
-                                    decoration: const InputDecoration(
-                                      labelText: 'GitHub Repository URL',
-                                      border: OutlineInputBorder(),
-                                      hintText: 'https://github.com/username/repo',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  if (isLoading)
-                                    Column(
-                                      children: [
-                                        const CircularProgressIndicator(),
-                                        const SizedBox(height: 8),
-                                        Text(statusMessage ?? 'Analyzing...', style: GoogleFonts.inter(fontSize: 12)),
-                                      ],
-                                    )
-                                  else
-                                    ElevatedButton.icon(
-                                      icon: const Icon(Icons.auto_awesome),
-                                      label: const Text('Generate README'),
-                                      onPressed: () async {
-                                        if (repoUrlController.text.isEmpty) return;
-                                        setState(() {
-                                          isLoading = true;
-                                          statusMessage = 'Fetching repository...';
-                                        });
-
-                                        try {
-                                          final githubScanner = GitHubScannerService();
-                                          final structure = await githubScanner.scanRepo(repoUrlController.text);
-
-                                          setState(() => statusMessage = 'Generating content with AI...');
-
-                                          final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
-
-                                          if (context.mounted) {
-                                            Navigator.pop(context);
-                                            provider.importMarkdown(readmeContent);
-                                            ToastHelper.show(context, 'README generated successfully!');
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            setState(() => isLoading = false);
-                                            ToastHelper.show(context, 'Error: $e', isError: true);
-                                          }
-                                        }
-                                      },
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
-                ),
-              ],
-            );
-          },
-        );
-      },
+      builder: (context) => const GenerateCodebaseDialog(),
     );
-    }
+  }
 
     void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) {
     showSafeDialog(
@@ -2144,4 +1432,6 @@ $htmlContent
     );
   }
 }
+
+
 

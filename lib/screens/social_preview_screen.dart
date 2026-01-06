@@ -30,6 +30,18 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   double _descSize = 32;
   bool _showBorder = true;
   Uint8List? _logoBytes; // Added for logo support
+  String _descriptionText = 'Awesome project description goes here.';
+  String _selectedFont = 'Inter';
+  final List<String> _fonts = ['Inter', 'Roboto', 'Poppins', 'Lato', 'Open Sans', 'Montserrat', 'Oswald', 'Raleway'];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize description from provider if available, otherwise default
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Initialize if needed
+    });
+  }
 
   Future<void> _pickLogo() async {
     final result = await FilePicker.platform.pickFiles(
@@ -249,11 +261,21 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
   bool _showWatermark = true;
   String _watermarkText = 'Made with Readme Creator';
 
-  // ...existing code...
-
   Widget _buildPreview(ProjectProvider provider) {
     final projectName = provider.variables['PROJECT_NAME'] ?? 'Project Name';
-    final description = 'Awesome project description goes here.'; // Placeholder or from var
+
+    TextStyle getFontStyle(double size, FontWeight weight) {
+      switch (_selectedFont) {
+        case 'Roboto': return GoogleFonts.roboto(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Poppins': return GoogleFonts.poppins(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Lato': return GoogleFonts.lato(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Open Sans': return GoogleFonts.openSans(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Montserrat': return GoogleFonts.montserrat(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Oswald': return GoogleFonts.oswald(fontSize: size, fontWeight: weight, color: _textColor);
+        case 'Raleway': return GoogleFonts.raleway(fontSize: size, fontWeight: weight, color: _textColor);
+        default: return GoogleFonts.inter(fontSize: size, fontWeight: weight, color: _textColor);
+      }
+    }
 
     return Center(
       child: SingleChildScrollView(
@@ -286,6 +308,13 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
               child: Stack(
                 children: [
                   // Background Pattern (Optional - maybe add later)
+                  if (_useGradient) // Add a subtle pattern overlay if gradient
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.05,
+                        child: CustomPaint(painter: GridPatternPainter()),
+                      ),
+                    ),
 
                   Center(
                     child: Padding(
@@ -299,21 +328,13 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
                           ],
                           Text(
                             projectName,
-                            style: GoogleFonts.inter(
-                              fontSize: _titleSize,
-                              fontWeight: FontWeight.bold,
-                              color: _textColor,
-                              height: 1.1,
-                            ),
+                            style: getFontStyle(_titleSize, FontWeight.bold).copyWith(height: 1.1),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            description,
-                            style: GoogleFonts.inter(
-                              fontSize: _descSize,
-                              color: _textColor.withAlpha(200),
-                            ),
+                            _descriptionText,
+                            style: getFontStyle(_descSize, FontWeight.normal).copyWith(color: _textColor.withAlpha(200)),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -354,6 +375,20 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        Text('Content Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 16),
+        TextFormField(
+          initialValue: _descriptionText,
+          decoration: const InputDecoration(
+            labelText: 'Card Description',
+            border: OutlineInputBorder(),
+            alignLabelWithHint: true,
+          ),
+          maxLines: 3,
+          onChanged: (val) => setState(() => _descriptionText = val),
+        ),
+        const SizedBox(height: 24),
+
         Text('Design Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 16),
 
@@ -391,6 +426,20 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
         const SizedBox(height: 32),
         Text('Typography Settings', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 16),
+        InputDecorator(
+          decoration: const InputDecoration(labelText: 'Font Family', border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4)),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: _selectedFont,
+              items: _fonts.map((f) => DropdownMenuItem(value: f, child: Text(f, style: GoogleFonts.getFont(f)))).toList(),
+              onChanged: (val) {
+                if (val != null) setState(() => _selectedFont = val);
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         _buildSlider('Title Font Size', _titleSize, 24, 120, (v) => setState(() => _titleSize = v)),
         const SizedBox(height: 16),
         _buildSlider('Description Font Size', _descSize, 12, 60, (v) => setState(() => _descSize = v)),
@@ -419,4 +468,22 @@ class _SocialPreviewScreenState extends State<SocialPreviewScreen> {
       ],
     );
   }
+}
+
+class GridPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1;
+    const step = 40.0;
+    for (double x = 0; x < size.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

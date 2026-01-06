@@ -140,30 +140,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildStep1() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('What are you building today?', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildOptionCard(
-              icon: Icons.folder_special,
-              title: 'Project README',
-              description: 'Documentation for your software, library, or app.',
-              value: 'project',
-            ),
-            const SizedBox(width: 24),
-            _buildOptionCard(
-              icon: Icons.person,
-              title: 'GitHub Profile',
-              description: 'A personal profile to showcase your skills and stats.',
-              value: 'profile',
-            ),
-          ],
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('What are you building today?', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildOptionCard(
+                icon: Icons.folder_special,
+                title: 'Project README',
+                description: 'Documentation for your software, library, or app.',
+                value: 'project',
+              ),
+              const SizedBox(width: 24),
+              _buildOptionCard(
+                icon: Icons.person,
+                title: 'GitHub Profile',
+                description: 'A personal profile to showcase your skills and stats.',
+                value: 'profile',
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -201,58 +203,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Widget _buildStep2() {
-    if (_goal == 'project') {
-      return Column(
+    return SingleChildScrollView(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Tell us about your project', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _projectNameController,
-            decoration: const InputDecoration(
-              labelText: 'Project Name',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.title),
+          if (_goal == 'project') ...[
+            Text('Tell us about your project', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _projectNameController,
+              decoration: const InputDecoration(
+                labelText: 'Project Name',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.title),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _projectDescController,
-            decoration: const InputDecoration(
-              labelText: 'Short Description',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.description),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _projectDescController,
+              decoration: const InputDecoration(
+                labelText: 'Short Description',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.description),
+              ),
+              maxLines: 2,
             ),
-            maxLines: 2,
-          ),
+          ] else ...[
+            Text('Tell us about yourself', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                labelText: 'GitHub Username',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _roleController,
+              decoration: const InputDecoration(
+                labelText: 'Role / Title (e.g. Full Stack Developer)',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.work),
+              ),
+            ),
+          ],
         ],
-      );
-    } else {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Tell us about yourself', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _usernameController,
-            decoration: const InputDecoration(
-              labelText: 'GitHub Username',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _roleController,
-            decoration: const InputDecoration(
-              labelText: 'Role / Title (e.g. Full Stack Developer)',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.work),
-            ),
-          ),
-        ],
-      );
-    }
+      ),
+    );
   }
 }
 

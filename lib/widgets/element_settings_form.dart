@@ -1493,22 +1493,29 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: element.badgeStyle ?? 'flat',
-                          decoration: const InputDecoration(labelText: 'Style'),
-                          items: const [
-                            DropdownMenuItem(value: 'flat', child: Text('Flat')),
-                            DropdownMenuItem(value: 'flat-square', child: Text('Flat Square')),
-                            DropdownMenuItem(value: 'plastic', child: Text('Plastic')),
-                            DropdownMenuItem(value: 'for-the-badge', child: Text('For The Badge')),
-                            DropdownMenuItem(value: 'social', child: Text('Social')),
-                          ],
-                          onChanged: (value) {
-                            if (value != null) {
-                              element.badgeStyle = value;
-                              _onBadgeParamsChanged(); // Trigger URL regen
-                            }
-                          },
+                        child: InputDecorator(
+                          decoration: const InputDecoration(labelText: 'Style', contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4), border: OutlineInputBorder()),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: element.badgeStyle ?? 'flat',
+                              items: const [
+                                DropdownMenuItem(value: 'flat', child: Text('Flat')),
+                                DropdownMenuItem(value: 'flat-square', child: Text('Flat Square')),
+                                DropdownMenuItem(value: 'plastic', child: Text('Plastic')),
+                                DropdownMenuItem(value: 'for-the-badge', child: Text('For The Badge')),
+                                DropdownMenuItem(value: 'social', child: Text('Social')),
+                              ],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    element.badgeStyle = value;
+                                  });
+                                  _onBadgeParamsChanged(); // Trigger URL regen
+                                }
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -1676,7 +1683,7 @@ class _ElementSettingsFormState extends State<ElementSettingsForm> {
                           Row(
                             children: [
                               SizedBox(
-                                width: 110,
+                                width: 130,
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true,
                                   decoration: const InputDecoration(

@@ -1,95 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A tool to generate Markdown README files">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Readme Creator">
-  <meta property="og:description" content="A tool to generate Markdown README files easily.">
-  <meta property="og:image" content="icons/Icon-192.png">
-  <meta property="og:url" content="https://www.readmecreator.studio/">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Readme Creator">
-  <meta name="twitter:description" content="A tool to generate Markdown README files easily.">
-  <meta name="twitter:image" content="icons/Icon-192.png">
-
-  <!-- Loading Indicator Style -->
-  <style>
-    body {
-      background-color: #0175C2; /* Same as manifest background_color */
-      margin: 0;
-      overflow: hidden; /* Hide scrollbars during loading */
-    }
-    .loader {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      margin: -60px 0 0 -60px; /* Center offset */
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      -webkit-animation: spin 2s linear infinite; /* Safari */
-      animation: spin 2s linear infinite;
-    }
-
-    /* Safari */
-    @-webkit-keyframes spin {
-      0% { -webkit-transform: rotate(0deg); }
-      100% { -webkit-transform: rotate(360deg); }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+  <meta name="description" content="Readme Creator - The ultimate tool to generate professional GitHub README files in minutes.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="readme_creator">
+  <meta name="apple-mobile-web-app-title" content="Readme Creator">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>readme_creator</title>
+  <title>Readme Creator | Professional README Generator</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      background-color: #0f172a;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: #3b82f6;
+      animation: spin 1s ease-in-out infinite;
+    }
+    .loading-text {
+      margin-top: 20px;
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <div class="loader"></div>
-  <noscript>
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif;">
-      <h1>JavaScript is required to run this application.</h1>
-    </div>
-  </noscript>
+  <div class="loading-container" id="loading-indicator">
+    <div class="spinner"></div>
+    <div class="loading-text">Initializing Readme Creator...</div>
+  </div>
+
   <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: "$SERVICE_WORKER_VERSION",
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+
     window.addEventListener('flutter-first-frame', function () {
-      var loader = document.querySelector('.loader');
+      var loader = document.querySelector('#loading-indicator');
       if (loader) {
-        loader.remove();
-        document.body.style.overflow = 'auto';
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 300);
       }
     });
   </script>

@@ -54,9 +54,6 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final libraryProvider = Provider.of<LibraryProvider>(context);
 
-    // ... (item definitions are outside valid replacement scope if I don't include them, but I will include them to be safe or target after them)
-    // Actually, I'll target the return statement mostly.
-
     final typographyItems = [
       ComponentItem(ReadmeElementType.heading, 'Heading', Icons.title),
       ComponentItem(ReadmeElementType.paragraph, 'Paragraph', Icons.text_fields),
@@ -204,7 +201,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                                       children: [
                                         Icon(Icons.dashboard_customize, size: 48, color: Theme.of(context).colorScheme.primary.withAlpha(100)),
                                         const SizedBox(height: 16),
-                                        const Text('No snippets saved.\\nRight-click an element to save.', textAlign: TextAlign.center),
+                                        const Text('No snippets saved.\nRight-click an element to save.', textAlign: TextAlign.center),
                                       ],
                                     ),
                                   ),
@@ -231,11 +228,6 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
   }
 
   Widget _buildDraggableItem(BuildContext context, ReadmeElementType type, String label, IconData icon) {
-    // We can use Draggable for drag and drop to canvas if supported,
-    // OR just InkWell to add on click.
-    // Assuming EditorCanvas handles Droppable or we just add on click.
-    // The previous implementation likely only had InkWell.
-    // Let's make it Draggable AND InkWell.
     return Draggable<ReadmeElementType>(
       data: type,
       feedback: Material(
@@ -351,9 +343,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                   },
                 ),
           onTap: () {
-            // Parse JSON and add element
             try {
-              // We use addSnippet which handles parsing and adding safely
               final provider = Provider.of<ProjectProvider>(context, listen: false);
               provider.addSnippet(snippet);
             } catch (e) {

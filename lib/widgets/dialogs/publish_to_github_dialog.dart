@@ -227,8 +227,9 @@ class _PublishToGitHubDialogState extends State<PublishToGitHubDialog> {
             ),
             ElevatedButton(
               onPressed: () {
-                launchUrl(Uri.parse(
-                    'https://github.com/${_ownerController.text.trim()}/${_repoController.text.trim()}/pulls'));
+                final owner = _ownerController.text.trim();
+                final repo = _repoController.text.trim();
+                launchUrl(Uri.parse('https://github.com/$owner/$repo/pulls'));
               },
               child: const Text('View PRs'),
             ),
@@ -242,4 +243,3 @@ class _PublishToGitHubDialogState extends State<PublishToGitHubDialog> {
     }
   }
 }
-

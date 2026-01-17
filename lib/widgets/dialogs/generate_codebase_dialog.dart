@@ -157,6 +157,7 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
     try {
       final structure = await CodebaseScannerService.scanDirectory(_pathController.text);
 
+      if (!mounted) return;
       setState(() => _statusMessage = 'Generating content with AI...');
 
       final readmeContent = await AIService.generateReadmeFromStructure(
@@ -189,6 +190,7 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
       final githubScanner = GitHubScannerService();
       final structure = await githubScanner.scanRepo(_repoUrlController.text);
 
+      if (!mounted) return;
       setState(() => _statusMessage = 'Generating content with AI...');
 
       final readmeContent = await AIService.generateReadmeFromStructure(
@@ -207,4 +209,3 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
     }
   }
 }
-

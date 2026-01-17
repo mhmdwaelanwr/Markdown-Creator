@@ -7,13 +7,38 @@ import '../core/constants/app_colors.dart';
 import '../utils/dialog_helper.dart';
 import '../utils/toast_helper.dart';
 
-class DeveloperInfoDialog extends StatelessWidget {
+class DeveloperInfoDialog extends StatefulWidget {
   const DeveloperInfoDialog({super.key});
+
+  @override
+  State<DeveloperInfoDialog> createState() => _DeveloperInfoDialogState();
+}
+
+class _DeveloperInfoDialogState extends State<DeveloperInfoDialog> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    // Listen to tab changes to trigger rebuild for header visibility
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
+    final isSupportTab = _tabController.index == 2;
 
     return StyledDialog(
       title: const DialogHeader(
@@ -24,61 +49,66 @@ class DeveloperInfoDialog extends StatelessWidget {
       width: 700,
       height: 750,
       contentPadding: EdgeInsets.zero,
-      content: DefaultTabController(
-        length: 3,
-        child: Column(
-          children: [
-            // Header Profile Section
-            _buildProfileHeader(context, isDark),
-            
-            // Modern TabBar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: TabBar(
-                  labelColor: Colors.white,
-                  unselectedLabelColor: isDark ? Colors.white60 : Colors.black54,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.primary.withAlpha(180)],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withAlpha(60),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+      content: Column(
+        children: [
+          // Animated Header: Hides when Support tab (index 2) is active
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: isSupportTab 
+              ? const SizedBox(width: double.infinity)
+              : _buildProfileHeader(context, isDark),
+          ),
+          
+          // TabBar Container
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: isDark ? Colors.white60 : Colors.black54,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary, AppColors.primary.withAlpha(180)],
                   ),
-                  dividerColor: Colors.transparent,
-                  labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13),
-                  tabs: const [
-                    Tab(text: 'Socials & Dev'),
-                    Tab(text: 'Contact'),
-                    Tab(text: 'Support'),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withAlpha(60),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
-              ),
-            ),
-            
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildSocialsTab(context, isDark),
-                  _buildContactTab(context, isDark),
-                  _buildSupportTab(context, isDark),
+                dividerColor: Colors.transparent,
+                labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13),
+                tabs: const [
+                  Tab(text: 'Socials & Dev'),
+                  Tab(text: 'Contact'),
+                  Tab(text: 'Support'),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildSocialsTab(context, isDark),
+                _buildContactTab(context, isDark),
+                _buildSupportTab(context, isDark),
+              ],
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
@@ -91,11 +121,9 @@ class DeveloperInfoDialog extends StatelessWidget {
 
   Widget _buildProfileHeader(BuildContext context, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(24),
-      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
       child: Row(
         children: [
-          // Avatar with animated glow effect
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(

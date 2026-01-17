@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/readme_element.dart';
 import '../models/snippet.dart';
 import '../providers/project_provider.dart';
-import '../utils/templates.dart';
 import 'canvas_item.dart';
 import '../core/constants/app_colors.dart';
 import '../utils/dialog_helper.dart';
@@ -19,6 +17,7 @@ class EditorCanvas extends StatelessWidget {
     final provider = Provider.of<ProjectProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Responsive sizing logic
     double maxWidth = 850;
     double? deviceHeight;
     double borderRadius = 12;
@@ -40,7 +39,9 @@ class EditorCanvas extends StatelessWidget {
         const SingleActivator(LogicalKeyboardKey.keyZ, control: true): () => provider.undo(),
         const SingleActivator(LogicalKeyboardKey.keyY, control: true): () => provider.redo(),
         const SingleActivator(LogicalKeyboardKey.delete): () {
-          if (provider.selectedElementId != null) provider.removeElement(provider.selectedElementId!);
+          if (provider.selectedElementId != null) {
+            provider.removeElement(provider.selectedElementId!);
+          }
         },
       },
       child: Focus(
@@ -48,15 +49,18 @@ class EditorCanvas extends StatelessWidget {
         child: DragTarget<Object>(
           onWillAcceptWithDetails: (details) => details.data is ReadmeElementType || details.data is Snippet,
           onAcceptWithDetails: (details) {
-            if (details.data is ReadmeElementType) provider.addElement(details.data as ReadmeElementType);
-            else if (details.data is Snippet) provider.addSnippet(details.data as Snippet);
+            if (details.data is ReadmeElementType) {
+              provider.addElement(details.data as ReadmeElementType);
+            } else if (details.data is Snippet) {
+              provider.addSnippet(details.data as Snippet);
+            }
           },
           builder: (context, candidateData, rejectedData) {
             return Container(
               color: isDark ? AppColors.editorBackgroundDark : AppColors.editorBackgroundLight,
               child: Stack(
                 children: [
-                  // Performance-Optimized Grid
+                  // FIXED: High-Performance Dotted Grid using DrawCircle
                   if (provider.showGrid)
                     Positioned.fill(
                       child: RepaintBoundary(
@@ -66,7 +70,7 @@ class EditorCanvas extends StatelessWidget {
                       ),
                     ),
 
-                  // Main Scrollable Area
+                  // Main Canvas Implementation
                   Positioned.fill(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
@@ -76,7 +80,7 @@ class EditorCanvas extends StatelessWidget {
                           Center(
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeOutCubic,
+                              curve: Curves.easeInOut,
                               constraints: BoxConstraints(
                                 maxWidth: maxWidth,
                                 minHeight: deviceHeight ?? 0,
@@ -87,22 +91,24 @@ class EditorCanvas extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(borderRadius),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withAlpha(isDark ? 60 : 15),
+                                    color: Colors.black.withAlpha(isDark ? 100 : 25),
                                     blurRadius: 30,
-                                    offset: const Offset(0, 10),
+                                    offset: const Offset(0, 15),
                                   ),
                                 ],
                                 border: Border.all(
-                                  color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(10),
-                                  width: provider.deviceMode == DeviceMode.desktop ? 1 : 10, // Visual frame
+                                  color: isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(12),
+                                  width: provider.deviceMode == DeviceMode.desktop ? 1 : 12, // Visual Frame
                                 ),
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: GestureDetector(
                                 onTap: () => provider.selectElement(''),
-                                child: provider.elements.isEmpty
-                                    ? _buildEmptyState(context)
-                                    : _buildElementList(context, provider, canvasPadding, isDark),
+                                child: RepaintBoundary(
+                                  child: provider.elements.isEmpty
+                                      ? _buildEmptyState(context)
+                                      : _buildElementList(provider, canvasPadding, isDark),
+                                ),
                               ),
                             ),
                           ),
@@ -112,10 +118,8 @@ class EditorCanvas extends StatelessWidget {
                     ),
                   ),
 
-                  // Enhanced Toolbar (Visible on hover/scroll)
+                  // Floating UI Elements
                   _buildFloatingToolbar(context, provider, isDark),
-
-                  // Drop Indicator
                   if (candidateData.isNotEmpty) _buildDropIndicator(context),
                 ],
               ),
@@ -126,33 +130,33 @@ class EditorCanvas extends StatelessWidget {
     );
   }
 
-  Widget _buildElementList(BuildContext context, ProjectProvider provider, EdgeInsets padding, bool isDark) {
-    // RepaintBoundary here ensures that reordering doesn't repaint the whole app
-    return RepaintBoundary(
-      child: ReorderableListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: padding,
-        itemCount: provider.elements.length,
-        onReorder: provider.reorderElements,
-        proxyDecorator: (child, index, animation) => _proxyDecorator(child, index, animation, isDark),
-        itemBuilder: (context, index) {
-          final element = provider.elements[index];
-          return KeyedSubtree(
-            key: ValueKey(element.id),
-            child: DropZone(
-              onDrop: (data) {
-                if (data is ReadmeElementType) provider.insertElement(index, data);
-                else if (data is Snippet) provider.insertSnippet(index, data);
-              },
-              child: CanvasItem(
-                element: element,
-                isSelected: element.id == provider.selectedElementId,
-              ),
+  Widget _buildElementList(ProjectProvider provider, EdgeInsets padding, bool isDark) {
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: padding,
+      itemCount: provider.elements.length,
+      onReorder: provider.reorderElements,
+      proxyDecorator: (child, index, animation) => _proxyDecorator(child, index, animation, isDark),
+      itemBuilder: (context, index) {
+        final element = provider.elements[index];
+        return KeyedSubtree(
+          key: ValueKey(element.id),
+          child: DropZone(
+            onDrop: (data) {
+              if (data is ReadmeElementType) {
+                provider.insertElement(index, data);
+              } else if (data is Snippet) {
+                provider.insertSnippet(index, data);
+              }
+            },
+            child: CanvasItem(
+              element: element,
+              isSelected: element.id == provider.selectedElementId,
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -163,13 +167,14 @@ class EditorCanvas extends StatelessWidget {
       right: 0,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.9),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withAlpha(20)),
+            color: (isDark ? const Color(0xFF1E293B) : Colors.white).withAlpha(240),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withAlpha(25)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(20), blurRadius: 10, offset: const Offset(0, 4)),
+              BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, offset: const Offset(0, 4)),
             ],
           ),
           child: Row(
@@ -177,25 +182,25 @@ class EditorCanvas extends StatelessWidget {
             children: [
               _toolbarButton(Icons.undo_rounded, 'Undo', provider.undo),
               _toolbarButton(Icons.redo_rounded, 'Redo', provider.redo),
-              const SizedBox(width: 4, height: 24, child: VerticalDivider()),
+              const VerticalDivider(width: 20, indent: 12, endIndent: 12),
               _toolbarButton(
-                Icons.delete_outline_rounded,
+                Icons.delete_sweep_rounded,
                 'Delete',
                 provider.selectedElementId != null ? () => provider.removeElement(provider.selectedElementId!) : null,
                 color: Colors.redAccent,
               ),
-              const SizedBox(width: 4, height: 24, child: VerticalDivider()),
+              const VerticalDivider(width: 20, indent: 12, endIndent: 12),
               _toolbarButton(
-                Icons.grid_3x3_rounded,
+                Icons.grid_goldenratio_rounded,
                 'Grid',
                 provider.toggleGrid,
                 isActive: provider.showGrid,
               ),
               _toolbarButton(
-                Icons.cleaning_services_rounded,
-                'Clear All',
+                Icons.delete_forever_rounded,
+                'Clear',
                 () => _confirmClear(context, provider),
-                color: Colors.orangeAccent,
+                color: Colors.orange,
               ),
             ],
           ),
@@ -209,9 +214,8 @@ class EditorCanvas extends StatelessWidget {
       icon: Icon(icon, size: 20),
       onPressed: onTap,
       tooltip: tooltip,
-      color: isActive ? Colors.blue : (onTap == null ? Colors.grey.withAlpha(100) : color),
+      color: isActive ? Colors.blue : (onTap == null ? Colors.grey.withAlpha(128) : color),
       visualDensity: VisualDensity.compact,
-      splashRadius: 20,
     );
   }
 
@@ -219,8 +223,8 @@ class EditorCanvas extends StatelessWidget {
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear Workspace?'),
-        content: const Text('This will remove all elements from your project.'),
+        title: const Text('Clear All?'),
+        content: const Text('Do you want to remove all elements from this project?'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           ElevatedButton(
@@ -229,7 +233,7 @@ class EditorCanvas extends StatelessWidget {
               provider.clearElements();
               Navigator.pop(context);
             },
-            child: const Text('Clear All'),
+            child: const Text('Clear Everything'),
           ),
         ],
       ),
@@ -239,21 +243,15 @@ class EditorCanvas extends StatelessWidget {
   Widget _buildDropIndicator(BuildContext context) {
     return IgnorePointer(
       child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue.withAlpha(150), width: 4),
-          color: Colors.blue.withAlpha(20),
-        ),
+        color: Colors.blue.withAlpha(25),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.add_circle_outline, color: Colors.blue, size: 64),
-              const SizedBox(height: 16),
-              Text(
-                'Drop to Add Component',
-                style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
-              ),
-            ],
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.add_circle_outline, color: Colors.white, size: 48),
           ),
         ),
       ),
@@ -262,37 +260,17 @@ class EditorCanvas extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 40),
+      padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 40),
       child: Column(
         children: [
-          Icon(Icons.dashboard_customize_outlined, size: 80, color: Colors.blue.withAlpha(100)),
+          const Icon(Icons.auto_awesome_mosaic_rounded, size: 80, color: Colors.blue),
           const SizedBox(height: 32),
           Text(
-            'Craft Your README',
-            style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.bold),
+            'New README Project',
+            style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Drag components from the sidebar or pick a template to get started.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 16, color: Colors.grey, height: 1.5),
-          ),
-          const SizedBox(height: 40),
-          Wrap(
-            spacing: 16,
-            children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.auto_awesome),
-                label: const Text('Quick Start'),
-                onPressed: () => Provider.of<ProjectProvider>(context, listen: false).loadTemplate(Templates.all.first),
-              ),
-              OutlinedButton.icon(
-                icon: const Icon(Icons.style),
-                label: const Text('Browse Templates'),
-                onPressed: () {}, // Handled in settings panel or separate button
-              ),
-            ],
-          ),
+          const SizedBox(height: 8),
+          const Text('Drag and drop components to build your file', style: TextStyle(color: Colors.grey)),
         ],
       ),
     );
@@ -301,9 +279,9 @@ class EditorCanvas extends StatelessWidget {
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation, bool isDark) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         return Material(
-          elevation: 10,
+          elevation: 8,
           color: isDark ? const Color(0xFF334155) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           child: child,
@@ -320,25 +298,19 @@ class DottedGridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Increased visibility and stability
     final paint = Paint()
-      ..color = isDark ? Colors.white.withAlpha(20) : Colors.black.withAlpha(10)
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round;
+      ..color = isDark ? Colors.white.withAlpha(38) : Colors.black.withAlpha(20)
+      ..style = PaintingStyle.fill;
 
     const double gap = 30.0;
-    final List<Offset> points = [];
-
-    // Pre-calculate points to avoid expensive logic in the loop if we were doing more
+    
+    // Draw circles instead of points for better web support
     for (double x = 0; x <= size.width; x += gap) {
       for (double y = 0; y <= size.height; y += gap) {
-        points.add(Offset(x, y));
+        canvas.drawCircle(Offset(x, y), 1.2, paint);
       }
     }
-    
-    // Using PointMode.points is generally fast, but some browsers might struggle with it.
-    // If it's "not working", we can try small drawRects or drawCircles, but points are best.
-    // Let's ensure strokeWidth is sufficient.
-    canvas.drawPoints(PointMode.points, points, paint);
   }
 
   @override
@@ -360,7 +332,9 @@ class _DropZoneState extends State<DropZone> {
     return DragTarget<Object>(
       onWillAcceptWithDetails: (details) {
         final accepts = details.data is ReadmeElementType || details.data is Snippet;
-        if (accepts) setState(() => _isHovered = true);
+        if (accepts) {
+          setState(() => _isHovered = true);
+        }
         return accepts;
       },
       onLeave: (_) => setState(() => _isHovered = false),
@@ -379,7 +353,7 @@ class _DropZoneState extends State<DropZone> {
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(2),
-                  boxShadow: [BoxShadow(color: Colors.blue.withAlpha(100), blurRadius: 8)],
+                  boxShadow: [BoxShadow(color: Colors.blue.withAlpha(128), blurRadius: 8)],
                 ),
               ),
             widget.child,

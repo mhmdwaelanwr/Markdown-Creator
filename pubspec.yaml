@@ -1,5 +1,5 @@
-name: readme_creator
-description: "A tool to generate Markdown README files"
+name: markdown_creator
+description: "The ultimate tool to craft stunning Markdown documentation in minutes."
 publish_to: 'none'
 
 version: 1.0.0+1

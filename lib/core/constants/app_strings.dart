@@ -1,6 +1,6 @@
 class AppStrings {
-  static const String appTitle = 'Advanced Readme Creator';
-  static const String appDescription = 'Create professional READMEs for your projects in minutes.';
+  static const String appTitle = 'Markdown Creator';
+  static const String appDescription = 'The ultimate tool to craft stunning Markdown documentation in minutes.';
 
   // Tooltips
   static const String copyTooltip = 'Copy to Clipboard';
@@ -14,4 +14,3 @@ class AppStrings {
   static const String savedMessage = 'Saved!';
   static const String errorLoading = 'Error loading data';
 }
-

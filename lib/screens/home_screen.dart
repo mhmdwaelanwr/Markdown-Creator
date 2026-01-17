@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/services.dart';
-import 'package:readme_creator/l10n/app_localizations.dart';
+import 'package:markdown_creator/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -251,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context) => [
                     PopupMenuItem(enabled: false, child: Text(user.displayName ?? 'User', style: const TextStyle(fontWeight: FontWeight.bold))),
                     const PopupMenuDivider(),
-                    const PopupMenuItem(value: 1, child: Text('Logout')),
+                    const PopupMenuItem(value: 1, child: const Text('Logout')),
                   ],
                 ),
             ],

@@ -8,15 +8,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
-// IMPORTANT: If you have successfully run 'flutterfire configure', 
-// uncomment the line below and the options in Firebase.initializeApp.
-// import 'firebase_options.dart'; 
+// IMPORTANT: After running 'flutterfire configure', uncomment the line below:
+// import 'package:markdown_creator/firebase_options.dart'; 
 
-import 'l10n/app_localizations.dart';
-import 'providers/project_provider.dart';
-import 'providers/library_provider.dart';
-import 'screens/home_screen.dart';
-import 'core/theme/app_theme.dart';
+import 'package:markdown_creator/l10n/app_localizations.dart';
+import 'package:markdown_creator/providers/project_provider.dart';
+import 'package:markdown_creator/providers/library_provider.dart';
+import 'package:markdown_creator/screens/home_screen.dart';
+import 'package:markdown_creator/core/theme/app_theme.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -24,8 +23,7 @@ void main() {
 
     bool firebaseInitialized = false;
     try {
-      // PRO TIP: When firebase_options.dart is ready, change this to:
-      // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      // Attempt safe initialization
       await Firebase.initializeApp();
       firebaseInitialized = true;
       debugPrint('Firebase Core: Connected');
@@ -43,7 +41,7 @@ void main() {
       ),
     );
   }, (error, stack) {
-    debugPrint('Critical System Error: $error');
+    debugPrint('Global System Error: $error');
   });
 }
 

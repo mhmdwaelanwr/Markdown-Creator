@@ -8,6 +8,8 @@ import '../../services/ai_service.dart';
 import '../../services/codebase_scanner_service.dart';
 import '../../services/github_scanner_service.dart';
 import '../../utils/toast_helper.dart';
+import '../../utils/dialog_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class GenerateCodebaseDialog extends StatefulWidget {
   const GenerateCodebaseDialog({super.key});
@@ -16,74 +18,105 @@ class GenerateCodebaseDialog extends StatefulWidget {
   State<GenerateCodebaseDialog> createState() => _GenerateCodebaseDialogState();
 }
 
-class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
+class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> with SingleTickerProviderStateMixin {
   final _pathController = TextEditingController();
   final _repoUrlController = TextEditingController();
+  late TabController _tabController;
   bool _isLoading = false;
   String? _statusMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   void dispose() {
     _pathController.dispose();
     _repoUrlController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        AppLocalizations.of(context)!.generateFromCodebase,
-        style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return StyledDialog(
+      title: DialogHeader(
+        title: AppLocalizations.of(context)!.generateFromCodebase,
+        icon: Icons.auto_awesome_rounded,
+        color: Colors.purple,
       ),
-      content: SizedBox(
-        width: 500,
-        child: DefaultTabController(
-          length: 2,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const TabBar(
-                labelColor: Colors.blue,
-                tabs: [
+      width: 600,
+      height: 450,
+      contentPadding: EdgeInsets.zero,
+      content: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: isDark ? Colors.white60 : Colors.black54,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.purple, Colors.deepPurpleAccent],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                dividerColor: Colors.transparent,
+                labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold),
+                tabs: const [
                   Tab(text: 'Local Folder'),
                   Tab(text: 'GitHub Repo'),
                 ],
               ),
-              SizedBox(
-                height: 200,
-                child: TabBarView(
-                  children: [
-                    _buildLocalFolderTab(context),
-                    _buildGitHubRepoTab(context),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildLocalFolderTab(context, isDark),
+                _buildGitHubRepoTab(context, isDark),
+              ],
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Close'),
+          child: Text('Cancel', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
       ],
     );
   }
 
-  Widget _buildLocalFolderTab(BuildContext context) {
+  Widget _buildLocalFolderTab(BuildContext context, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
+          _buildInfoBox('Point to your project folder, and our AI will analyze the structure to generate a tailored README.', isDark),
+          const SizedBox(height: 24),
           TextField(
             controller: _pathController,
             decoration: InputDecoration(
               labelText: 'Project Path',
-              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.folder_open_rounded),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.folder_open),
+                icon: const Icon(Icons.search_rounded),
                 onPressed: () async {
                   String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
                   if (selectedDirectory != null) {
@@ -93,78 +126,108 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          if (_isLoading)
-            _buildLoadingIndicator()
-          else
-            ElevatedButton.icon(
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text('Generate README'),
-              onPressed: () => _generateFromLocal(context),
-            ),
+          const Spacer(),
+          _buildActionButton(
+            label: 'Analyze & Generate',
+            onPressed: _isLoading ? null : () => _generateFromLocal(context),
+            isLoading: _isLoading,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildGitHubRepoTab(BuildContext context) {
+  Widget _buildGitHubRepoTab(BuildContext context, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
+          _buildInfoBox('Paste a public GitHub URL to automatically fetch and document your repository.', isDark),
+          const SizedBox(height: 24),
           TextField(
             controller: _repoUrlController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'GitHub Repository URL',
-              border: OutlineInputBorder(),
-              hintText: 'https://github.com/username/repo',
+              hintText: 'https://github.com/user/repo',
+              prefixIcon: const Icon(Icons.link_rounded),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-          const SizedBox(height: 16),
-          if (_isLoading)
-            _buildLoadingIndicator()
-          else
-            ElevatedButton.icon(
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text('Generate README'),
-              onPressed: () => _generateFromGitHub(context),
-            ),
+          const Spacer(),
+          _buildActionButton(
+            label: 'Fetch & Generate',
+            onPressed: _isLoading ? null : () => _generateFromGitHub(context),
+            isLoading: _isLoading,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Column(
+  Widget _buildInfoBox(String text, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withAlpha(isDark ? 20 : 10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.withAlpha(30)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline_rounded, color: Colors.blue, size: 20),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: GoogleFonts.inter(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({required String label, required VoidCallback? onPressed, required bool isLoading}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          elevation: 0,
+        ),
+        child: isLoading 
+          ? _buildLoadingState()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.auto_fix_high_rounded),
+                const SizedBox(width: 12),
+                Text(label, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16)),
+              ],
+            ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const CircularProgressIndicator(),
-        const SizedBox(height: 8),
-        Text(_statusMessage ?? 'Analyzing...', style: GoogleFonts.inter(fontSize: 12)),
+        const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+        const SizedBox(width: 16),
+        Text(_statusMessage ?? 'Processing...', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
       ],
     );
   }
 
   Future<void> _generateFromLocal(BuildContext context) async {
     if (_pathController.text.isEmpty) return;
-
     final provider = Provider.of<ProjectProvider>(context, listen: false);
-
-    setState(() {
-      _isLoading = true;
-      _statusMessage = 'Scanning codebase...';
-    });
-
+    setState(() { _isLoading = true; _statusMessage = 'Scanning files...'; });
     try {
       final structure = await CodebaseScannerService.scanDirectory(_pathController.text);
-
       if (!mounted) return;
-      setState(() => _statusMessage = 'Generating content with AI...');
-
-      final readmeContent = await AIService.generateReadmeFromStructure(
-        structure,
-        apiKey: provider.geminiApiKey,
-      );
-
+      setState(() => _statusMessage = 'AI is writing...');
+      final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
       if (!mounted) return;
       Navigator.pop(context);
       provider.importMarkdown(readmeContent);
@@ -178,26 +241,14 @@ class _GenerateCodebaseDialogState extends State<GenerateCodebaseDialog> {
 
   Future<void> _generateFromGitHub(BuildContext context) async {
     if (_repoUrlController.text.isEmpty) return;
-
     final provider = Provider.of<ProjectProvider>(context, listen: false);
-
-    setState(() {
-      _isLoading = true;
-      _statusMessage = 'Fetching repository...';
-    });
-
+    setState(() { _isLoading = true; _statusMessage = 'Fetching repo...'; });
     try {
       final githubScanner = GitHubScannerService();
       final structure = await githubScanner.scanRepo(_repoUrlController.text);
-
       if (!mounted) return;
-      setState(() => _statusMessage = 'Generating content with AI...');
-
-      final readmeContent = await AIService.generateReadmeFromStructure(
-        structure,
-        apiKey: provider.geminiApiKey,
-      );
-
+      setState(() => _statusMessage = 'AI is writing...');
+      final readmeContent = await AIService.generateReadmeFromStructure(structure, apiKey: provider.geminiApiKey);
       if (!mounted) return;
       Navigator.pop(context);
       provider.importMarkdown(readmeContent);

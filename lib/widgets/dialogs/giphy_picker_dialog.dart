@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/giphy_service.dart';
 import '../../utils/dialog_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class GiphyPickerDialog extends StatefulWidget {
   const GiphyPickerDialog({super.key});
@@ -24,137 +25,120 @@ class _GiphyPickerDialogState extends State<GiphyPickerDialog> {
   }
 
   Future<void> _loadTrending() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    setState(() { _isLoading = true; _error = null; });
     try {
       final gifs = await _giphyService.getTrendingGifs();
-      setState(() {
-        _gifs = gifs;
-        _isLoading = false;
-      });
+      setState(() { _gifs = gifs; _isLoading = false; });
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      setState(() { _error = e.toString(); _isLoading = false; });
     }
   }
 
   Future<void> _search(String query) async {
-    if (query.isEmpty) {
-      _loadTrending();
-      return;
-    }
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    if (query.isEmpty) { _loadTrending(); return; }
+    setState(() { _isLoading = true; _error = null; });
     try {
       final gifs = await _giphyService.searchGifs(query);
-      setState(() {
-        _gifs = gifs;
-        _isLoading = false;
-      });
+      setState(() { _gifs = gifs; _isLoading = false; });
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      setState(() { _error = e.toString(); _isLoading = false; });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return StyledDialog(
       title: const DialogHeader(
-        title: 'Select GIF from GIPHY',
-        icon: Icons.gif,
+        title: 'GIPHY Explorer',
+        icon: Icons.gif_box_rounded,
         color: Colors.pinkAccent,
       ),
-      width: 600,
-      height: 500,
+      width: 650,
+      height: 600,
       content: Column(
         children: [
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: 'Search GIFs',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
-                  _loadTrending();
-                },
-              ),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            style: GoogleFonts.inter(),
-            onSubmitted: _search,
-          ),
-          const SizedBox(height: 16),
+          _buildSearchField(isDark),
+          const SizedBox(height: 20),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _error != null
-                    ? Center(child: Text(_error!, style: GoogleFonts.inter(color: Colors.red)))
-                    : _gifs.isEmpty
-                        ? Center(child: Text('No GIFs found', style: GoogleFonts.inter()))
-                        : GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                              childAspectRatio: 1, // Square for preview
-                            ),
-                            itemCount: _gifs.length,
-                            itemBuilder: (context, index) {
-                              final url = _gifs[index];
-                              return InkWell(
-                                onTap: () => Navigator.pop(context, url),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    url,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        color: Colors.grey[200],
-                                        child: const Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (ctx, err, stack) => const Icon(Icons.broken_image),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+            child: _isLoading ? _buildLoading() : (_error != null ? _buildError() : _buildGrid()),
           ),
-          if (!_isLoading && _gifs.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Powered by GIPHY',
-              style: GoogleFonts.inter(fontSize: 10, color: Colors.grey),
-            ),
-          ]
+          if (!_isLoading && _gifs.isNotEmpty) _buildFooter(),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
       ],
     );
   }
-}
 
+  Widget _buildSearchField(bool isDark) {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Find the perfect GIF...',
+        prefixIcon: const Icon(Icons.search_rounded),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close_rounded, size: 20),
+          onPressed: () { _searchController.clear(); _loadTrending(); },
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        filled: true,
+        fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
+      ),
+      style: GoogleFonts.inter(),
+      onSubmitted: _search,
+    );
+  }
+
+  Widget _buildGrid() {
+    if (_gifs.isEmpty) return Center(child: Text('No results found', style: GoogleFonts.inter(color: Colors.grey)));
+    
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: _gifs.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () => Navigator.pop(context, _gifs[index]),
+          borderRadius: BorderRadius.circular(12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              color: Colors.grey.withAlpha(20),
+              child: Image.network(
+                _gifs[index],
+                fit: BoxFit.cover,
+                errorBuilder: (ctx, err, stack) => const Icon(Icons.broken_image_rounded, color: Colors.grey),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoading() => const Center(child: CircularProgressIndicator(color: Colors.pinkAccent));
+  Widget _buildError() => Center(child: Text('Error: $_error', style: const TextStyle(color: Colors.red)));
+
+  Widget _buildFooter() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.bolt_rounded, size: 14, color: Colors.grey),
+          const SizedBox(width: 6),
+          Text('Powered by GIPHY', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+}

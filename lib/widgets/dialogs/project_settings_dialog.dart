@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/project_provider.dart';
 import '../../utils/debouncer.dart';
 import '../../utils/dialog_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class ProjectSettingsDialog extends StatefulWidget {
   const ProjectSettingsDialog({super.key});
@@ -25,59 +26,68 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // We consume provider here so the dialog updates if settings change externally,
-    // although typically settings change FROM here.
     final provider = Provider.of<ProjectProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Using StyledDialog from dialog_helper
     return StyledDialog(
       title: DialogHeader(
         title: AppLocalizations.of(context)!.projectSettings,
-        icon: Icons.settings,
-        color: Colors.blueGrey,
+        icon: Icons.tune_rounded,
+        color: AppColors.primary,
       ),
       contentPadding: EdgeInsets.zero,
-      width: 600,
-      height: 600,
+      width: 650,
+      height: 650,
       content: DefaultTabController(
         length: 5,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-              decoration: BoxDecoration(
-                color: Colors.grey.withAlpha(20),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TabBar(
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Theme.of(context).primaryColor),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                labelColor: Theme.of(context).primaryColor,
-                unselectedLabelColor: Colors.grey,
-                dividerColor: Colors.transparent,
-                tabs: [
-                  Tab(text: AppLocalizations.of(context)!.variables),
-                  Tab(text: AppLocalizations.of(context)!.license),
-                  const Tab(text: 'Community'),
-                  Tab(text: AppLocalizations.of(context)!.colors),
-                  Tab(text: AppLocalizations.of(context)!.formatting),
-                ],
+                child: TabBar(
+                  isScrollable: true,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: isDark ? Colors.white60 : Colors.black54,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppColors.primary, AppColors.primary.withAlpha(180)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withAlpha(60),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  dividerColor: Colors.transparent,
+                  labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13),
+                  tabs: [
+                    Tab(text: AppLocalizations.of(context)!.variables),
+                    Tab(text: AppLocalizations.of(context)!.license),
+                    const Tab(text: 'Community'),
+                    Tab(text: AppLocalizations.of(context)!.colors),
+                    Tab(text: AppLocalizations.of(context)!.formatting),
+                  ],
+                ),
               ),
             ),
             Expanded(
               child: TabBarView(
                 children: [
-                  _buildVariablesTab(context, provider),
-                  _buildLicenseTab(context, provider),
-                  _buildCommunityTab(context, provider),
-                  _buildColorsTab(context, provider),
-                  _buildFormattingTab(context, provider),
+                  _buildVariablesTab(context, provider, isDark),
+                  _buildLicenseTab(context, provider, isDark),
+                  _buildCommunityTab(context, provider, isDark),
+                  _buildColorsTab(context, provider, isDark),
+                  _buildFormattingTab(context, provider, isDark),
                 ],
               ),
             ),
@@ -87,240 +97,227 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.close),
+          child: Text(AppLocalizations.of(context)!.close, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
       ],
     );
   }
 
-  Widget _buildVariablesTab(BuildContext context, ProjectProvider provider) {
+  Widget _buildVariablesTab(BuildContext context, ProjectProvider provider, bool isDark) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       child: Column(
-        children: provider.variables.entries.map((entry) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: TextFormField(
-              initialValue: entry.value,
-              decoration: InputDecoration(
-                labelText: entry.key,
-                border: const OutlineInputBorder(),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle('PROJECT VARIABLES'),
+          const SizedBox(height: 16),
+          ...provider.variables.entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: TextFormField(
+                initialValue: entry.value,
+                decoration: InputDecoration(
+                  labelText: entry.key,
+                  prefixIcon: const Icon(Icons.label_important_outline_rounded, size: 20),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  filled: true,
+                  fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
+                ),
+                style: GoogleFonts.inter(),
+                onChanged: (value) {
+                  _debouncer.run(() {
+                    provider.updateVariable(entry.key, value);
+                  });
+                },
               ),
-              style: GoogleFonts.inter(),
-              onChanged: (value) {
-                _debouncer.run(() {
-                  provider.updateVariable(entry.key, value);
-                });
-              },
-            ),
-          );
-        }).toList(),
+            );
+          }),
+        ],
       ),
     );
   }
 
-  Widget _buildLicenseTab(BuildContext context, ProjectProvider provider) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+  Widget _buildLicenseTab(BuildContext context, ProjectProvider provider, bool isDark) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Select License for your project:', style: GoogleFonts.inter()),
+          _buildSectionTitle('SOFTWARE LICENSE'),
           const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            initialValue: provider.licenseType,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
-            items: [
-              DropdownMenuItem(value: 'None', child: Text('None', style: GoogleFonts.inter())),
-              DropdownMenuItem(value: 'MIT', child: Text('MIT License', style: GoogleFonts.inter())),
-              DropdownMenuItem(value: 'Apache 2.0', child: Text('Apache License 2.0', style: GoogleFonts.inter())),
-              DropdownMenuItem(value: 'GPLv3', child: Text('GNU GPLv3', style: GoogleFonts.inter())),
-              DropdownMenuItem(value: 'BSD 3-Clause', child: Text('BSD 3-Clause License', style: GoogleFonts.inter())),
-            ],
-            onChanged: (value) {
-              if (value != null) provider.setLicenseType(value);
-            },
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'A LICENSE file will be generated and included in the export.',
-            style: GoogleFonts.inter(color: Colors.grey),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.withAlpha(30)),
+            ),
+            child: Column(
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: provider.licenseType,
+                  decoration: InputDecoration(
+                    labelText: 'Select License',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  items: [
+                    'None', 'MIT', 'Apache 2.0', 'GPLv3', 'BSD 3-Clause'
+                  ].map((val) => DropdownMenuItem(value: val, child: Text(val, style: GoogleFonts.inter()))).toList(),
+                  onChanged: (value) {
+                    if (value != null) provider.setLicenseType(value);
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'A LICENSE file will be generated and included in the export.',
+                        style: GoogleFonts.inter(color: Colors.grey, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCommunityTab(BuildContext context, ProjectProvider provider) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SwitchListTile(
-              title: Text('Include CONTRIBUTING.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              subtitle: Text('Adds a standard contributing guide.', style: GoogleFonts.inter(fontSize: 12)),
-              value: provider.includeContributing,
-              onChanged: (value) => provider.setIncludeContributing(value),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: Text('Include SECURITY.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              subtitle: Text('Adds a security policy.', style: GoogleFonts.inter(fontSize: 12)),
-              value: provider.includeSecurity,
-              onChanged: (value) => provider.setIncludeSecurity(value),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: Text('Include SUPPORT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              subtitle: Text('Adds support information.', style: GoogleFonts.inter(fontSize: 12)),
-              value: provider.includeSupport,
-              onChanged: (value) => provider.setIncludeSupport(value),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: Text('Include CODE_OF_CONDUCT.md', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              subtitle: Text('Adds a contributor covenant code of conduct.', style: GoogleFonts.inter(fontSize: 12)),
-              value: provider.includeCodeOfConduct,
-              onChanged: (value) => provider.setIncludeCodeOfConduct(value),
-            ),
-            const Divider(),
-            SwitchListTile(
-              title: Text('Include Issue Templates', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              subtitle: Text('Adds GitHub issue and PR templates.', style: GoogleFonts.inter(fontSize: 12)),
-              value: provider.includeIssueTemplates,
-              onChanged: (value) => provider.setIncludeIssueTemplates(value),
-            ),
-          ],
+  Widget _buildCommunityTab(BuildContext context, ProjectProvider provider, bool isDark) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        _buildSectionTitle('COMMUNITY STANDARDS'),
+        const SizedBox(height: 16),
+        _buildSwitchTile('CONTRIBUTING.md', 'Adds a standard contributing guide.', provider.includeContributing, (v) => provider.setIncludeContributing(v), Icons.handshake_rounded),
+        _buildSwitchTile('SECURITY.md', 'Adds a security policy.', provider.includeSecurity, (v) => provider.setIncludeSecurity(v), Icons.security_rounded),
+        _buildSwitchTile('SUPPORT.md', 'Adds support information.', provider.includeSupport, (v) => provider.setIncludeSupport(v), Icons.help_outline_rounded),
+        _buildSwitchTile('CODE_OF_CONDUCT.md', 'Adds a code of conduct.', provider.includeCodeOfConduct, (v) => provider.setIncludeCodeOfConduct(v), Icons.gavel_rounded),
+        _buildSwitchTile('Issue Templates', 'Adds GitHub issue and PR templates.', provider.includeIssueTemplates, (v) => provider.setIncludeIssueTemplates(v), Icons.bug_report_rounded),
+      ],
+    );
+  }
+
+  Widget _buildColorsTab(BuildContext context, ProjectProvider provider, bool isDark) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        _buildSectionTitle('BRANDING COLORS'),
+        const SizedBox(height: 16),
+        _buildColorTile(context, AppLocalizations.of(context)!.primaryColor, provider.primaryColor, (c) => provider.setPrimaryColor(c)),
+        _buildColorTile(context, AppLocalizations.of(context)!.secondaryColor, provider.secondaryColor, (c) => provider.setSecondaryColor(c)),
+      ],
+    );
+  }
+
+  Widget _buildFormattingTab(BuildContext context, ProjectProvider provider, bool isDark) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        _buildSectionTitle('EXPORT FORMATTING'),
+        const SizedBox(height: 16),
+        _buildSwitchTile(AppLocalizations.of(context)!.exportHtml, 'Include a formatted HTML file.', provider.exportHtml, (v) => provider.setExportHtml(v), Icons.html_rounded),
+        const SizedBox(height: 16),
+        _buildSectionTitle('MARKDOWN STYLE'),
+        const SizedBox(height: 16),
+        _buildDropdownSetting(
+          label: AppLocalizations.of(context)!.listBulletStyle,
+          value: provider.listBullet,
+          items: {'*': '* (Asterisk)', '-': '- (Dash)', '+': '+ (Plus)'},
+          onChanged: (v) => provider.setListBullet(v!),
+          icon: Icons.list_rounded,
+        ),
+        const SizedBox(height: 16),
+        _buildDropdownSetting(
+          label: AppLocalizations.of(context)!.sectionSpacing,
+          value: provider.sectionSpacing,
+          items: {0: 'Compact', 1: 'Standard', 2: 'Spacious'},
+          onChanged: (v) => provider.setSectionSpacing(v!),
+          icon: Icons.vertical_distribute_rounded,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.5),
+    );
+  }
+
+  Widget _buildSwitchTile(String title, String subtitle, bool value, ValueChanged<bool> onChanged, IconData icon) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: Colors.grey.withAlpha(30))),
+      child: SwitchListTile(
+        secondary: Icon(icon, color: AppColors.primary),
+        title: Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
+        value: value,
+        onChanged: onChanged,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  Widget _buildColorTile(BuildContext context, String title, Color color, ValueChanged<Color> onColorChanged) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: Colors.grey.withAlpha(30))),
+      child: ListTile(
+        leading: Container(
+          width: 40, height: 40,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white.withAlpha(50))),
+        ),
+        title: Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text('#${color.toARGB32().toRadixString(16).toUpperCase().substring(2)}', style: GoogleFonts.firaCode(fontSize: 12)),
+        trailing: const Icon(Icons.colorize_rounded, size: 18),
+        onTap: () => _showColorPicker(context, color, onColorChanged),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  void _showColorPicker(BuildContext context, Color initialColor, ValueChanged<Color> onColorChanged) {
+    showSafeDialog(
+      context,
+      builder: (context) => AlertDialog(
+        title: Text('Pick Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: initialColor,
+            onColorChanged: onColorChanged,
+            labelTypes: const [],
+          ),
+        ),
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Done'))],
+      ),
+    );
+  }
+
+  Widget _buildDropdownSetting<T>({required String label, required T value, required Map<T, String> items, required ValueChanged<T?> onChanged, required IconData icon}) {
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: AppColors.primary),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: value,
+          isDense: true,
+          items: items.entries.map((e) => DropdownMenuItem(value: e.key, child: Text(e.value, style: GoogleFonts.inter()))).toList(),
+          onChanged: onChanged,
         ),
       ),
     );
   }
-
-  Widget _buildColorsTab(BuildContext context, ProjectProvider provider) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(AppLocalizations.of(context)!.primaryColor, style: GoogleFonts.inter()),
-            subtitle: Text(
-              '#${provider.primaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}',
-              style: GoogleFonts.inter(),
-            ),
-            trailing: CircleAvatar(backgroundColor: provider.primaryColor),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Pick Primary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                  content: SingleChildScrollView(
-                    child: ColorPicker(
-                      pickerColor: provider.primaryColor,
-                      onColorChanged: (color) => provider.setPrimaryColor(color),
-                      labelTypes: const [],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      child: const Text('Done'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          ListTile(
-            title: Text(AppLocalizations.of(context)!.secondaryColor, style: GoogleFonts.inter()),
-            subtitle: Text(
-              '#${provider.secondaryColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}',
-              style: GoogleFonts.inter(),
-            ),
-            trailing: CircleAvatar(backgroundColor: provider.secondaryColor),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Pick Secondary Color', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-                  content: SingleChildScrollView(
-                    child: ColorPicker(
-                      pickerColor: provider.secondaryColor,
-                      onColorChanged: (color) => provider.setSecondaryColor(color),
-                      labelTypes: const [],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      child: const Text('Done'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFormattingTab(BuildContext context, ProjectProvider provider) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          SwitchListTile(
-            title: Text(AppLocalizations.of(context)!.exportHtml, style: GoogleFonts.inter()),
-            subtitle: Text('Include a formatted HTML file in the export.', style: GoogleFonts.inter()),
-            value: provider.exportHtml,
-            onChanged: (value) => provider.setExportHtml(value),
-          ),
-          const Divider(),
-          InputDecorator(
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.listBulletStyle,
-              border: const OutlineInputBorder(),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: provider.listBullet,
-                isDense: true,
-                items: [
-                  DropdownMenuItem(value: '*', child: Text('* (Asterisk)', style: GoogleFonts.inter())),
-                  DropdownMenuItem(value: '-', child: Text('- (Dash)', style: GoogleFonts.inter())),
-                  DropdownMenuItem(value: '+', child: Text('+ (Plus)', style: GoogleFonts.inter())),
-                ],
-                onChanged: (value) {
-                  if (value != null) provider.setListBullet(value);
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          InputDecorator(
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.sectionSpacing,
-              border: const OutlineInputBorder(),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: provider.sectionSpacing,
-                isDense: true,
-                items: [
-                  DropdownMenuItem(value: 0, child: Text('0 (Compact)', style: GoogleFonts.inter())),
-                  DropdownMenuItem(value: 1, child: Text('1 (Standard)', style: GoogleFonts.inter())),
-                  DropdownMenuItem(value: 2, child: Text('2 (Spacious)', style: GoogleFonts.inter())),
-                ],
-                onChanged: (value) {
-                  if (value != null) provider.setSectionSpacing(value);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-

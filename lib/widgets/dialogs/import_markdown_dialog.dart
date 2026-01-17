@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/project_provider.dart';
 import '../../utils/dialog_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class ImportMarkdownDialog extends StatefulWidget {
   const ImportMarkdownDialog({super.key});
@@ -16,152 +17,191 @@ class ImportMarkdownDialog extends StatefulWidget {
   State<ImportMarkdownDialog> createState() => _ImportMarkdownDialogState();
 }
 
-class _ImportMarkdownDialogState extends State<ImportMarkdownDialog> {
+class _ImportMarkdownDialogState extends State<ImportMarkdownDialog> with SingleTickerProviderStateMixin {
   final _textController = TextEditingController();
   final _urlController = TextEditingController();
+  late TabController _tabController;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   void dispose() {
     _textController.dispose();
     _urlController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // We access provider here to call import method
-    // But we might not need to listen to changes if we just call a method.
-    // Provider.of(context, listen: false) is cleaner if we just trigger action.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return StyledDialog(
       width: 700,
-      height: 550,
+      height: 600,
       title: DialogHeader(
         title: AppLocalizations.of(context)!.importMarkdown,
-        icon: Icons.file_upload,
+        icon: Icons.upload_file_rounded,
         color: Colors.indigo,
       ),
-      content: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
+      contentPadding: EdgeInsets.zero,
+      content: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            child: Container(
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.grey.withAlpha(20),
-                borderRadius: BorderRadius.circular(8),
+                color: isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.white,
+                unselectedLabelColor: isDark ? Colors.white60 : Colors.black54,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Theme.of(context).primaryColor),
+                  gradient: const LinearGradient(
+                    colors: [Colors.indigo, Colors.indigoAccent],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                labelColor: Theme.of(context).primaryColor,
-                unselectedLabelColor: Colors.grey,
                 dividerColor: Colors.transparent,
+                labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold),
                 tabs: const [
-                  Tab(text: 'Text / File', icon: Icon(Icons.description, size: 18)),
-                  Tab(text: 'URL (GitHub/Pastebin)', icon: Icon(Icons.link, size: 18)),
+                  Tab(text: 'Text / File'),
+                  Tab(text: 'Fetch from URL'),
                 ],
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  // Tab 1: Text / File
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Text('Paste your Markdown content below or pick a file.', style: GoogleFonts.inter()),
-                        const SizedBox(height: 16),
-                        Expanded(
-                          child: TextField(
-                            controller: _textController,
-                            maxLines: null,
-                            expands: true,
-                            textAlignVertical: TextAlignVertical.top,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: '# My Project\n\nDescription...',
-                            ),
-                            style: GoogleFonts.firaCode(fontSize: 13),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.upload_file),
-                          label: const Text('Pick Markdown File'),
-                          onPressed: _pickFile,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Tab 2: URL
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Enter a raw URL from GitHub or Pastebin.', style: GoogleFonts.inter()),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _urlController,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            hintText: 'https://raw.githubusercontent.com/...',
-                            labelText: AppLocalizations.of(context)!.repoUrl,
-                            prefixIcon: const Icon(Icons.link),
-                          ),
-                          style: GoogleFonts.inter(),
-                        ),
-                        const SizedBox(height: 16),
-                        if (_isLoading)
-                          const CircularProgressIndicator()
-                        else
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.cloud_download),
-                            label: const Text('Fetch Content'),
-                            onPressed: _fetchUrl,
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildTextTab(isDark),
+                _buildUrlTab(isDark),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancel),
+          child: Text(AppLocalizations.of(context)!.cancel, style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: Colors.grey)),
         ),
-        FilledButton(
+        const SizedBox(width: 8),
+        FilledButton.icon(
           onPressed: () => _importOrClose(context),
-          child: Text(AppLocalizations.of(context)!.import),
+          icon: const Icon(Icons.check_circle_rounded, size: 18),
+          label: Text(AppLocalizations.of(context)!.import, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.indigo,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ],
     );
   }
 
-  Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['md', 'txt'],
-      withData: true,
+  Widget _buildTextTab(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, size: 16, color: Colors.grey),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Paste raw markdown or select a file.', style: GoogleFonts.inter(fontSize: 12, color: Colors.grey))),
+              TextButton.icon(
+                onPressed: _pickFile,
+                icon: const Icon(Icons.folder_open_rounded, size: 18),
+                label: const Text('Pick File'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              maxLines: null,
+              expands: true,
+              textAlignVertical: TextAlignVertical.top,
+              decoration: InputDecoration(
+                hintText: '# My Awesome Project\n\nStarting writing here...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(2),
+              ),
+              style: GoogleFonts.firaCode(fontSize: 13),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildUrlTab(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.indigo.withAlpha(isDark ? 20 : 10),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.indigo.withAlpha(30)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.link_rounded, color: Colors.indigo),
+                const SizedBox(width: 16),
+                Expanded(child: Text('Import directly from a raw GitHub or Pastebin URL.', style: GoogleFonts.inter(fontSize: 13))),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          TextField(
+            controller: _urlController,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.repoUrl,
+              hintText: 'https://raw.githubusercontent.com/...',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              prefixIcon: const Icon(Icons.public_rounded),
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isLoading ? null : _fetchUrl,
+              icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.cloud_download_rounded),
+              label: Text(_isLoading ? 'Fetching...' : 'Download & Preview'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['md', 'txt'], withData: true);
     if (result != null && result.files.isNotEmpty) {
       final bytes = result.files.first.bytes;
-      if (bytes != null) {
-        setState(() {
-          _textController.text = utf8.decode(bytes);
-        });
-      }
+      if (bytes != null) setState(() { _textController.text = utf8.decode(bytes); });
     }
   }
 
@@ -169,34 +209,19 @@ class _ImportMarkdownDialogState extends State<ImportMarkdownDialog> {
     if (_urlController.text.isEmpty) return;
     setState(() => _isLoading = true);
     try {
-      final url = _urlController.text;
-      // Basic check for github blob -> raw
-      String fetchUrl = url;
-      if (url.contains('github.com') && url.contains('/blob/')) {
-        fetchUrl = url.replaceFirst('/blob/', '/raw/');
-      }
-
+      String fetchUrl = _urlController.text;
+      if (fetchUrl.contains('github.com') && fetchUrl.contains('/blob/')) fetchUrl = fetchUrl.replaceFirst('/blob/', '/raw/');
       final response = await http.get(Uri.parse(fetchUrl));
       if (response.statusCode == 200) {
-        setState(() {
-          _textController.text = response.body;
-        });
-        if (mounted) {
-          ToastHelper.show(context, AppLocalizations.of(context)!.contentFetched);
-        }
+        setState(() { _textController.text = response.body; _tabController.animateTo(0); });
+        if (mounted) ToastHelper.show(context, AppLocalizations.of(context)!.contentFetched);
       } else {
-        if (mounted) {
-          ToastHelper.show(context, '${AppLocalizations.of(context)!.fetchFailed}: ${response.statusCode}', isError: true);
-        }
+        if (mounted) ToastHelper.show(context, 'Failed: ${response.statusCode}', isError: true);
       }
     } catch (e) {
-      if (mounted) {
-        ToastHelper.show(context, '${AppLocalizations.of(context)!.error}: $e', isError: true);
-      }
+      if (mounted) ToastHelper.show(context, 'Error: $e', isError: true);
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -205,34 +230,10 @@ class _ImportMarkdownDialogState extends State<ImportMarkdownDialog> {
       final markdownText = _textController.text;
       final provider = Provider.of<ProjectProvider>(context, listen: false);
       Navigator.pop(context);
-
-      // Need to schedule this frame callback or just run it?
-      // Since we popped, context might be tricky, but provider is captured.
-      // The original code used addPostFrameCallback after pop.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         provider.importMarkdown(markdownText);
-        // Using context here might be unsafe if we popped.
-        // ToastHelper uses context. But we have popped.
-        // We need a valid context. The context from build is now "unmounted" effectively for UI purposes but might still work for finding Scaffold.
-        // Actually best to show toast BEFORE pop or use a global key if implemented.
-        // Or assume the parent scaffold is still valid (it usually is).
-        // But original code had context.mounted check etc.
-        // Let's try passing the context of the dialog which is being closed... might work for finding scaffold messenger if it's root.
-        // Better:
-        // provider.importMarkdown doesn't need context.
-        // ToastHelper needs it.
       });
-      // Showing toast. Ideally we should show it on the parent screen.
-      // We can't easily access parent context here cleanly.
-      // But we can just assume it works or skip toast here if tricky.
-      // Actually, we can show toast before popping? No, we want to show success on the screen we return to.
-      // But `context` here is the dialog context.
-      // Using `Navigator.of(context).context`? No.
-      // We can pass a callback or just trust that ScaffoldMessenger.of(context) works even if dialog is closing (it finds the root/nearest scaffold).
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.projectImported)),
-      );
+      ToastHelper.show(context, AppLocalizations.of(context)!.projectImported);
     }
   }
 }
-

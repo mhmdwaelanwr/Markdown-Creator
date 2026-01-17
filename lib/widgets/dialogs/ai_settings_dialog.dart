@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/project_provider.dart';
 import '../../utils/dialog_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class AISettingsDialog extends StatefulWidget {
   const AISettingsDialog({super.key});
@@ -33,75 +34,156 @@ class _AISettingsDialogState extends State<AISettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return StyledDialog(
       title: DialogHeader(
         title: AppLocalizations.of(context)!.aiSettings,
-        icon: Icons.psychology,
+        icon: Icons.psychology_rounded,
         color: Colors.purple,
       ),
-      content: SizedBox(
-        width: 400,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Gemini AI', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(
-                AppLocalizations.of(context)!.enterGeminiKey,
-                style: GoogleFonts.inter(fontSize: 12),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _apiKeyController,
-                obscureText: _isObscured,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.geminiApiKey,
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() => _isObscured = !_isObscured),
-                  ),
-                ),
-                style: GoogleFonts.inter(),
-              ),
-              const SizedBox(height: 4),
-              InkWell(
-                onTap: () {
-                  launchUrl(Uri.parse('https://aistudio.google.com/app/apikey'));
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.getApiKey,
-                  style: GoogleFonts.inter(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
+      width: 500,
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeaderCard(isDark),
+            const SizedBox(height: 24),
+            _buildSectionTitle('API CONFIGURATION'),
+            const SizedBox(height: 12),
+            _buildApiKeyField(context, isDark),
+            const SizedBox(height: 16),
+            _buildInfoBox('Your API key is stored locally on your device and is only used to communicate with Google Gemini AI services.', isDark),
+          ],
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.cancel),
+          child: Text(AppLocalizations.of(context)!.cancel, style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: Colors.grey)),
         ),
-        ElevatedButton(
-          onPressed: () {
-            final key = _apiKeyController.text.trim();
-            final provider = Provider.of<ProjectProvider>(context, listen: false);
-            provider.setGeminiApiKey(key);
-            Navigator.pop(context);
-            ToastHelper.show(context, AppLocalizations.of(context)!.settingsSaved);
-          },
-          child: Text(AppLocalizations.of(context)!.save),
+        const SizedBox(width: 8),
+        FilledButton.icon(
+          onPressed: _save,
+          icon: const Icon(Icons.save_rounded, size: 18),
+          label: Text(AppLocalizations.of(context)!.save, style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.purple,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ],
     );
   }
-}
 
+  Widget _buildHeaderCard(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple.withAlpha(40), Colors.deepPurple.withAlpha(10)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.purple.withAlpha(30)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.auto_fix_high_rounded, size: 40, color: Colors.purpleAccent),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Google Gemini AI', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  'Powering your README generation with next-gen intelligence.',
+                  style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.5),
+    );
+  }
+
+  Widget _buildApiKeyField(BuildContext context, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _apiKeyController,
+          obscureText: _isObscured,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.geminiApiKey,
+            prefixIcon: const Icon(Icons.key_rounded, size: 20),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
+            suffixIcon: IconButton(
+              icon: Icon(_isObscured ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20),
+              onPressed: () => setState(() => _isObscured = !_isObscured),
+            ),
+          ),
+          style: GoogleFonts.firaCode(fontSize: 13),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _launchUrl('https://aistudio.google.com/app/apikey'),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.open_in_new_rounded, size: 14, color: Colors.blue),
+                const SizedBox(width: 6),
+                Text(
+                  AppLocalizations.of(context)!.getApiKey,
+                  style: GoogleFonts.inter(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoBox(String text, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(fontSize: 11, color: Colors.grey, height: 1.4),
+      ),
+    );
+  }
+
+  void _save() {
+    final key = _apiKeyController.text.trim();
+    final provider = Provider.of<ProjectProvider>(context, listen: false);
+    provider.setGeminiApiKey(key);
+    Navigator.pop(context);
+    ToastHelper.show(context, AppLocalizations.of(context)!.settingsSaved);
+  }
+
+  Future<void> _launchUrl(String urlString) async {
+    final uri = Uri.parse(urlString);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+}

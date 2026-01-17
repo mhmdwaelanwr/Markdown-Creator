@@ -4,81 +4,146 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/project_provider.dart';
 import '../../utils/dialog_helper.dart';
+import '../../core/constants/app_colors.dart';
 
 class SnapshotsDialog extends StatelessWidget {
   const SnapshotsDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return StyledDialog(
       title: DialogHeader(
         title: AppLocalizations.of(context)!.localSnapshots,
-        icon: Icons.history, // Using history icon similar to menu
+        icon: Icons.history_rounded,
         color: Colors.blue,
       ),
-      content: SizedBox(
-        width: 400,
-        height: 400,
-        child: Consumer<ProjectProvider>(
-          builder: (context, provider, _) {
-            return Column(
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.save),
-                  label: const Text('Create New Snapshot'),
-                  onPressed: () {
-                    provider.saveSnapshot();
-                    // We don't need to close and reopen because Consumer will rebuild this widget
-                    // when snapshots list changes in provider.
+      width: 550,
+      height: 500,
+      content: Column(
+        children: [
+          _buildActionHeader(context, isDark),
+          const SizedBox(height: 20),
+          _buildSectionTitle('SAVED STATES'),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Consumer<ProjectProvider>(
+              builder: (context, provider, _) {
+                if (provider.snapshots.isEmpty) return _buildEmptyState();
+                return ListView.builder(
+                  itemCount: provider.snapshots.length,
+                  itemBuilder: (context, index) {
+                    return _buildSnapshotItem(context, provider, index, isDark);
                   },
-                ),
-                const Divider(),
-                Expanded(
-                  child: provider.snapshots.isEmpty
-                      ? Center(child: Text('No snapshots saved.', style: GoogleFonts.inter()))
-                      : ListView.builder(
-                          itemCount: provider.snapshots.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: const Icon(Icons.history),
-                              title: Text('Snapshot ${provider.snapshots.length - index}', style: GoogleFonts.inter()),
-                              subtitle: index == 0 ? Text('Latest', style: GoogleFonts.inter()) : null,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.restore),
-                                    tooltip: AppLocalizations.of(context)!.restore,
-                                    onPressed: () => _confirmRestore(context, provider, index),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
-                                    tooltip: AppLocalizations.of(context)!.delete,
-                                    onPressed: () {
-                                      provider.deleteSnapshot(index);
-                                      // Confirmation for delete might be nice but extracting it simple for now as per original code logic (though original had confirm on deleted? No, original had confirm on restore, delete was direct with post-feedback).
-                                      // Original code:
-                                      // "Snapshot deleted" dialog AFTER delete.
-                                      // I will keep it simple here.
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                ),
-              ],
-            );
-          },
-        ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.close),
+          child: Text(AppLocalizations.of(context)!.close, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionHeader(BuildContext context, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.withAlpha(isDark ? 20 : 10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue.withAlpha(30)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.manage_history_rounded, color: Colors.blue),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Instant Backup', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text('Create a restore point of your current project.', style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Provider.of<ProjectProvider>(context, listen: false).saveSnapshot(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSnapshotItem(BuildContext context, ProjectProvider provider, int index, bool isDark) {
+    final reverseIndex = provider.snapshots.length - index;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 0,
+      color: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.withAlpha(30)),
+      ),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(color: Colors.blue.withAlpha(20), borderRadius: BorderRadius.circular(8)),
+          child: Text('#$reverseIndex', style: GoogleFonts.firaCode(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blue)),
+        ),
+        title: Text('Snapshot $reverseIndex', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        subtitle: index == 0 ? Text('Latest Version', style: GoogleFonts.inter(fontSize: 11, color: Colors.green, fontWeight: FontWeight.bold)) : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.restore_rounded, color: Colors.blue),
+              onPressed: () => _confirmRestore(context, provider, index),
+              tooltip: 'Restore',
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+              onPressed: () => provider.deleteSnapshot(index),
+              tooltip: 'Delete',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.history_toggle_off_rounded, size: 48, color: Colors.grey.withAlpha(100)),
+          const SizedBox(height: 16),
+          Text('No snapshots yet', style: GoogleFonts.inter(color: Colors.grey, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.5),
+      ),
     );
   }
 
@@ -86,47 +151,20 @@ class SnapshotsDialog extends StatelessWidget {
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: Text('${AppLocalizations.of(context)!.restore} Snapshot?', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
-        content: Text('Current work will be replaced.', style: GoogleFonts.inter()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Restore Snapshot?'),
+        content: const Text('Your current work will be replaced with this saved state. This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          FilledButton(
             onPressed: () {
-              Navigator.pop(context); // close confirm
-              // We're inside a dialog effectively (SnapshotsDialog), so we probably want to assume it stays open?
-              // The original code closed everything?
-              // "Navigator.pop(context); // close confirm"
-              // "Navigator.pop(context); // close list" -> This suggests it closes the snapshots dialog too.
-              // I will follow that pattern: restoring replaces state, usually good to return to editor.
-
-              // Wait, if I'm in SnapshotsDialog, I need to close IT too if I want to match original behavior.
-              // But how to close parent?
-              // Using a callback or finding parent navigator.
-              // If I use showSafeDialog for confirmation, it pushes a new route.
-              // Popping once closes confirm. Popping again closes list.
-
-              // Let's invoke restore.
               provider.restoreSnapshot(index);
-
-              // Ideally we close the snapshots dialog as well.
-              // Since this widget is the dialog content essentially, `context` passed to build is the dialog context? No, `StyledDialog` wraps it.
-              // Actually `Navigator.of(context).pop()` in `_confirmRestore` closes the confirm dialog.
-              // We need another pop.
-              // But `context` here is from `builder`.
-              // We can pass the parent context to `_confirmRestore`.
+              Navigator.pop(context);
             },
-            child: Text(AppLocalizations.of(context)!.restore),
+            child: const Text('Restore Now'),
           ),
         ],
       ),
-    ).then((_) {
-        // If we want to close the main dialog upon restore confirmation (if the user clicked restore)
-        // But `then` triggers on cancel too.
-        // Let's leave it as is, or maybe just close on restore button press inside the builder.
-    });
+    );
   }
 }
-

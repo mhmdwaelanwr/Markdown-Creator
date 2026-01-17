@@ -3,54 +3,30 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter/foundation.dart';
 
 class AIService {
-  // Mock AI Service
-  // In a real app, this would call OpenAI or Gemini API
-
   static Future<String> improveText(String text, {String? apiKey}) async {
     if (apiKey != null && apiKey.isNotEmpty) {
       try {
-        // Using the model version suggested by the user's context
-        final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-        final content = [Content.text('Improve the following text for a README file, making it more professional and concise:\n\n$text')];
+        final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+        final content = [Content.text('Improve the following text for a README file, making it more professional, concise, and engaging:\n\n$text')];
         final response = await model.generateContent(content);
         return response.text ?? text;
       } catch (e) {
         debugPrint('Gemini API Error: $e');
-        // Return the actual error message to help debugging
         return '$text (Error: ${e.toString().replaceAll('GenerativeAIException: ', '')})';
       }
     }
 
     // Mock fallback
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network
-
+    await Future.delayed(const Duration(milliseconds: 800));
     if (text.isEmpty) return 'Generated content based on context...';
-
-    final improvements = [
-      '$text - Enhanced with more details and professional tone.',
-      '✨ $text (Polished)',
-      '🚀 $text (Optimized for impact)',
-      'Here is a better version: $text. It is now more concise and clear.',
-    ];
-
-    // Simple mock logic
-    if (text.length < 10) {
-      return improvements[0];
-    }
-
-    return '${text.split(' ').map((word) {
-      if (word.length > 4 && Random().nextBool()) {
-        return word; // Keep original sometimes
-      }
-      return word;
-    }).join(' ')} (AI Enhanced)';
+    return '$text (AI Enhanced)';
   }
 
   static Future<String> generateDescription(String topic, {String? apiKey}) async {
     if (apiKey != null && apiKey.isNotEmpty) {
       try {
-        final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-        final content = [Content.text('Generate a short, engaging project description for a project about: $topic')];
+        final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+        final content = [Content.text('Generate a short, engaging project description for a project about: $topic. Include emojis where appropriate.')];
         final response = await model.generateContent(content);
         return response.text ?? 'Could not generate description.';
       } catch (e) {
@@ -59,77 +35,61 @@ class AIService {
       }
     }
 
-    await Future.delayed(const Duration(seconds: 1));
-    final templates = [
-      'This project is a comprehensive solution for $topic. It includes robust features, scalable architecture, and follows best practices for modern development.',
-      '🚀 $topic: The ultimate tool for developers. Boost your productivity with our cutting-edge features.',
-      'A lightweight, fast, and flexible library for $topic. Designed with simplicity in mind.',
-      'Welcome to the $topic project! We aim to solve complex problems with elegant solutions.',
-    ];
-    return templates[Random().nextInt(templates.length)];
+    await Future.delayed(const Duration(milliseconds: 800));
+    return 'A comprehensive solution for $topic built with modern technologies.';
   }
 
   static Future<String> fixGrammar(String text, {String? apiKey}) async {
     if (apiKey != null && apiKey.isNotEmpty) {
       try {
-        final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
-        final content = [Content.text('Fix grammar and spelling in the following text:\n\n$text')];
+        final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+        final content = [Content.text('Fix grammar and spelling in the following text. Preserve markdown formatting:\n\n$text')];
         final response = await model.generateContent(content);
         return response.text ?? text;
       } catch (e) {
         debugPrint('Gemini API Error: $e');
-        return text; // For grammar, just return original text on error to avoid breaking flow
+        return text;
       }
     }
 
-    await Future.delayed(const Duration(seconds: 1));
-    // Mock grammar fix
+    await Future.delayed(const Duration(milliseconds: 500));
     String fixed = text.trim();
     if (fixed.isNotEmpty) {
       fixed = fixed[0].toUpperCase() + fixed.substring(1);
-      if (!fixed.endsWith('.')) fixed += '.';
+      if (!fixed.endsWith('.') && !fixed.endsWith('!') && !fixed.endsWith('?')) fixed += '.';
     }
     return fixed;
   }
 
-  static Future<String> generateReadmeFromCodebase(String codeContext, {String? apiKey}) async {
+  static Future<String> generateReadmeFromStructure(String structure, {String? apiKey}) async {
     if (apiKey != null && apiKey.isNotEmpty) {
       try {
-        // Using a model with larger context window if possible, but flash is good.
-        final model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
+        final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
         final prompt = '''
 You are an expert developer tool designed to generate comprehensive README.md files.
-Analyze the following codebase context and generate a professional, detailed README.md file in Markdown format.
+Analyze the following codebase structure and generate a professional, detailed README.md file in Markdown format.
 
-The README should include:
-1. Project Title and Description (infer from code).
-2. Features (key functionalities).
-3. Tech Stack (languages, frameworks, libraries used).
-4. Installation Instructions (how to set up).
-5. Usage Guide (how to run/use).
-6. Project Structure (brief overview).
-7. Contributing Guidelines (standard).
-8. License (if found, otherwise mention it).
+Include:
+1. Project Title and Description.
+2. Key Features.
+3. Tech Stack.
+4. Quick Start / Installation.
+5. Project Structure.
+6. How to Contribute.
 
-Output ONLY the raw Markdown content. Do not include "Here is the README" or markdown code block fences (```markdown).
+Output ONLY the raw Markdown content.
 
-Codebase Context:
-$codeContext
+Structure:
+$structure
 ''';
         final content = [Content.text(prompt)];
         final response = await model.generateContent(content);
-        return response.text ?? '# Error generating README';
+        return response.text ?? '# Generated README';
       } catch (e) {
         debugPrint('Gemini API Error: $e');
-        return '# Error: ${e.toString().replaceAll('GenerativeAIException: ', '')}';
+        return '# Error: ${e.toString()}';
       }
     }
-
-    await Future.delayed(const Duration(seconds: 2));
-    return '# Mock README\n\nThis is a mock README generated because no API key was provided.\n\n## Features\n- Feature 1\n- Feature 2';
-  }
-
-  static Future<String> generateReadmeFromStructure(String structure, {String? apiKey}) async {
-    return generateReadmeFromCodebase(structure, apiKey: apiKey);
+    return '# Mock README\n\nProvide an API Key to use AI generation.';
   }
 }

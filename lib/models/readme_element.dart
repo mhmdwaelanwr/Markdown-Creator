@@ -33,6 +33,8 @@ abstract class ReadmeElement {
   String get description;
 
   Map<String, dynamic> toJson();
+  
+  ReadmeElement copy();
 
   factory ReadmeElement.fromJson(Map<String, dynamic> json) {
     final typeStr = json['type'] as String;
@@ -102,11 +104,13 @@ class SocialProfile {
       username: json['username'],
     );
   }
+
+  SocialProfile copy() => SocialProfile(platform: platform, username: username);
 }
 
 class SocialsElement extends ReadmeElement {
   List<SocialProfile> profiles;
-  String style; // 'for-the-badge', 'flat', 'flat-square', 'plastic', 'social'
+  String style;
 
   SocialsElement({List<SocialProfile>? profiles, this.style = 'for-the-badge', super.id})
       : profiles = profiles ?? [],
@@ -122,6 +126,12 @@ class SocialsElement extends ReadmeElement {
     'profiles': profiles.map((e) => e.toJson()).toList(),
     'style': style,
   };
+
+  @override
+  SocialsElement copy() => SocialsElement(
+    profiles: profiles.map((p) => p.copy()).toList(),
+    style: style,
+  );
 
   factory SocialsElement.fromJson(Map<String, dynamic> json) {
     return SocialsElement(
@@ -147,6 +157,9 @@ class MermaidElement extends ReadmeElement {
     'code': code,
   };
 
+  @override
+  MermaidElement copy() => MermaidElement(code: code);
+
   factory MermaidElement.fromJson(Map<String, dynamic> json) {
     return MermaidElement(
       code: json['code'] ?? '',
@@ -170,6 +183,9 @@ class TOCElement extends ReadmeElement {
     'title': title,
   };
 
+  @override
+  TOCElement copy() => TOCElement(title: title);
+
   factory TOCElement.fromJson(Map<String, dynamic> json) {
     return TOCElement(
       title: json['title'] ?? 'Table of Contents',
@@ -180,7 +196,7 @@ class TOCElement extends ReadmeElement {
 
 class HeadingElement extends ReadmeElement {
   String text;
-  int level; // 1, 2, 3
+  int level;
 
   HeadingElement({this.text = 'Heading', this.level = 1, super.id}) : super(type: ReadmeElementType.heading);
 
@@ -194,6 +210,9 @@ class HeadingElement extends ReadmeElement {
     'text': text,
     'level': level,
   };
+
+  @override
+  HeadingElement copy() => HeadingElement(text: text, level: level);
 
   factory HeadingElement.fromJson(Map<String, dynamic> json) {
     return HeadingElement(
@@ -219,6 +238,9 @@ class ParagraphElement extends ReadmeElement {
     'text': text,
   };
 
+  @override
+  ParagraphElement copy() => ParagraphElement(text: text);
+
   factory ParagraphElement.fromJson(Map<String, dynamic> json) {
     return ParagraphElement(
       text: json['text'],
@@ -231,7 +253,7 @@ class ImageElement extends ReadmeElement {
   String url;
   String altText;
   double? width;
-  Uint8List? localData; // For local preview
+  Uint8List? localData;
 
   ImageElement({this.url = 'https://via.placeholder.com/150', this.altText = 'Image', this.width, this.localData, super.id}) : super(type: ReadmeElementType.image);
 
@@ -245,8 +267,15 @@ class ImageElement extends ReadmeElement {
     'url': url,
     'altText': altText,
     'width': width,
-    // We don't save localData to JSON as it's temporary for the session
   };
+
+  @override
+  ImageElement copy() => ImageElement(
+    url: url,
+    altText: altText,
+    width: width,
+    localData: localData != null ? Uint8List.fromList(localData!) : null,
+  );
 
   factory ImageElement.fromJson(Map<String, dynamic> json) {
     return ImageElement(
@@ -275,6 +304,9 @@ class LinkButtonElement extends ReadmeElement {
     'url': url,
   };
 
+  @override
+  LinkButtonElement copy() => LinkButtonElement(text: text, url: url);
+
   factory LinkButtonElement.fromJson(Map<String, dynamic> json) {
     return LinkButtonElement(
       text: json['text'],
@@ -300,6 +332,9 @@ class CodeBlockElement extends ReadmeElement {
     'code': code,
     'language': language,
   };
+
+  @override
+  CodeBlockElement copy() => CodeBlockElement(code: code, language: language);
 
   factory CodeBlockElement.fromJson(Map<String, dynamic> json) {
     return CodeBlockElement(
@@ -327,6 +362,9 @@ class ListElement extends ReadmeElement {
     'isOrdered': isOrdered,
   };
 
+  @override
+  ListElement copy() => ListElement(items: List<String>.from(items), isOrdered: isOrdered);
+
   factory ListElement.fromJson(Map<String, dynamic> json) {
     return ListElement(
       items: List<String>.from(json['items']),
@@ -340,8 +378,6 @@ class BadgeElement extends ReadmeElement {
   String imageUrl;
   String targetUrl;
   String label;
-
-  // Custom properties for static badges generator
   String? badgeLabel;
   String? badgeMessage;
   String? badgeColor;
@@ -382,6 +418,20 @@ class BadgeElement extends ReadmeElement {
     'badgeLogoColor': badgeLogoColor,
     'badgeLabelColor': badgeLabelColor,
   };
+
+  @override
+  BadgeElement copy() => BadgeElement(
+    imageUrl: imageUrl,
+    targetUrl: targetUrl,
+    label: label,
+    badgeLabel: badgeLabel,
+    badgeMessage: badgeMessage,
+    badgeColor: badgeColor,
+    badgeStyle: badgeStyle,
+    badgeLogo: badgeLogo,
+    badgeLogoColor: badgeLogoColor,
+    badgeLabelColor: badgeLabelColor,
+  );
 
   factory BadgeElement.fromJson(Map<String, dynamic> json) {
     return BadgeElement(
@@ -433,6 +483,13 @@ class TableElement extends ReadmeElement {
         'alignments': alignments.map((e) => e.toString()).toList(),
       };
 
+  @override
+  TableElement copy() => TableElement(
+    headers: List<String>.from(headers),
+    rows: rows.map((r) => List<String>.from(r)).toList(),
+    alignments: List<ColumnAlignment>.from(alignments),
+  );
+
   factory TableElement.fromJson(Map<String, dynamic> json) {
     return TableElement(
       headers: List<String>.from(json['headers']),
@@ -474,6 +531,9 @@ class IconElement extends ReadmeElement {
     'size': size,
   };
 
+  @override
+  IconElement copy() => IconElement(name: name, url: url, size: size);
+
   factory IconElement.fromJson(Map<String, dynamic> json) {
     return IconElement(
       name: json['name'],
@@ -486,7 +546,7 @@ class IconElement extends ReadmeElement {
 
 class EmbedElement extends ReadmeElement {
   String url;
-  String typeName; // 'gist', 'codepen', etc.
+  String typeName;
 
   EmbedElement({this.url = '', this.typeName = 'gist', super.id}) : super(type: ReadmeElementType.embed);
 
@@ -501,6 +561,9 @@ class EmbedElement extends ReadmeElement {
     'typeName': typeName,
   };
 
+  @override
+  EmbedElement copy() => EmbedElement(url: url, typeName: typeName);
+
   factory EmbedElement.fromJson(Map<String, dynamic> json) {
     return EmbedElement(
       url: json['url'],
@@ -511,7 +574,7 @@ class EmbedElement extends ReadmeElement {
 }
 
 class GitHubStatsElement extends ReadmeElement {
-  String repoName; // username/repo
+  String repoName;
   bool showStars;
   bool showForks;
   bool showIssues;
@@ -540,6 +603,15 @@ class GitHubStatsElement extends ReadmeElement {
     'showLicense': showLicense,
   };
 
+  @override
+  GitHubStatsElement copy() => GitHubStatsElement(
+    repoName: repoName,
+    showStars: showStars,
+    showForks: showForks,
+    showIssues: showIssues,
+    showLicense: showLicense,
+  );
+
   factory GitHubStatsElement.fromJson(Map<String, dynamic> json) {
     return GitHubStatsElement(
       repoName: json['repoName'] ?? '',
@@ -553,8 +625,8 @@ class GitHubStatsElement extends ReadmeElement {
 }
 
 class ContributorsElement extends ReadmeElement {
-  String repoName; // username/repo
-  String style; // 'grid', 'list'
+  String repoName;
+  String style;
 
   ContributorsElement({
     this.repoName = '',
@@ -572,6 +644,9 @@ class ContributorsElement extends ReadmeElement {
     'repoName': repoName,
     'style': style,
   };
+
+  @override
+  ContributorsElement copy() => ContributorsElement(repoName: repoName, style: style);
 
   factory ContributorsElement.fromJson(Map<String, dynamic> json) {
     return ContributorsElement(
@@ -597,6 +672,9 @@ class BlockquoteElement extends ReadmeElement {
     'text': text,
   };
 
+  @override
+  BlockquoteElement copy() => BlockquoteElement(text: text);
+
   factory BlockquoteElement.fromJson(Map<String, dynamic> json) {
     return BlockquoteElement(
       text: json['text'],
@@ -616,6 +694,9 @@ class DividerElement extends ReadmeElement {
     'id': id,
     'type': type.toString(),
   };
+
+  @override
+  DividerElement copy() => DividerElement();
 
   factory DividerElement.fromJson(Map<String, dynamic> json) {
     return DividerElement(id: json['id']);
@@ -639,6 +720,9 @@ class CollapsibleElement extends ReadmeElement {
     'content': content,
   };
 
+  @override
+  CollapsibleElement copy() => CollapsibleElement(summary: summary, content: content);
+
   factory CollapsibleElement.fromJson(Map<String, dynamic> json) {
     return CollapsibleElement(
       summary: json['summary'],
@@ -652,8 +736,8 @@ enum DynamicWidgetType { spotify, youtube, medium, activity }
 
 class DynamicWidgetElement extends ReadmeElement {
   DynamicWidgetType widgetType;
-  String identifier; // Spotify ID, YouTube Channel ID, Medium Username, GitHub Username
-  String theme; // 'default', 'dark', 'light', etc.
+  String identifier;
+  String theme;
 
   DynamicWidgetElement({
     this.widgetType = DynamicWidgetType.spotify,
@@ -673,6 +757,13 @@ class DynamicWidgetElement extends ReadmeElement {
         'identifier': identifier,
         'theme': theme,
       };
+
+  @override
+  DynamicWidgetElement copy() => DynamicWidgetElement(
+    widgetType: widgetType,
+    identifier: identifier,
+    theme: theme,
+  );
 
   factory DynamicWidgetElement.fromJson(Map<String, dynamic> json) {
     return DynamicWidgetElement(
@@ -702,6 +793,9 @@ class RawElement extends ReadmeElement {
     'content': content,
     'css': css,
   };
+
+  @override
+  RawElement copy() => RawElement(content: content, css: css);
 
   factory RawElement.fromJson(Map<String, dynamic> json) {
     return RawElement(

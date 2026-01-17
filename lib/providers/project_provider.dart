@@ -64,7 +64,6 @@ class ProjectProvider with ChangeNotifier {
   Locale? get locale => _locale;
   String get targetLanguage => _targetLanguage;
 
-  // Helper to call notifyListeners safely after the current frame.
   void _safeNotify() {
     try {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -73,7 +72,6 @@ class ProjectProvider with ChangeNotifier {
         } catch (_) {}
       });
     } catch (_) {
-      // Fallback to direct notify if WidgetsBinding is not available for some reason
       try {
         notifyListeners();
       } catch (_) {}
@@ -147,10 +145,8 @@ class ProjectProvider with ChangeNotifier {
 
   Future<void> _saveState() async {
     await _prefsService.saveThemeMode(_themeMode);
-
     await _prefsService.saveElements(_elements);
     await _prefsService.saveVariables(_variables);
-
     await _prefsService.saveString(PreferencesService.keyLicenseType, _licenseType);
     await _prefsService.saveBool(PreferencesService.keyIncludeContributing, _includeContributing);
     await _prefsService.saveBool(PreferencesService.keyIncludeSecurity, _includeSecurity);
@@ -167,13 +163,9 @@ class ProjectProvider with ChangeNotifier {
 
     if (_geminiApiKey != null) {
       await _prefsService.saveString(PreferencesService.keyGeminiApiKey, _geminiApiKey!);
-    } else {
-      await _prefsService.remove(PreferencesService.keyGeminiApiKey);
     }
     if (_githubToken != null) {
       await _prefsService.saveString(PreferencesService.keyGithubToken, _githubToken!);
-    } else {
-      await _prefsService.remove(PreferencesService.keyGithubToken);
     }
     await _prefsService.saveString(PreferencesService.keyTargetLanguage, _targetLanguage);
   }
@@ -202,65 +194,27 @@ class ProjectProvider with ChangeNotifier {
   void importFromJson(String jsonString) {
     try {
       final Map<String, dynamic> data = jsonDecode(jsonString);
-
       if (data['elements'] != null) {
         _elements.clear();
         final List<dynamic> elementsList = data['elements'];
         _elements.addAll(elementsList.map((e) => ReadmeElement.fromJson(e)).toList());
       }
-
       if (data['variables'] != null) {
         _variables.clear();
         _variables.addAll(Map<String, String>.from(data['variables']));
       }
-
-      if (data['licenseType'] != null) {
-        _licenseType = data['licenseType'];
-      }
-
-      if (data['includeContributing'] != null) {
-        _includeContributing = data['includeContributing'];
-      }
-
-      if (data['includeSecurity'] != null) {
-        _includeSecurity = data['includeSecurity'];
-      }
-
-      if (data['includeSupport'] != null) {
-        _includeSupport = data['includeSupport'];
-      }
-
-      if (data['includeCodeOfConduct'] != null) {
-        _includeCodeOfConduct = data['includeCodeOfConduct'];
-      }
-
-      if (data['includeIssueTemplates'] != null) {
-        _includeIssueTemplates = data['includeIssueTemplates'];
-      }
-
-      if (data['primaryColor'] != null) {
-        _primaryColor = Color(data['primaryColor']);
-      }
-
-      if (data['secondaryColor'] != null) {
-        _secondaryColor = Color(data['secondaryColor']);
-      }
-
-      if (data['showGrid'] != null) {
-        _showGrid = data['showGrid'];
-      }
-
-      if (data['listBullet'] != null) {
-        _listBullet = data['listBullet'];
-      }
-
-      if (data['sectionSpacing'] != null) {
-        _sectionSpacing = data['sectionSpacing'];
-      }
-
-      if (data['exportHtml'] != null) {
-        _exportHtml = data['exportHtml'];
-      }
+      if (data['licenseType'] != null) _licenseType = data['licenseType'];
+      if (data['includeContributing'] != null) _includeContributing = data['includeContributing'];
+      if (data['includeSecurity'] != null) _includeSecurity = data['includeSecurity'];
+      if (data['includeSupport'] != null) _includeSupport = data['includeSupport'];
+      if (data['includeCodeOfConduct'] != null) _includeCodeOfConduct = data['includeCodeOfConduct'];
+      if (data['includeIssueTemplates'] != null) _includeIssueTemplates = data['includeIssueTemplates'];
+      if (data['primaryColor'] != null) _primaryColor = Color(data['primaryColor']);
+      if (data['secondaryColor'] != null) _secondaryColor = Color(data['secondaryColor']);
+      if (data['showGrid'] != null) _showGrid = data['showGrid'];
+      if (data['listBullet'] != null) _listBullet = data['listBullet'];
+      if (data['sectionSpacing'] != null) _sectionSpacing = data['sectionSpacing'];
+      if (data['exportHtml'] != null) _exportHtml = data['exportHtml'];
 
       _selectedElementId = null;
       _saveState();
@@ -274,12 +228,9 @@ class ProjectProvider with ChangeNotifier {
   Future<void> importMarkdown(String markdown) async {
     _recordHistory();
     try {
-      // Run parsing in a separate isolate to avoid blocking UI
       final newElements = await compute(_parseMarkdownIsolate, markdown);
-
       _elements.clear();
       _elements.addAll(newElements);
-
       _selectedElementId = null;
       _saveState();
       _safeNotify();
@@ -311,75 +262,22 @@ class ProjectProvider with ChangeNotifier {
   void _recordHistory() {
     _undoStack.add(exportToJson());
     _redoStack.clear();
-    if (_undoStack.length > 20) {
-      _undoStack.removeAt(0);
-    }
+    if (_undoStack.length > 20) _undoStack.removeAt(0);
   }
 
   void undo() {
     if (_undoStack.isEmpty) return;
-    final currentState = exportToJson();
-    _redoStack.add(currentState);
-    final previousState = _undoStack.removeLast();
-    importFromJson(previousState);
+    _redoStack.add(exportToJson());
+    importFromJson(_undoStack.removeLast());
   }
 
   void redo() {
     if (_redoStack.isEmpty) return;
-    final currentState = exportToJson();
-    _undoStack.add(currentState);
-    final nextState = _redoStack.removeLast();
-    importFromJson(nextState);
+    _undoStack.add(exportToJson());
+    importFromJson(_redoStack.removeLast());
   }
 
-  ReadmeElement _createElementByType(ReadmeElementType type) {
-    switch (type) {
-      case ReadmeElementType.heading:
-        return HeadingElement();
-      case ReadmeElementType.paragraph:
-        return ParagraphElement();
-      case ReadmeElementType.image:
-        return ImageElement();
-      case ReadmeElementType.linkButton:
-        return LinkButtonElement();
-      case ReadmeElementType.codeBlock:
-        return CodeBlockElement();
-      case ReadmeElementType.list:
-        return ListElement();
-      case ReadmeElementType.badge:
-        return BadgeElement();
-      case ReadmeElementType.table:
-        return TableElement();
-      case ReadmeElementType.icon:
-        return IconElement();
-      case ReadmeElementType.embed:
-        return EmbedElement();
-      case ReadmeElementType.githubStats:
-        return GitHubStatsElement();
-      case ReadmeElementType.contributors:
-        return ContributorsElement();
-      case ReadmeElementType.mermaid:
-        return MermaidElement();
-      case ReadmeElementType.toc:
-        return TOCElement();
-      case ReadmeElementType.socials:
-        return SocialsElement();
-      case ReadmeElementType.blockquote:
-        return BlockquoteElement();
-      case ReadmeElementType.divider:
-        return DividerElement();
-      case ReadmeElementType.collapsible:
-        return CollapsibleElement();
-      case ReadmeElementType.dynamicWidget:
-        return DynamicWidgetElement();
-      case ReadmeElementType.raw:
-        return RawElement();
-    }
-  }
-
-  void addElement(ReadmeElementType type) {
-    insertElement(_elements.length, type);
-  }
+  void addElement(ReadmeElementType type) => insertElement(_elements.length, type);
 
   void addElementObject(ReadmeElement element) {
     _recordHistory();
@@ -389,41 +287,49 @@ class ProjectProvider with ChangeNotifier {
     _safeNotify();
   }
 
-  void insertElementObject(int index, ReadmeElement element) {
-    _recordHistory();
-    if (index < 0) index = 0;
-    if (index > _elements.length) index = _elements.length;
-    _elements.insert(index, element);
-    _selectedElementId = element.id;
-    _saveState();
-    _safeNotify();
-  }
-
   void insertElement(int index, ReadmeElementType type) {
     _recordHistory();
     final newElement = _createElementByType(type);
-    if (index < 0) index = 0;
-    if (index > _elements.length) index = _elements.length;
-    _elements.insert(index, newElement);
+    _elements.insert(index.clamp(0, _elements.length), newElement);
     _selectedElementId = newElement.id;
     _saveState();
     _safeNotify();
   }
 
-  void addSnippet(Snippet snippet) {
-    insertSnippet(_elements.length, snippet);
+  ReadmeElement _createElementByType(ReadmeElementType type) {
+    switch (type) {
+      case ReadmeElementType.heading: return HeadingElement();
+      case ReadmeElementType.paragraph: return ParagraphElement();
+      case ReadmeElementType.image: return ImageElement();
+      case ReadmeElementType.linkButton: return LinkButtonElement();
+      case ReadmeElementType.codeBlock: return CodeBlockElement();
+      case ReadmeElementType.list: return ListElement();
+      case ReadmeElementType.badge: return BadgeElement();
+      case ReadmeElementType.table: return TableElement();
+      case ReadmeElementType.icon: return IconElement();
+      case ReadmeElementType.embed: return EmbedElement();
+      case ReadmeElementType.githubStats: return GitHubStatsElement();
+      case ReadmeElementType.contributors: return ContributorsElement();
+      case ReadmeElementType.mermaid: return MermaidElement();
+      case ReadmeElementType.toc: return TOCElement();
+      case ReadmeElementType.socials: return SocialsElement();
+      case ReadmeElementType.blockquote: return BlockquoteElement();
+      case ReadmeElementType.divider: return DividerElement();
+      case ReadmeElementType.collapsible: return CollapsibleElement();
+      case ReadmeElementType.dynamicWidget: return DynamicWidgetElement();
+      case ReadmeElementType.raw: return RawElement();
+    }
   }
+
+  void addSnippet(Snippet snippet) => insertSnippet(_elements.length, snippet);
 
   void insertSnippet(int index, Snippet snippet) {
     _recordHistory();
     try {
-      final Map<String, dynamic> json = jsonDecode(snippet.elementJson);
+      final json = jsonDecode(snippet.elementJson);
       json.remove('id');
       final newElement = ReadmeElement.fromJson(json);
-
-      if (index < 0) index = 0;
-      if (index > _elements.length) index = _elements.length;
-      _elements.insert(index, newElement);
+      _elements.insert(index.clamp(0, _elements.length), newElement);
       _selectedElementId = newElement.id;
       _saveState();
       _safeNotify();
@@ -435,9 +341,7 @@ class ProjectProvider with ChangeNotifier {
   void removeElement(String id) {
     _recordHistory();
     _elements.removeWhere((e) => e.id == id);
-    if (_selectedElementId == id) {
-      _selectedElementId = null;
-    }
+    if (_selectedElementId == id) _selectedElementId = null;
     _saveState();
     _safeNotify();
   }
@@ -449,10 +353,8 @@ class ProjectProvider with ChangeNotifier {
 
   void reorderElements(int oldIndex, int newIndex) {
     _recordHistory();
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
-    final ReadmeElement item = _elements.removeAt(oldIndex);
+    if (oldIndex < newIndex) newIndex -= 1;
+    final item = _elements.removeAt(oldIndex);
     _elements.insert(newIndex, item);
     _saveState();
     _safeNotify();
@@ -461,12 +363,6 @@ class ProjectProvider with ChangeNotifier {
   void moveElementUp(String id) {
     final index = _elements.indexWhere((e) => e.id == id);
     if (index > 0) {
-      reorderElements(index, index); // reorderElements expects newIndex to be where it lands.
-      // Wait, reorderElements logic:
-      // if old < new, new -= 1.
-      // To move up: old=index, new=index-1.
-      // if index > index-1 (true), new -= 1? No.
-      // Let's just use swap logic for simple up/down.
       _recordHistory();
       final item = _elements.removeAt(index);
       _elements.insert(index - 1, item);
@@ -487,75 +383,10 @@ class ProjectProvider with ChangeNotifier {
   }
 
   void duplicateElement(String id) {
-    _recordHistory();
     final index = _elements.indexWhere((e) => e.id == id);
     if (index != -1) {
-      final element = _elements[index];
-      ReadmeElement newElement;
-
-      // Create a copy based on type
-      if (element is HeadingElement) {
-        newElement = HeadingElement(text: element.text, level: element.level);
-      } else if (element is ParagraphElement) {
-        newElement = ParagraphElement(text: element.text);
-      } else if (element is ImageElement) {
-        newElement = ImageElement(
-            url: element.url,
-            altText: element.altText,
-            width: element.width);
-      } else if (element is LinkButtonElement) {
-        newElement = LinkButtonElement(text: element.text, url: element.url);
-      } else if (element is CodeBlockElement) {
-        newElement = CodeBlockElement(code: element.code, language: element.language);
-      } else if (element is ListElement) {
-        newElement = ListElement(items: List.from(element.items));
-      } else if (element is BadgeElement) {
-        newElement = BadgeElement(
-            imageUrl: element.imageUrl,
-            targetUrl: element.targetUrl,
-            label: element.label);
-      } else if (element is TableElement) {
-        newElement = TableElement(
-          headers: List.from(element.headers),
-          rows: element.rows.map((r) => List<String>.from(r)).toList(),
-          alignments: List.from(element.alignments),
-        );
-      } else if (element is IconElement) {
-        newElement = IconElement(name: element.name, url: element.url, size: element.size);
-      } else if (element is EmbedElement) {
-        newElement = EmbedElement(url: element.url, typeName: element.typeName);
-      } else if (element is GitHubStatsElement) {
-        newElement = GitHubStatsElement(
-          repoName: element.repoName,
-          showStars: element.showStars,
-          showForks: element.showForks,
-          showIssues: element.showIssues,
-          showLicense: element.showLicense,
-        );
-      } else if (element is ContributorsElement) {
-        newElement = ContributorsElement(
-          repoName: element.repoName,
-          style: element.style,
-        );
-      } else if (element is MermaidElement) {
-        newElement = MermaidElement(code: element.code);
-      } else if (element is TOCElement) {
-        newElement = TOCElement(title: element.title);
-      } else if (element is SocialsElement) {
-        newElement = SocialsElement(
-          profiles: element.profiles.map((p) => SocialProfile(platform: p.platform, username: p.username)).toList(),
-          style: element.style,
-        );
-      } else if (element is BlockquoteElement) {
-        newElement = BlockquoteElement(text: element.text);
-      } else if (element is DividerElement) {
-        newElement = DividerElement();
-      } else if (element is CollapsibleElement) {
-        newElement = CollapsibleElement(summary: element.summary, content: element.content);
-      } else {
-        return;
-      }
-
+      _recordHistory();
+      final newElement = _elements[index].copy();
       _elements.insert(index + 1, newElement);
       _selectedElementId = newElement.id;
       _saveState();
@@ -590,30 +421,11 @@ class ProjectProvider with ChangeNotifier {
     _safeNotify();
   }
 
-  void setIncludeContributing(bool value) {
-    _includeContributing = value;
-    notifyListeners();
-  }
-
-  void setIncludeSecurity(bool value) {
-    _includeSecurity = value;
-    notifyListeners();
-  }
-
-  void setIncludeSupport(bool value) {
-    _includeSupport = value;
-    notifyListeners();
-  }
-
-  void setIncludeCodeOfConduct(bool value) {
-    _includeCodeOfConduct = value;
-    notifyListeners();
-  }
-
-  void setIncludeIssueTemplates(bool value) {
-    _includeIssueTemplates = value;
-    notifyListeners();
-  }
+  void setIncludeContributing(bool value) { _includeContributing = value; notifyListeners(); }
+  void setIncludeSecurity(bool value) { _includeSecurity = value; notifyListeners(); }
+  void setIncludeSupport(bool value) { _includeSupport = value; notifyListeners(); }
+  void setIncludeCodeOfConduct(bool value) { _includeCodeOfConduct = value; notifyListeners(); }
+  void setIncludeIssueTemplates(bool value) { _includeIssueTemplates = value; notifyListeners(); }
 
   void setPrimaryColor(Color color) {
     _recordHistory();
@@ -629,25 +441,18 @@ class ProjectProvider with ChangeNotifier {
     _safeNotify();
   }
 
-  void toggleGrid() {
-    _showGrid = !_showGrid;
-    _safeNotify();
-  }
+  void toggleGrid() { _showGrid = !_showGrid; _safeNotify(); }
 
   void saveSnapshot() {
     final snapshot = exportToJson();
     _snapshots.insert(0, snapshot);
-    if (_snapshots.length > 10) {
-      _snapshots.removeLast();
-    }
+    if (_snapshots.length > 10) _snapshots.removeLast();
     _saveState();
     _safeNotify();
   }
 
   void restoreSnapshot(int index) {
-    if (index >= 0 && index < _snapshots.length) {
-      importFromJson(_snapshots[index]);
-    }
+    if (index >= 0 && index < _snapshots.length) importFromJson(_snapshots[index]);
   }
 
   void deleteSnapshot(int index) {
@@ -658,60 +463,24 @@ class ProjectProvider with ChangeNotifier {
     }
   }
 
-  void setListBullet(String bullet) {
-    _listBullet = bullet;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setSectionSpacing(int spacing) {
-    _sectionSpacing = spacing;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setDeviceMode(DeviceMode mode) {
-    _deviceMode = mode;
-    _safeNotify();
-  }
+  void setListBullet(String bullet) { _listBullet = bullet; _saveState(); _safeNotify(); }
+  void setSectionSpacing(int spacing) { _sectionSpacing = spacing; _saveState(); _safeNotify(); }
+  void setDeviceMode(DeviceMode mode) { _deviceMode = mode; _safeNotify(); }
 
   void loadTemplate(ProjectTemplate template) {
     _recordHistory();
     _elements.clear();
-    // Deep copy elements to avoid reference issues if we modify them
-    // Since we don't have a deep copy method, we can serialize/deserialize or just create new instances manually.
-    // For simplicity, let's use JSON roundtrip which is robust.
-    final jsonList = template.elements.map((e) => e.toJson()).toList();
-    _elements.addAll(jsonList.map((e) => ReadmeElement.fromJson(e)).toList());
-
+    _elements.addAll(template.elements.map((e) => e.copy()).toList());
     _selectedElementId = null;
     _saveState();
     _safeNotify();
   }
 
-  void setExportHtml(bool value) {
-    _exportHtml = value;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setGeminiApiKey(String key) async {
-    _geminiApiKey = key;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setGitHubToken(String token) {
-    _githubToken = token;
-    _saveState();
-    _safeNotify();
-  }
-
-
+  void setExportHtml(bool value) { _exportHtml = value; _saveState(); _safeNotify(); }
+  void setGeminiApiKey(String key) { _geminiApiKey = key; _saveState(); _safeNotify(); }
+  void setGitHubToken(String token) { _githubToken = token; _saveState(); _safeNotify(); }
 }
 
-// Top-level function for compute
 List<ReadmeElement> _parseMarkdownIsolate(String markdown) {
-  final importer = MarkdownImporter();
-  return importer.parse(markdown);
+  return MarkdownImporter().parse(markdown);
 }

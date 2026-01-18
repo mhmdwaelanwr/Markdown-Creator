@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../providers/project_provider.dart';
+import '../models/readme_element.dart'; // FIXED: Missing import for ReadmeElementType
 import '../generator/markdown_generator.dart';
 import 'element_settings_form.dart';
 import '../core/constants/app_colors.dart';
@@ -14,6 +15,8 @@ class SettingsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return DefaultTabController(
       length: 2,
       child: ClipRect(
@@ -21,22 +24,50 @@ class SettingsPanel extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             decoration: BoxDecoration(
-              color: colorScheme.surface.withOpacity(0.7),
+              color: isDark ? AppColors.darkBackground.withOpacity(0.85) : colorScheme.surface.withOpacity(0.85),
               border: Border(left: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
             ),
             child: Column(
               children: [
+                // Enhanced TabBar Section
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.02),
+                    border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.05))),
+                  ),
                   child: TabBar(
-                    labelColor: Theme.of(context).primaryColor,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: Theme.of(context).primaryColor,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    labelColor: AppColors.primary,
+                    unselectedLabelColor: Colors.grey.shade500,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    indicator: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.primary.withOpacity(0.1),
+                    ),
+                    labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
+                    unselectedLabelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 13),
                     tabs: const [
-                      Tab(text: 'Settings'),
-                      Tab(text: 'Preview'),
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.tune_rounded, size: 18),
+                            SizedBox(width: 8),
+                            Text('Settings'),
+                          ],
+                        ),
+                      ),
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.code_rounded, size: 18),
+                            SizedBox(width: 8),
+                            Text('Preview'),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -71,25 +102,25 @@ class SettingsPanel extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer.withAlpha(50),
+                  color: colorScheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.tune, size: 64, color: colorScheme.primary.withAlpha(150)),
+                child: Icon(Icons.touch_app_outlined, size: 64, color: AppColors.primary.withOpacity(0.8)),
               ),
               const SizedBox(height: 24),
               Text(
                 'No Element Selected',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.poppins(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
-                'Select an element from the canvas to edit its properties, or drag a new component from the left panel.',
+                'Select an element from the canvas to edit its properties and see the results instantly.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(color: colorScheme.onSurface.withAlpha(150)),
+                style: GoogleFonts.inter(color: colorScheme.onSurface.withOpacity(0.6), height: 1.5),
               ),
             ],
           ),
@@ -97,7 +128,6 @@ class SettingsPanel extends StatelessWidget {
       );
     }
 
-    // Use Key to force rebuild when selection changes
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: ListView(
@@ -107,82 +137,122 @@ class SettingsPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colorScheme.primaryContainer.withAlpha(50),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.primary.withAlpha(50)),
+              color: AppColors.primary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.primary.withOpacity(0.2)),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.primary,
+                  radius: 16,
+                  child: Icon(_getElementIcon(element.type), size: 16, color: Colors.white),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Edit ${element.description}',
-                    style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.primary),
+                    element.description,
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.primary),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_upward),
-                      tooltip: 'Move Up',
-                      onPressed: () => provider.moveElementUp(element.id),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_downward),
-                      tooltip: 'Move Down',
-                      onPressed: () => provider.moveElementDown(element.id),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      color: colorScheme.error,
-                      tooltip: 'Delete Element',
-                      onPressed: () => provider.removeElement(element.id),
-                    ),
-                  ],
-                ),
+                _buildActionButtons(context, provider, element.id),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           ElementSettingsForm(element: element),
         ],
       ),
     );
   }
 
+  Widget _buildActionButtons(BuildContext context, ProjectProvider provider, String elementId) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.keyboard_arrow_up_rounded, size: 20),
+          onPressed: () => provider.moveElementUp(elementId),
+          visualDensity: VisualDensity.compact,
+        ),
+        IconButton(
+          icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
+          onPressed: () => provider.moveElementDown(elementId),
+          visualDensity: VisualDensity.compact,
+        ),
+        const SizedBox(width: 4),
+        IconButton(
+          icon: const Icon(Icons.delete_sweep_outlined, color: Colors.redAccent, size: 20),
+          onPressed: () => provider.removeElement(elementId),
+          visualDensity: VisualDensity.compact,
+        ),
+      ],
+    );
+  }
+
+  IconData _getElementIcon(ReadmeElementType type) {
+    switch (type) {
+      case ReadmeElementType.heading: return Icons.title_rounded;
+      case ReadmeElementType.paragraph: return Icons.notes_rounded;
+      case ReadmeElementType.image: return Icons.image_rounded;
+      case ReadmeElementType.linkButton: return Icons.link_rounded;
+      case ReadmeElementType.codeBlock: return Icons.code_rounded;
+      case ReadmeElementType.list: return Icons.list_rounded;
+      case ReadmeElementType.badge: return Icons.verified_rounded;
+      case ReadmeElementType.table: return Icons.table_chart_rounded;
+      case ReadmeElementType.icon: return Icons.category_rounded;
+      default: return Icons.extension_rounded;
+    }
+  }
+
   Widget _buildPreviewTab(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context);
     final element = provider.selectedElement;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (element == null) {
-      return Center(child: Text('Select an element to preview code', style: GoogleFonts.inter(color: Colors.grey)));
+      return Center(
+        child: Text(
+          'Select an element to preview code',
+          style: GoogleFonts.inter(color: Colors.grey.shade500),
+        ),
+      );
     }
 
     final generator = MarkdownGenerator();
-    // Generate markdown for just this element
     final markdown = generator.generate([element]);
 
     return Container(
-      color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkBackground : AppColors.lightBackground,
+      color: isDark ? const Color(0xFF0D1117) : const Color(0xFFF6F8FA),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: isDark ? Colors.black26 : Colors.black.withOpacity(0.03),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Markdown Source', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey)),
-                IconButton(
-                  icon: const Icon(Icons.copy, size: 16),
-                  tooltip: 'Copy to Clipboard',
+                Text(
+                  'MARKDOWN SOURCE',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 10,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 1.1,
+                  ),
+                ),
+                TextButton.icon(
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: markdown));
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Copied to Clipboard')),
+                    );
                   },
+                  icon: const Icon(Icons.copy_all_rounded, size: 14),
+                  label: const Text('Copy', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
                 ),
               ],
             ),
@@ -190,10 +260,14 @@ class SettingsPanel extends StatelessWidget {
           const Divider(height: 1),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: SelectableText(
                 markdown,
-                style: GoogleFonts.firaCode(fontSize: 14),
+                style: GoogleFonts.firaCode(
+                  fontSize: 14,
+                  color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F),
+                  height: 1.6,
+                ),
               ),
             ),
           ),

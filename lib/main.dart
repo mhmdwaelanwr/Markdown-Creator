@@ -1,5 +1,5 @@
-// Markdown Creator - The ultimate documentation tool.
-// Development by: Mohamed Anwar (mhmdwaelanwr)
+// Markdown Creator Pro - The Ultimate Tech Doc Suite
+// Developed by: Mohamed Anwar (mhmdwaelanwr)
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -13,32 +13,34 @@ import 'package:markdown_creator/providers/project_provider.dart';
 import 'package:markdown_creator/providers/library_provider.dart';
 import 'package:markdown_creator/screens/home_screen.dart';
 import 'package:markdown_creator/core/theme/app_theme.dart';
-
-// IMPORTANT: After running 'flutterfire configure', this file will be generated.
-// We use a conditional check to avoid build errors if the file is missing.
 import 'package:markdown_creator/services/auth_service.dart';
 
-void main() async {
-  // Use runZonedGuarded for production-grade error catching
+void main() {
+  // Catch all potential errors in production
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     
-    // Set preferred orientations for better UI control
+    // Smooth UI optimizations
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
 
+    // Professional Status Bar UI
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
+
     bool firebaseInitialized = false;
     try {
-      // Check for custom firebase_options.dart presence in future steps
-      // For now, we use the standard initialization
+      // Safe Firebase Boot (Works offline/online)
       await Firebase.initializeApp();
       firebaseInitialized = true;
-      debugPrint('🚀 Firebase Engine: Operational');
+      debugPrint('🛡️ Firebase Engine: ACTIVE');
     } catch (e) {
-      debugPrint('⚠️ Firebase Engine: Offline Mode ($e)');
+      debugPrint('⚠️ Firebase Engine: OFFLINE MODE ($e)');
     }
 
     runApp(
@@ -50,17 +52,16 @@ void main() async {
           ),
           Provider(create: (_) => AuthService()),
         ],
-        child: const MyApp(),
+        child: const MarkdownCreatorApp(),
       ),
     );
   }, (error, stack) {
-    debugPrint('❌ Critical System Error: $error');
-    debugPrint(stack.toString());
+    debugPrint('❌ Global Crash Guard: $error');
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MarkdownCreatorApp extends StatelessWidget {
+  const MarkdownCreatorApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
           title: 'Markdown Creator Pro',
           debugShowCheckedModeBanner: false,
           
-          // Localization Setup
+          // Advanced Localization
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -80,18 +81,15 @@ class MyApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           locale: provider.locale,
           
-          // Theming
+          // Premium Theming
           themeMode: provider.themeMode,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           
-          // Navigation
+          // Clean Navigation Architecture
           initialRoute: '/',
-          onGenerateRoute: (settings) {
-            if (settings.name == '/') {
-              return MaterialPageRoute(builder: (_) => const HomeScreen());
-            }
-            return null;
+          routes: {
+            '/': (context) => const HomeScreen(),
           },
         );
       },

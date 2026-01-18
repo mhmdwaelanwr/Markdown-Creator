@@ -49,32 +49,24 @@ class EditorCanvas extends StatelessWidget {
       },
       child: Focus(
         autofocus: true,
-        child: DragTarget<Object>(
-          onWillAcceptWithDetails: (details) => details.data is ReadmeElementType || details.data is Snippet,
-          onAcceptWithDetails: (details) {
-            if (details.data is ReadmeElementType) {
-              provider.addElement(details.data as ReadmeElementType);
-            } else if (details.data is Snippet) {
-              provider.addSnippet(details.data as Snippet);
-            }
-          },
-          builder: (context, candidateData, rejectedData) {
-            return Container(
-              color: isDark ? AppColors.editorBackgroundDark : AppColors.editorBackgroundLight,
-              child: Stack(
-                children: [
-                  // High-Contrast Grid Logic
-                  if (provider.showGrid)
-                    Positioned.fill(
-                      child: RepaintBoundary(
-                        child: CustomPaint(
-                          painter: DottedGridPainter(isDark: isDark),
-                        ),
-                      ),
-                    ),
-
-                  // Main Interactive Workspace
-                  Positioned.fill(
+        child: Container(
+          // Outer Screen Background
+          color: isDark ? AppColors.editorBackgroundDark : AppColors.editorBackgroundLight,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Main Scrollable Area
+              DragTarget<Object>(
+                onWillAcceptWithDetails: (details) => details.data is ReadmeElementType || details.data is Snippet,
+                onAcceptWithDetails: (details) {
+                  if (details.data is ReadmeElementType) {
+                    provider.addElement(details.data as ReadmeElementType);
+                  } else if (details.data is Snippet) {
+                    provider.addSnippet(details.data as Snippet);
+                  }
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return Positioned.fill(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       child: Column(
@@ -82,6 +74,8 @@ class EditorCanvas extends StatelessWidget {
                           const SizedBox(height: 100),
                           _buildAuthContextBanner(context, authService, isDark),
                           const SizedBox(height: 20),
+                          
+                          // THE CANVAS (THE PAPER)
                           Center(
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
@@ -96,23 +90,38 @@ class EditorCanvas extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(borderRadius),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(isDark ? 0.4 : 0.1),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                                    color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
+                                    blurRadius: 40,
+                                    offset: const Offset(0, 20),
                                   ),
                                 ],
                                 border: Border.all(
-                                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                                  width: provider.deviceMode == DeviceMode.desktop ? 1 : 12,
+                                  color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                                  width: 1,
                                 ),
                               ),
                               clipBehavior: Clip.antiAlias,
-                              child: GestureDetector(
-                                onTap: () => provider.selectElement(''),
-                                behavior: HitTestBehavior.opaque,
-                                child: provider.elements.isEmpty
-                                    ? _buildEmptyState(context)
-                                    : _buildElementList(provider, canvasPadding, isDark),
+                              child: Stack(
+                                children: [
+                                  // GRID PAINTED INSIDE THE PAPER (AS THE BASE LAYER)
+                                  if (provider.showGrid)
+                                    Positioned.fill(
+                                      child: IgnorePointer(
+                                        child: CustomPaint(
+                                          painter: DottedGridPainter(isDark: isDark),
+                                        ),
+                                      ),
+                                    ),
+
+                                  // CONTENT LAYER (ABOVE THE GRID)
+                                  GestureDetector(
+                                    onTap: () => provider.selectElement(''),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: provider.elements.isEmpty
+                                        ? _buildEmptyState(context)
+                                        : _buildElementList(provider, canvasPadding, isDark),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -120,14 +129,19 @@ class EditorCanvas extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-
-                  // Integrated Toolbar
-                  _buildFloatingToolbar(context, provider, isDark),
-                ],
+                  );
+                },
               ),
-            );
-          },
+
+              // Floating Toolbar
+              Positioned(
+                top: 20,
+                left: 0,
+                right: 0,
+                child: _buildFloatingToolbar(context, provider, isDark),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -196,52 +210,47 @@ class EditorCanvas extends StatelessWidget {
   }
 
   Widget _buildFloatingToolbar(BuildContext context, ProjectProvider provider, bool isDark) {
-    return Positioned(
-      top: 20,
-      left: 0,
-      right: 0,
-      child: Center(
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.95),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _toolbarButton(Icons.undo_rounded, 'Undo', provider.undo),
-              _toolbarButton(Icons.redo_rounded, 'Redo', provider.redo),
-              const VerticalDivider(width: 20, indent: 12, endIndent: 12),
-              _toolbarButton(
-                Icons.delete_sweep_rounded,
-                'Delete',
-                provider.selectedElementId != null ? () => provider.removeElement(provider.selectedElementId!) : null,
-                color: Colors.redAccent,
-              ),
-              const VerticalDivider(width: 20, indent: 12, endIndent: 12),
-              _toolbarButton(
-                Icons.grid_goldenratio_rounded,
-                'Grid',
-                provider.toggleGrid,
-                isActive: provider.showGrid,
-              ),
-              _toolbarButton(
-                Icons.delete_forever_rounded,
-                'Clear',
-                () {
-                  provider.clearElements();
-                  ToastHelper.show(context, 'Workspace cleared');
-                },
-                color: Colors.orange,
-              ),
-            ],
-          ),
+    return Center(
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: (isDark ? const Color(0xFF1E293B) : Colors.white).withOpacity(0.95),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _toolbarButton(Icons.undo_rounded, 'Undo', provider.undo),
+            _toolbarButton(Icons.redo_rounded, 'Redo', provider.redo),
+            const VerticalDivider(width: 20, indent: 12, endIndent: 12),
+            _toolbarButton(
+              Icons.delete_sweep_rounded,
+              'Delete',
+              provider.selectedElementId != null ? () => provider.removeElement(provider.selectedElementId!) : null,
+              color: Colors.redAccent,
+            ),
+            const VerticalDivider(width: 20, indent: 12, endIndent: 12),
+            _toolbarButton(
+              Icons.grid_goldenratio_rounded,
+              'Grid',
+              provider.toggleGrid,
+              isActive: provider.showGrid,
+            ),
+            _toolbarButton(
+              Icons.delete_forever_rounded,
+              'Clear',
+              () {
+                provider.clearElements();
+                ToastHelper.show(context, 'Workspace cleared');
+              },
+              color: Colors.orange,
+            ),
+          ],
         ),
       ),
     );
@@ -258,19 +267,21 @@ class EditorCanvas extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 40),
-      child: Column(
-        children: [
-          const Icon(Icons.auto_awesome_mosaic_rounded, size: 80, color: Colors.blue),
-          const SizedBox(height: 32),
-          Text(
-            'Start Your Masterpiece',
-            style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text('Drag components from the library to build your documentation', style: TextStyle(color: Colors.grey)),
-        ],
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 40),
+        child: Column(
+          children: [
+            const Icon(Icons.auto_awesome_mosaic_rounded, size: 80, color: Colors.blue),
+            const SizedBox(height: 32),
+            Text(
+              'Start Your Masterpiece',
+              style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text('Drag components from the library to build your documentation', style: TextStyle(color: Colors.grey)),
+          ],
+        ),
       ),
     );
   }
@@ -283,13 +294,13 @@ class DottedGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = isDark ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.08)
+      ..color = isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.04)
       ..style = PaintingStyle.fill;
 
-    const double gap = 30.0;
+    const double gap = 32.0;
     for (double x = 0; x <= size.width; x += gap) {
       for (double y = 0; y <= size.height; y += gap) {
-        canvas.drawCircle(Offset(x, y), 1.2, paint);
+        canvas.drawCircle(Offset(x, y), 0.8, paint);
       }
     }
   }

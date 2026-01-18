@@ -1,19 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import '../models/saved_project.dart';
 import '../models/snippet.dart';
 
 class FirestoreService {
-  // Static check to see if Firebase is initialized
-  bool get isReady => Firebase.apps.isNotEmpty;
+  // Safe access to Firebase instances
+  bool get isReady {
+    try {
+      return Firebase.apps.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
+  }
 
-  FirebaseFirestore get _db => FirebaseFirestore.instance;
-  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseFirestore? get _db => isReady ? FirebaseFirestore.instance : null;
+  FirebaseAuth? get _auth => isReady ? FirebaseAuth.instance : null;
 
   Stream<List<Map<String, dynamic>>> getPublicTemplates() {
-    if (!isReady) return Stream.value([]);
-    return _db.collection('public_templates').snapshots().map((snapshot) {
+    final db = _db;
+    if (db == null) return Stream.value([]);
+    
+    return db.collection('public_templates').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         var data = doc.data();
         data['id'] = doc.id;
@@ -22,13 +31,15 @@ class FirestoreService {
     });
   }
 
+  // Missing method required by Admin Dashboard
   Future<void> savePublicTemplate({
     required String name,
     required String description,
     required List<Map<String, dynamic>> elements,
   }) async {
-    if (!isReady) return;
-    await _db.collection('public_templates').add({
+    final db = _db;
+    if (db == null) return;
+    await db.collection('public_templates').add({
       'name': name,
       'description': description,
       'elements': elements,
@@ -37,40 +48,55 @@ class FirestoreService {
   }
 
   // Personal Collections
-  CollectionReference get _projectsRef => _db.collection('users').doc(_auth.currentUser?.uid).collection('projects');
-  CollectionReference get _snippetsRef => _db.collection('users').doc(_auth.currentUser?.uid).collection('snippets');
+  DocumentReference? get _userDoc {
+    final auth = _auth;
+    final db = _db;
+    if (auth?.currentUser == null || db == null) return null;
+    return db.collection('users').doc(auth!.currentUser!.uid);
+  }
 
   Future<void> saveProject(SavedProject project) async {
-    if (!isReady || _auth.currentUser == null) return;
-    await _projectsRef.doc(project.id).set(project.toJson());
+    final userDoc = _userDoc;
+    if (userDoc == null) return;
+    await userDoc.collection('projects').doc(project.id).set(project.toJson());
   }
 
   Stream<List<SavedProject>> getProjects() {
-    if (!isReady || _auth.currentUser == null) return Stream.value([]);
-    return _projectsRef.orderBy('lastModified', descending: true).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => SavedProject.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    final userDoc = _userDoc;
+    if (userDoc == null) return Stream.value([]);
+    
+    return userDoc.collection('projects')
+        .orderBy('lastModified', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => SavedProject.fromJson(doc.data())).toList();
     });
   }
 
   Future<void> deleteProject(String id) async {
-    if (!isReady || _auth.currentUser == null) return;
-    await _projectsRef.doc(id).delete();
+    final userDoc = _userDoc;
+    if (userDoc == null) return;
+    await userDoc.collection('projects').doc(id).delete();
   }
 
   Future<void> saveSnippet(Snippet snippet) async {
-    if (!isReady || _auth.currentUser == null) return;
-    await _snippetsRef.doc(snippet.id).set(snippet.toJson());
+    final userDoc = _userDoc;
+    if (userDoc == null) return;
+    await userDoc.collection('snippets').doc(snippet.id).set(snippet.toJson());
   }
 
   Stream<List<Snippet>> getSnippets() {
-    if (!isReady || _auth.currentUser == null) return Stream.value([]);
-    return _snippetsRef.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Snippet.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    final userDoc = _userDoc;
+    if (userDoc == null) return Stream.value([]);
+    
+    return userDoc.collection('snippets').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Snippet.fromJson(doc.data())).toList();
     });
   }
 
   Future<void> deleteSnippet(String id) async {
-    if (!isReady || _auth.currentUser == null) return;
-    await _snippetsRef.doc(id).delete();
+    final userDoc = _userDoc;
+    if (userDoc == null) return;
+    await userDoc.collection('snippets').doc(id).delete();
   }
 }

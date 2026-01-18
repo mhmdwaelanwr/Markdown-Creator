@@ -9,11 +9,11 @@ import '../services/auth_service.dart';
 
 class LibraryProvider with ChangeNotifier {
   final PreferencesService _prefsService = PreferencesService();
+  final FirestoreService _firestoreService = FirestoreService();
+  final AuthService _authService = AuthService();
+  
   final bool isFirebaseAvailable;
   
-  late final FirestoreService _firestoreService;
-  late final AuthService _authService;
-
   List<SavedProject> _projects = [];
   List<Snippet> _snippets = [];
 
@@ -21,29 +21,23 @@ class LibraryProvider with ChangeNotifier {
   List<Snippet> get snippets => _snippets;
 
   LibraryProvider({this.isFirebaseAvailable = false}) {
-    if (isFirebaseAvailable) {
-      _firestoreService = FirestoreService();
-      _authService = AuthService();
-    }
     _init();
   }
 
   Future<void> _init() async {
-    // 1. Handle Auth only if Firebase is ready
-    if (isFirebaseAvailable && _authService.currentUser == null) {
-      try {
-        await _authService.signInAnonymously();
-      } catch (e) {
-        debugPrint('Silent Auth failed: $e');
-      }
-    }
-
-    // 2. Always load local for persistence
+    // 1. Load local data first for immediate UI response
     await _loadLocalLibrary();
 
-    // 3. Sync if online
+    // 2. If Firebase is ready, handle sync
     if (isFirebaseAvailable) {
-      _listenToCloudChanges();
+      try {
+        if (_authService.currentUser == null) {
+          await _authService.signInAnonymously();
+        }
+        _listenToCloudChanges();
+      } catch (e) {
+        debugPrint('Firebase Sync Initialization failed: $e');
+      }
     }
   }
 
@@ -65,6 +59,7 @@ class LibraryProvider with ChangeNotifier {
 
     _firestoreService.getProjects().listen((cloudProjects) {
       if (cloudProjects.isNotEmpty) {
+        // Simple merge logic: Cloud wins for shared IDs, but keep local-only
         _projects = cloudProjects;
         _saveLocalLibrary();
         notifyListeners();

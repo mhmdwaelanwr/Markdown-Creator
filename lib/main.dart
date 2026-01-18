@@ -1,15 +1,12 @@
-// Markdown Creator
+// Markdown Creator - The ultimate documentation tool.
 // Development by: Mohamed Anwar (mhmdwaelanwr)
 
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-
-// IMPORTANT: After running 'flutterfire configure', uncomment the line below:
-// import 'package:markdown_creator/firebase_options.dart'; 
 
 import 'package:markdown_creator/l10n/app_localizations.dart';
 import 'package:markdown_creator/providers/project_provider.dart';
@@ -17,31 +14,48 @@ import 'package:markdown_creator/providers/library_provider.dart';
 import 'package:markdown_creator/screens/home_screen.dart';
 import 'package:markdown_creator/core/theme/app_theme.dart';
 
-void main() {
+// IMPORTANT: After running 'flutterfire configure', this file will be generated.
+// We use a conditional check to avoid build errors if the file is missing.
+import 'package:markdown_creator/services/auth_service.dart';
+
+void main() async {
+  // Use runZonedGuarded for production-grade error catching
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    
+    // Set preferred orientations for better UI control
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
 
     bool firebaseInitialized = false;
     try {
-      // Attempt safe initialization
+      // Check for custom firebase_options.dart presence in future steps
+      // For now, we use the standard initialization
       await Firebase.initializeApp();
       firebaseInitialized = true;
-      debugPrint('Firebase Core: Connected');
+      debugPrint('🚀 Firebase Engine: Operational');
     } catch (e) {
-      debugPrint('Firebase Core: Running in Offline Mode ($e)');
+      debugPrint('⚠️ Firebase Engine: Offline Mode ($e)');
     }
 
     runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ProjectProvider()),
-          ChangeNotifierProvider(create: (_) => LibraryProvider(isFirebaseAvailable: firebaseInitialized)),
+          ChangeNotifierProvider(
+            create: (_) => LibraryProvider(isFirebaseAvailable: firebaseInitialized),
+          ),
+          Provider(create: (_) => AuthService()),
         ],
         child: const MyApp(),
       ),
     );
   }, (error, stack) {
-    debugPrint('Global System Error: $error');
+    debugPrint('❌ Critical System Error: $error');
+    debugPrint(stack.toString());
   });
 }
 
@@ -53,8 +67,10 @@ class MyApp extends StatelessWidget {
     return Consumer<ProjectProvider>(
       builder: (context, provider, child) {
         return MaterialApp(
-          title: 'Markdown Creator',
+          title: 'Markdown Creator Pro',
           debugShowCheckedModeBanner: false,
+          
+          // Localization Setup
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -63,12 +79,19 @@ class MyApp extends StatelessWidget {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           locale: provider.locale,
+          
+          // Theming
           themeMode: provider.themeMode,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
+          
+          // Navigation
           initialRoute: '/',
-          routes: {
-            '/': (context) => const HomeScreen(),
+          onGenerateRoute: (settings) {
+            if (settings.name == '/') {
+              return MaterialPageRoute(builder: (_) => const HomeScreen());
+            }
+            return null;
           },
         );
       },

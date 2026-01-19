@@ -65,7 +65,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _entranceController;
+  late AnimationController _mainController;
   late Animation<double> _fadeAnimation;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final AuthService _authService = AuthService();
@@ -75,17 +75,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _entranceController = AnimationController(
+    _mainController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = CurvedAnimation(parent: _entranceController, curve: Curves.easeInOut);
-    _entranceController.forward();
+    _fadeAnimation = CurvedAnimation(parent: _mainController, curve: Curves.easeOutQuart);
+    _mainController.forward();
   }
 
   @override
   void dispose() {
-    _entranceController.dispose();
+    _mainController.dispose();
     super.dispose();
   }
 
@@ -95,145 +95,96 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final provider = Provider.of<ProjectProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Scaffold(
-        key: _scaffoldKey,
-        extendBodyBehindAppBar: true,
-        appBar: _buildModernAppBar(context, isDesktop, provider),
-        drawer: isDesktop ? null : const Drawer(child: ComponentsPanel()),
-        endDrawer: isDesktop ? null : const Drawer(child: SettingsPanel()),
-        body: Stack(
-          children: [
-            _buildBackgroundEffects(context, isDark),
-            Column(
-              children: [
-                const SizedBox(height: 70), 
-                Expanded(
-                  child: Row(
-                    children: [
-                      if (isDesktop && !_isFocusMode) 
-                        const Expanded(flex: 2, child: ComponentsPanel()),
-                      
-                      if (isDesktop && !_isFocusMode) VerticalDivider(width: 1, color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                      
-                      Expanded(
-                        flex: 6,
-                        child: const EditorCanvas(),
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyK, control: true): () => _showCommandPalette(context, provider),
+      },
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Scaffold(
+          key: _scaffoldKey,
+          extendBodyBehindAppBar: true,
+          backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+          appBar: _buildFutureAppBar(context, isDesktop, provider),
+          drawer: isDesktop ? null : const Drawer(child: ComponentsPanel()),
+          endDrawer: isDesktop ? null : const Drawer(child: SettingsPanel()),
+          body: Stack(
+            children: [
+              _buildDynamicBackground(context, isDark),
+              Column(
+                children: [
+                  const SizedBox(height: 100), 
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          if (isDesktop && !_isFocusMode) 
+                            _buildSidePanel(const ComponentsPanel(), flex: 2),
+                          
+                          if (isDesktop && !_isFocusMode) const SizedBox(width: 16),
+                          
+                          Expanded(
+                            flex: 6,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(32),
+                              child: const EditorCanvas(),
+                            ),
+                          ),
+                          
+                          if (_showPreview && isDesktop) ...[
+                            const SizedBox(width: 16),
+                            _buildSidePanel(_buildLiveMarkdownPreview(context, provider, isDark), flex: 4),
+                          ],
+                          
+                          if (isDesktop && !_isFocusMode) const SizedBox(width: 16),
+                          
+                          if (isDesktop && !_isFocusMode) 
+                            _buildSidePanel(const SettingsPanel(), flex: 3),
+                        ],
                       ),
-                      
-                      if (_showPreview && isDesktop) ...[
-                        VerticalDivider(width: 1, color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                        Expanded(
-                          flex: 4,
-                          child: _buildLiveMarkdownPreview(context, provider, isDark),
-                        ),
-                      ],
-                      
-                      if (isDesktop && !_isFocusMode) VerticalDivider(width: 1, color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                      
-                      if (isDesktop && !_isFocusMode) 
-                        const Expanded(flex: 3, child: SettingsPanel()),
-                    ],
+                    ),
                   ),
-                ),
-                _buildModernStatusBar(context, provider, isDark),
-              ],
-            ),
-          ],
+                  _buildStudioStatusBar(context, provider, isDark),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildModernAppBar(BuildContext context, bool isDesktop, ProjectProvider provider) {
+  PreferredSizeWidget _buildFutureAppBar(BuildContext context, bool isDesktop, ProjectProvider provider) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      flexibleSpace: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(color: (isDark ? Colors.black : Colors.white).withOpacity(0.7)),
-        ),
-      ),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.description_rounded, color: AppColors.primary, size: 24),
-          const SizedBox(width: 10),
-          Text('Markdown Creator', style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 17)),
-        ],
-      ),
-      actions: [
-        if (isDesktop) ..._buildFullDesktopActions(context, provider),
-        if (!isDesktop) ...[
-          IconButton(icon: const Icon(Icons.tune_rounded), onPressed: () => _scaffoldKey.currentState?.openEndDrawer()),
-          _buildMoreOptionsButton(context),
-        ]
-      ],
-    );
-  }
-
-  List<Widget> _buildFullDesktopActions(BuildContext context, ProjectProvider provider) {
-    return [
-      _appBarIconButton(Icons.undo_rounded, 'Undo', provider.undo),
-      _appBarIconButton(Icons.redo_rounded, 'Redo', provider.redo),
-      _divider(),
-      _appBarIconButton(Icons.desktop_mac, 'Desktop', () => provider.setDeviceMode(DeviceMode.desktop), isActive: provider.deviceMode == DeviceMode.desktop),
-      _appBarIconButton(Icons.tablet_mac, 'Tablet', () => provider.setDeviceMode(DeviceMode.tablet), isActive: provider.deviceMode == DeviceMode.tablet),
-      _appBarIconButton(Icons.phone_iphone, 'Mobile', () => provider.setDeviceMode(DeviceMode.mobile), isActive: provider.deviceMode == DeviceMode.mobile),
-      _divider(),
-      _appBarIconButton(Icons.file_copy_outlined, 'Templates', () => _showTemplatesMenu(context, provider)),
-      _appBarIconButton(Icons.library_books_outlined, 'Library', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen()))),
-      _appBarIconButton(Icons.health_and_safety_outlined, 'Health', () {
-        final issues = HealthCheckService.analyze(provider.elements);
-        _showHealthCheckDialog(context, issues, provider);
-      }),
-      _divider(),
-      _appBarIconButton(_showPreview ? Icons.visibility : Icons.visibility_off, 'Preview', () => setState(() => _showPreview = !_showPreview), isActive: _showPreview),
-      _appBarIconButton(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, 'Focus', () => setState(() => _isFocusMode = !_isFocusMode), isActive: _isFocusMode),
-      _divider(),
-      _appBarButton(Icons.download_rounded, 'Export', () => _handleExport(provider), isPrimary: true),
-      _buildMoreOptionsButton(context),
-      const SizedBox(width: 8),
-    ];
-  }
-
-  Widget _divider() => VerticalDivider(width: 20, indent: 15, endIndent: 15, color: Colors.grey.withOpacity(0.2));
-
-  Widget _appBarIconButton(IconData icon, String tooltip, VoidCallback onTap, {bool isActive = false, Color? color}) {
-    return IconButton(
-      icon: Icon(icon, size: 20),
-      tooltip: tooltip,
-      onPressed: onTap,
-      color: isActive ? AppColors.primary : color,
-    );
-  }
-
-  Widget _appBarButton(IconData icon, String tooltip, VoidCallback onTap, {bool isPrimary = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Tooltip(
-        message: tooltip,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-            decoration: BoxDecoration(
-              color: isPrimary ? AppColors.primary : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 18, color: isPrimary ? Colors.white : null),
-                if (isPrimary) ...[
-                  const SizedBox(width: 8),
-                  const Text('Export', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(100),
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+            child: Container(
+              height: 64,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
+                border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                children: [
+                  _appIcon(),
+                  const SizedBox(width: 12),
+                  Text('MD Studio', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: -0.5)),
+                  const Spacer(),
+                  if (isDesktop) ..._buildFullStudioActions(context, provider),
+                  if (!isDesktop) IconButton(icon: const Icon(Icons.tune_rounded), onPressed: () => _scaffoldKey.currentState?.openEndDrawer()),
+                  _buildMoreOptionsButton(context),
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -241,146 +192,140 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildMoreOptionsButton(BuildContext context) {
-    final provider = Provider.of<ProjectProvider>(context, listen: false);
+  List<Widget> _buildFullStudioActions(BuildContext context, ProjectProvider provider) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    return [
+      // 1. History
+      _actionIcon(Icons.undo_rounded, provider.undo, tooltip: 'Undo (Ctrl+Z)'),
+      _actionIcon(Icons.redo_rounded, provider.redo, tooltip: 'Redo (Ctrl+Y)'),
+      _divider(),
 
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert_rounded),
-      tooltip: 'More Options',
-      surfaceTintColor: Colors.transparent,
-      elevation: 20,
-      shadowColor: Colors.black.withOpacity(0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
-      ),
-      offset: const Offset(0, 52),
-      itemBuilder: (context) => [
-        _buildMenuHeader('Project & Files'),
-        _buildMenuItem(context, 'save', Icons.save_alt_rounded, 'Save to Library', color: Colors.blueAccent),
-        _buildMenuItem(context, 'snapshots', Icons.history_rounded, 'Local Snapshots', color: Colors.blueAccent),
-        _buildMenuItem(context, 'import_md', Icons.file_upload_outlined, 'Import Markdown', color: Colors.blueAccent),
-        _buildMenuItem(context, 'export_json', Icons.javascript_rounded, 'Export Project (JSON)', color: Colors.blueAccent),
-        _buildMenuItem(context, 'import_json', Icons.data_object_rounded, 'Import Project (JSON)', color: Colors.blueAccent),
-        _buildMenuItem(context, 'clear', Icons.delete_sweep_rounded, 'Clear Workspace', color: Colors.redAccent, isDestructive: true),
+      // 2. Devices
+      _deviceIcon(Icons.desktop_mac, DeviceMode.desktop, provider),
+      _deviceIcon(Icons.tablet_mac, DeviceMode.tablet, provider),
+      _deviceIcon(Icons.phone_iphone, DeviceMode.mobile, provider),
+      _divider(),
 
-        const PopupMenuDivider(height: 1),
-        _buildMenuHeader('Tools & Generators'),
-        _buildMenuItem(context, 'gallery', Icons.auto_awesome_mosaic_rounded, 'Showcase Gallery', color: Colors.orangeAccent),
-        _buildMenuItem(context, 'social', Icons.auto_graph_rounded, 'Social Preview Designer', color: Colors.orangeAccent),
-        _buildMenuItem(context, 'actions', Icons.terminal_rounded, 'GitHub Actions Generator', color: Colors.orangeAccent),
-        _buildMenuItem(context, 'funding', Icons.volunteer_activism_rounded, 'Funding Generator', color: Colors.pinkAccent),
-        _buildMenuItem(context, 'extra', Icons.library_add_rounded, 'Generate Extra Files', color: Colors.deepOrangeAccent),
+      // 3. Core Tools
+      _actionIcon(Icons.file_copy_outlined, () => _showTemplatesMenu(context, provider), tooltip: 'Templates'),
+      _actionIcon(Icons.library_books_outlined, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen())), tooltip: 'Projects'),
+      _actionIcon(Icons.health_and_safety_outlined, () {
+        final issues = HealthCheckService.analyze(provider.elements);
+        _showHealthCheckDialog(context, issues, provider);
+      }, tooltip: 'Health Audit'),
+      _divider(),
 
-        const PopupMenuDivider(height: 1),
-        _buildMenuHeader('Intelligence & Cloud'),
-        _buildMenuItem(context, 'ai', Icons.psychology_rounded, 'AI Settings & Magic', color: Colors.purpleAccent),
-        _buildMenuItem(context, 'codebase', Icons.auto_awesome_rounded, 'Generate From Codebase', color: Colors.purpleAccent),
-        _buildMenuItem(context, 'publish', Icons.cloud_upload_rounded, 'Publish to GitHub', color: Colors.tealAccent),
+      // 4. Studio Appearance
+      _actionIcon(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded, provider.toggleTheme, tooltip: 'Toggle Theme', color: isDark ? Colors.amber : Colors.blueGrey),
+      _actionIcon(Icons.settings_outlined, () => _showProjectSettingsDialog(context, provider), tooltip: 'Studio Settings'),
+      _divider(),
 
-        const PopupMenuDivider(height: 1),
-        _buildMenuHeader('Application'),
-        _buildMenuItem(context, 'lang', Icons.translate_rounded, 'Change Language', color: Colors.grey),
-        _buildMenuItem(context, 'shortcuts', Icons.keyboard_command_key_rounded, 'Keyboard Shortcuts', color: Colors.grey),
-        _buildMenuItem(context, 'about_dev', Icons.badge_rounded, 'About Developer', color: Colors.grey),
-        _buildMenuItem(context, 'about', Icons.info_outline_rounded, 'About Application', color: Colors.grey),
-      ],
-      onSelected: (value) async {
-        if (value == 'save') _showSaveToLibraryDialog(context, provider);
-        else if (value == 'snapshots') _showSnapshotsDialog(context, provider);
-        else if (value == 'import_md') _showImportMarkdownDialog(context, provider);
-        else if (value == 'gallery') Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen()));
-        else if (value == 'social') Navigator.push(context, MaterialPageRoute(builder: (_) => const SocialPreviewScreen()));
-        else if (value == 'actions') Navigator.push(context, MaterialPageRoute(builder: (_) => const GitHubActionsGenerator()));
-        else if (value == 'funding') Navigator.push(context, MaterialPageRoute(builder: (_) => const FundingGeneratorScreen()));
-        else if (value == 'publish') _showPublishToGitHubDialog(context, provider);
-        else if (value == 'ai') _showAISettingsDialog(context, provider);
-        else if (value == 'codebase') _showGenerateFromCodebaseDialog(context, provider);
-        else if (value == 'extra') _showExtraFilesDialog(context, provider);
-        else if (value == 'lang') _showLanguageDialog(context, provider);
-        else if (value == 'shortcuts') _showKeyboardShortcutsDialog(context);
-        else if (value == 'about_dev') _showDeveloperInfoDialog(context);
-        else if (value == 'about') _showAboutAppDialog(context);
-        else if (value == 'clear') {
-          showSafeDialog(context, builder: (context) => ConfirmDialog(
-            title: 'Clear Workspace?',
-            content: 'This will remove all elements. This action cannot be undone.',
-            confirmText: 'Clear',
-            isDestructive: true,
-            onConfirm: () => provider.clearElements(),
-          ));
-        } else if (value == 'export_json') {
-          final json = provider.exportToJson();
-          downloadJsonFile(json, 'readme_project.json');
-        } else if (value == 'import_json') {
-          _handleImportJson(provider);
-        }
+      // 5. Viewing
+      _actionIcon(_showPreview ? Icons.visibility : Icons.visibility_off, () => setState(() => _showPreview = !_showPreview), active: _showPreview, tooltip: 'Live View'),
+      _actionIcon(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, () => setState(() => _isFocusMode = !_isFocusMode), active: _isFocusMode, tooltip: 'Focus Mode'),
+      
+      const SizedBox(width: 12),
+      // 6. Action
+      _appBarPrimaryButton('Export', Icons.rocket_launch_rounded, () => _handleExport(provider)),
+      const SizedBox(width: 8),
+      
+      // 7. Auth Avatar
+      _buildUserAvatar(),
+    ];
+  }
+
+  Widget _buildUserAvatar() {
+    return StreamBuilder(
+      stream: _authService.user,
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        if (user == null) return IconButton(icon: const Icon(Icons.account_circle_outlined), onPressed: () => _showLoginDialog(context));
+        return Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: InkWell(
+            onTap: () => _authService.signOut(),
+            child: CircleAvatar(radius: 14, backgroundImage: NetworkImage(user.photoURL ?? '')),
+          ),
+        );
       },
     );
   }
 
-  PopupMenuItem<String> _buildMenuItem(BuildContext context, String value, IconData icon, String text, {Color? color, bool isDestructive = false}) {
-    final themeColor = color ?? Theme.of(context).iconTheme.color;
+  Widget _appIcon() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18),
+    );
+  }
+
+  Widget _appBarPrimaryButton(String label, IconData icon, VoidCallback onTap) {
+    return ElevatedButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, size: 16),
+      label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Widget _divider() => VerticalDivider(width: 24, indent: 20, endIndent: 20, color: Colors.grey.withOpacity(0.2));
+
+  Widget _actionIcon(IconData icon, VoidCallback onTap, {bool active = false, String? tooltip, Color? color}) {
+    return Tooltip(
+      message: tooltip ?? '',
+      child: IconButton(
+        icon: Icon(icon, size: 19, color: active ? AppColors.primary : color),
+        onPressed: onTap,
+        splashRadius: 22,
+      ),
+    );
+  }
+
+  Widget _deviceIcon(IconData icon, DeviceMode mode, ProjectProvider provider) {
+    final active = provider.deviceMode == mode;
+    return Tooltip(
+      message: mode.name.toUpperCase(),
+      child: IconButton(
+        icon: Icon(icon, size: 19, color: active ? AppColors.primary : Colors.grey),
+        onPressed: () => provider.setDeviceMode(mode),
+      ),
+    );
+  }
+
+  Widget _buildSidePanel(Widget child, {required int flex}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return PopupMenuItem<String>(
-      value: value,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    return Expanded(
+      flex: flex,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: themeColor!.withOpacity(isDark ? 0.15 : 0.08),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: themeColor, size: 18),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                text,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: isDestructive ? Colors.redAccent : (isDark ? Colors.white : Colors.black87),
-                ),
-              ),
-            ),
-            if (!isDestructive)
-              Icon(Icons.chevron_right_rounded, size: 14, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)),
-          ],
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black26 : Colors.white70,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 20)],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: child,
         ),
       ),
     );
   }
 
-  PopupMenuItem<String> _buildMenuHeader(String title) {
-    return PopupMenuItem<String>(
-      enabled: false,
-      height: 36,
-      padding: const EdgeInsets.only(left: 16, top: 8),
-      child: Text(
-        title.toUpperCase(),
-        style: GoogleFonts.inter(
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          color: Colors.grey.shade500,
-          letterSpacing: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackgroundEffects(BuildContext context, bool isDark) {
+  Widget _buildDynamicBackground(BuildContext context, bool isDark) {
     return Positioned.fill(
       child: Stack(
         children: [
-          Positioned(top: -100, right: -50, child: Container(width: 300, height: 300, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withOpacity(isDark ? 0.1 : 0.03)))),
-          Positioned(bottom: -50, left: -50, child: Container(width: 400, height: 400, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.purpleAccent.withOpacity(0.08)))),
+          Positioned(top: -100, right: -50, child: Container(width: 400, height: 400, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withOpacity(isDark ? 0.15 : 0.05)))),
+          Positioned(bottom: -150, left: -50, child: Container(width: 500, height: 500, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.purpleAccent.withOpacity(isDark ? 0.1 : 0.03)))),
         ],
       ),
     );
@@ -391,38 +336,48 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Container(
       color: isDark ? const Color(0xFF0D1117) : Colors.white,
       padding: const EdgeInsets.all(24),
-      child: Markdown(
-        data: markdown,
-        selectable: true,
-        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-          p: GoogleFonts.inter(height: 1.6, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
-          h1: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-          code: GoogleFonts.firaCode(backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-        ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.code_rounded, size: 14, color: Colors.grey),
+              const SizedBox(width: 8),
+              Text('MARKDOWN PREVIEW', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.2)),
+            ],
+          ),
+          const Divider(height: 32),
+          Expanded(
+            child: Markdown(
+              data: markdown,
+              selectable: true,
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                p: GoogleFonts.inter(height: 1.6, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
+                h1: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                code: GoogleFonts.firaCode(backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildModernStatusBar(BuildContext context, ProjectProvider provider, bool isDark) {
-    final score = AIService.calculateHealthScore(provider.elements);
+  Widget _buildStudioStatusBar(BuildContext context, ProjectProvider provider, bool isDark) {
+    final score = HealthCheckService.calculateDocumentationScore(provider.elements);
     return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(color: isDark ? Colors.black45 : Colors.white70, border: Border(top: BorderSide(color: isDark ? Colors.white10 : Colors.black12))),
+      height: 36,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(color: isDark ? Colors.black38 : Colors.white70, border: Border(top: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)))),
       child: Row(
         children: [
-          _statusItem(Icons.widgets_outlined, '${provider.elements.length} Elements'),
+          _statusItem(Icons.layers_rounded, '${provider.elements.length} Components'),
           const SizedBox(width: 24),
-          _statusItem(Icons.analytics_outlined, 'Quality Score: ${score.toInt()}/100', color: score > 70 ? Colors.green : Colors.orange),
+          _statusItem(Icons.analytics_outlined, 'Doc Health: ${score.toInt()}%', color: score > 70 ? Colors.greenAccent : Colors.orangeAccent),
           const Spacer(),
           if (provider.isSaving) 
-            Row(children: [
-              const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
-              const SizedBox(width: 8),
-              Text('Saving...', style: GoogleFonts.inter(fontSize: 10, color: Colors.grey)),
-            ])
+            const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary))
           else
-            _statusItem(Icons.cloud_done_outlined, 'Sync Active', color: AppColors.primary),
+            _statusItem(Icons.cloud_done_rounded, 'Studio Synced', color: AppColors.primary),
         ],
       ),
     );
@@ -432,6 +387,62 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Row(children: [Icon(icon, size: 14, color: color ?? Colors.grey), const SizedBox(width: 6), Text(label, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: color ?? Colors.grey))]);
   }
 
+  Widget _buildMoreOptionsButton(BuildContext context) {
+    final provider = Provider.of<ProjectProvider>(context, listen: false);
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.grid_view_rounded, size: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      offset: const Offset(0, 50),
+      itemBuilder: (context) => [
+        _menuHeader('Projects & Files'),
+        _menuItem('save', Icons.save_alt_rounded, 'Save Project', Colors.blue),
+        _menuItem('snapshots', Icons.history_rounded, 'Local Snapshots', Colors.blue),
+        _menuItem('import_md', Icons.file_upload_outlined, 'Import Markdown', Colors.blue),
+        _menuItem('export_json', Icons.javascript_rounded, 'Export JSON', Colors.blue),
+        _menuItem('import_json', Icons.data_object_rounded, 'Import JSON', Colors.blue),
+        _menuItem('clear', Icons.delete_sweep_rounded, 'Clear Workspace', Colors.red, isDestructive: true),
+        const PopupMenuDivider(),
+        _menuHeader('Intelligence'),
+        _menuItem('ai', Icons.psychology_rounded, 'AI Settings & Magic', Colors.purple),
+        _menuItem('codebase', Icons.auto_awesome_rounded, 'Generate From Codebase', Colors.purple),
+        _menuItem('publish', Icons.cloud_upload_rounded, 'Publish to GitHub', Colors.teal),
+        const PopupMenuDivider(),
+        _menuHeader('Advanced Tools'),
+        _menuItem('social', Icons.auto_graph_rounded, 'Social Preview Designer', Colors.orange),
+        _menuItem('actions', Icons.terminal_rounded, 'GitHub Actions Generator', Colors.orange),
+        _menuItem('funding', Icons.volunteer_activism_rounded, 'Funding Generator', Colors.pink),
+        _menuItem('extra', Icons.library_add_rounded, 'Generate Extra Files', Colors.deepOrange),
+        const PopupMenuDivider(),
+        _menuHeader('App Settings'),
+        _menuItem('lang', Icons.translate_rounded, 'Change Language', Colors.grey),
+        _menuItem('shortcuts', Icons.keyboard_command_key_rounded, 'Keyboard Shortcuts', Colors.grey),
+        _menuItem('about', Icons.info_outline_rounded, 'About Application', Colors.grey),
+      ],
+      onSelected: (val) {
+        if (val == 'save') _showSaveToLibraryDialog(context, provider);
+        else if (val == 'snapshots') _showSnapshotsDialog(context, provider);
+        else if (val == 'import_md') _showImportMarkdownDialog(context, provider);
+        else if (val == 'export_json') downloadJsonFile(provider.exportToJson(), 'readme_project.json');
+        else if (val == 'import_json') _handleImportJson(provider);
+        else if (val == 'clear') showSafeDialog(context, builder: (context) => ConfirmDialog(title: 'Clear Workspace?', content: 'This will remove all elements.', confirmText: 'Clear', isDestructive: true, onConfirm: () => provider.clearElements()));
+        else if (val == 'gallery') Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen()));
+        else if (val == 'social') Navigator.push(context, MaterialPageRoute(builder: (_) => const SocialPreviewScreen()));
+        else if (val == 'actions') Navigator.push(context, MaterialPageRoute(builder: (_) => const GitHubActionsGenerator()));
+        else if (val == 'funding') Navigator.push(context, MaterialPageRoute(builder: (_) => const FundingGeneratorScreen()));
+        else if (val == 'extra') _showExtraFilesDialog(context, provider);
+        else if (val == 'ai') _showAISettingsDialog(context, provider);
+        else if (val == 'codebase') _showGenerateFromCodebaseDialog(context, provider);
+        else if (val == 'publish') _showPublishToGitHubDialog(context, provider);
+        else if (val == 'lang') _showLanguageDialog(context, provider);
+        else if (val == 'shortcuts') _showKeyboardShortcutsDialog(context);
+        else if (val == 'about') _showAboutAppDialog(context);
+      },
+    );
+  }
+
+  PopupMenuItem<String> _menuHeader(String title) => PopupMenuItem(enabled: false, height: 30, child: Text(title.toUpperCase(), style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.2)));
+  PopupMenuItem<String> _menuItem(String val, IconData icon, String text, Color color, {bool isDestructive = false}) => PopupMenuItem(value: val, child: Row(children: [Icon(icon, color: isDestructive ? Colors.red : color, size: 18), const SizedBox(width: 12), Text(text, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: isDestructive ? Colors.red : null))]));
+
   void _showTemplatesMenu(BuildContext context, ProjectProvider provider) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -439,6 +450,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     showMenu<ProjectTemplate>(context: context, position: position, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), items: provider.allTemplates.map((t) => PopupMenuItem(value: t, child: ListTile(leading: const Icon(Icons.article_outlined, color: AppColors.primary), title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text(t.description, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))))).toList()).then((template) {
       if (template != null) showSafeDialog(context, builder: (context) => ConfirmDialog(title: 'Load Template?', content: 'This will replace your current workspace.', confirmText: 'Load', onConfirm: () => provider.loadTemplate(template)));
     });
+  }
+
+  void _showCommandPalette(BuildContext context, ProjectProvider provider) {
+    // A future-gen quick search feature
+    showDialog(context: context, builder: (context) => const Center(child: Text('Command Palette Coming Soon...')));
   }
 
   Future<void> _handleImportJson(ProjectProvider provider) async {
@@ -470,6 +486,5 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ExtraFilesDialog());
   void _showLanguageDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const LanguageDialog());
   void _showKeyboardShortcutsDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const KeyboardShortcutsDialog());
-  void _showDeveloperInfoDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const DeveloperInfoDialog());
   void _showAboutAppDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const AboutAppDialog());
 }

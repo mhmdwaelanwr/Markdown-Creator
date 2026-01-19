@@ -17,94 +17,62 @@ class HealthIssue {
 }
 
 class HealthCheckService {
+  /// Standard Structural Analysis (The "Normal" Health Check)
   static List<HealthIssue> analyze(List<ReadmeElement> elements) {
     final List<HealthIssue> issues = [];
 
     if (elements.isEmpty) {
       issues.add(HealthIssue(
-        message: 'Your README is a blank canvas.',
+        message: 'Your README is empty.',
         severity: IssueSeverity.info,
-        suggestion: 'Start by adding a Project Title (H1) to introduce your work.',
+        suggestion: 'Add a Title (H1) to start your project documentation.',
       ));
       return issues;
     }
 
-    // 1. Critical Structure Analysis
     bool hasH1 = false;
+    bool hasDescription = false;
+    bool hasInstall = false;
     int imageCount = 0;
-    int linkCount = 0;
 
     for (final element in elements) {
-      if (element is HeadingElement && element.level == 1) hasH1 = true;
+      if (element is HeadingElement) {
+        if (element.level == 1) hasH1 = true;
+        if (element.text.toLowerCase().contains('install')) hasInstall = true;
+      }
+      if (element is ParagraphElement) {
+        if (element.text.length > 20) hasDescription = true;
+      }
       if (element is ImageElement) imageCount++;
-      if (element is LinkButtonElement || element is BadgeElement) linkCount++;
-    }
-
-    if (!hasH1) {
-      issues.add(HealthIssue(
-        message: 'Missing Main Title.',
-        severity: IssueSeverity.error,
-        suggestion: 'Add an H1 heading with your project name for better SEO.',
-      ));
-    }
-
-    // 2. Visual & Media Analysis
-    if (imageCount == 0) {
-      issues.add(HealthIssue(
-        message: 'Low visual appeal.',
-        severity: IssueSeverity.warning,
-        suggestion: 'Consider adding a screenshot or a demo GIF to showcase your app.',
-      ));
-    }
-
-    // 3. Social & Networking Analysis
-    if (!elements.any((e) => e is SocialsElement)) {
-      issues.add(HealthIssue(
-        message: 'Community links missing.',
-        severity: IssueSeverity.info,
-        suggestion: 'Add a Socials element so people can find and support you.',
-      ));
-    }
-
-    // 4. Code Quality Check
-    for (final element in elements) {
-      if (element is CodeBlockElement && element.code.length < 10) {
-        issues.add(HealthIssue(
-          message: 'Short code block detected.',
-          severity: IssueSeverity.warning,
-          elementId: element.id,
-          suggestion: 'Provide a meaningful code example or installation step.',
-        ));
+      
+      // Detailed element checks
+      if (element is HeadingElement && element.text.trim().isEmpty) {
+        issues.add(HealthIssue(message: 'Empty Heading detected.', severity: IssueSeverity.error, elementId: element.id));
+      }
+      if (element is ImageElement && element.altText.isEmpty) {
+        issues.add(HealthIssue(message: 'Image missing Alt Text.', severity: IssueSeverity.warning, elementId: element.id, suggestion: 'Alt text is vital for accessibility.'));
+      }
+      if (element is LinkButtonElement && element.url.isEmpty) {
+        issues.add(HealthIssue(message: 'Button with no URL.', severity: IssueSeverity.error, elementId: element.id));
       }
     }
 
-    // 5. Documentation Balance (Algo)
-    if (elements.length > 3 && issues.isEmpty) {
-      issues.add(HealthIssue(
-        message: 'Documentation looking great!',
-        severity: IssueSeverity.success,
-        suggestion: 'You have a well-balanced structure. Ready to publish!',
-      ));
-    }
+    if (!hasH1) issues.add(HealthIssue(message: 'Missing Main Title (H1).', severity: IssueSeverity.error, suggestion: 'Every README should start with a clear H1 title.'));
+    if (!hasDescription) issues.add(HealthIssue(message: 'Short or missing description.', severity: IssueSeverity.warning, suggestion: 'Add a paragraph explaining what your project does.'));
+    if (imageCount == 0) issues.add(HealthIssue(message: 'No visuals found.', severity: IssueSeverity.info, suggestion: 'Adding a screenshot or logo makes your project more attractive.'));
+    if (!hasInstall) issues.add(HealthIssue(message: 'Installation steps not found.', severity: IssueSeverity.warning, suggestion: 'Tell users how to get your project running.'));
 
     return issues;
   }
 
   static double calculateDocumentationScore(List<ReadmeElement> elements) {
     if (elements.isEmpty) return 0;
-    
-    double score = 20; // Base score for starting
-    
-    // Structure points
+    double score = 30; // Base
     if (elements.any((e) => e is HeadingElement && e.level == 1)) score += 20;
-    if (elements.any((e) => e is HeadingElement && e.level == 2)) score += 10;
-    
-    // Content points
-    if (elements.any((e) => e is ParagraphElement)) score += 15;
-    if (elements.any((e) => e is ImageElement)) score += 15;
+    if (elements.any((e) => e is ParagraphElement && e.text.length > 50)) score += 20;
+    if (elements.any((e) => e is ImageElement)) score += 10;
     if (elements.any((e) => e is CodeBlockElement)) score += 10;
-    if (elements.any((e) => e is ListElement)) score += 10;
-    
+    if (elements.any((e) => e is SocialsElement)) score += 10;
     return score.clamp(0, 100);
   }
 }

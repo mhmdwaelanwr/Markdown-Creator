@@ -48,12 +48,13 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         if (_searchQuery.isEmpty) _buildSectionHeader(title, isDark),
         GridView.builder(
           shrinkWrap: true,
+          padding: EdgeInsets.zero, // Remove grid padding
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 1.4,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 1.5, // More compact
           ),
           itemCount: filteredItems.length,
           itemBuilder: (context, index) {
@@ -61,7 +62,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
             return _buildDraggableItem(context, item.type, item.label, item.icon);
           },
         ),
-        if (_searchQuery.isEmpty) const SizedBox(height: 24),
+        if (_searchQuery.isEmpty) const SizedBox(height: 12), // Tighter spacing
       ],
     );
   }
@@ -106,7 +107,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             TabBar(
               labelColor: AppColors.primary,
               unselectedLabelColor: Colors.grey,
@@ -119,52 +120,55 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search...',
-                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  prefixIcon: const Icon(Icons.search_rounded, size: 18),
                   filled: true,
                   fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
                   ),
                   contentPadding: EdgeInsets.zero,
                 ),
-                style: GoogleFonts.inter(fontSize: 14),
+                style: GoogleFonts.inter(fontSize: 13),
               ),
             ),
             Expanded(
               child: TabBarView(
                 children: [
                   // Elements Tab
-                  ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      _buildFilteredSection('Typography', typographyItems, isDark),
-                      _buildFilteredSection('Media & Graphics', mediaItems, isDark),
-                      _buildFilteredSection('Structure', structureItems, isDark),
-                      const SizedBox(height: 40),
-                    ],
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      children: [
+                        _buildFilteredSection('Typography', typographyItems, isDark),
+                        _buildFilteredSection('Media & Graphics', mediaItems, isDark),
+                        _buildFilteredSection('Structure', structureItems, isDark),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                   // Snippets Tab
                   Column(
                     children: [
                       if (projectProvider.selectedElement != null)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
                               onPressed: () => _showSaveSnippetDialog(context, projectProvider.selectedElement!),
-                              icon: const Icon(Icons.add_box_rounded),
-                              label: const Text('Save Selected as Snippet'),
+                              icon: const Icon(Icons.add_box_rounded, size: 18),
+                              label: const Text('Save Selected', style: TextStyle(fontSize: 12)),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary.withAlpha(30),
+                                backgroundColor: AppColors.primary.withAlpha(20),
                                 foregroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               ),
                             ),
                           ),
@@ -187,21 +191,20 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     return Draggable<ReadmeElementType>(
       data: type,
       feedback: Material(
-        elevation: 12,
-        borderRadius: BorderRadius.circular(12),
+        elevation: 8,
+        borderRadius: BorderRadius.circular(10),
         child: Container(
-          width: 120,
-          height: 80,
+          width: 100,
+          height: 60,
           decoration: BoxDecoration(
             color: AppColors.primary,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 24),
-              const SizedBox(height: 4),
-              Text(label, style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+              Icon(icon, color: Colors.white, size: 20),
+              Text(label, style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)),
             ],
           ),
         ),
@@ -210,21 +213,21 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => Provider.of<ProjectProvider>(context, listen: false).addElement(type),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           child: Container(
             decoration: BoxDecoration(
               color: isDark ? Colors.white.withAlpha(5) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withAlpha(30)),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.withAlpha(20)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 22, color: AppColors.primary),
-                const SizedBox(height: 6),
+                Icon(icon, size: 20, color: AppColors.primary),
+                const SizedBox(height: 4),
                 Text(
                   label,
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -237,14 +240,14 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
 
   Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0, left: 4),
+      padding: const EdgeInsets.only(top: 4.0, bottom: 6.0, left: 2),
       child: Text(
         title.toUpperCase(),
         style: GoogleFonts.inter(
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: FontWeight.w900,
-          color: Colors.grey.withAlpha(180),
-          letterSpacing: 1.5,
+          color: Colors.grey.withAlpha(150),
+          letterSpacing: 1.2,
         ),
       ),
     );
@@ -256,16 +259,16 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bookmark_border_rounded, size: 48, color: Colors.grey.withAlpha(100)),
-            const SizedBox(height: 16),
-            Text('No snippets yet', style: GoogleFonts.inter(color: Colors.grey)),
+            Icon(Icons.bookmark_border_rounded, size: 40, color: Colors.grey.withAlpha(80)),
+            const SizedBox(height: 12),
+            Text('No snippets', style: GoogleFonts.inter(color: Colors.grey, fontSize: 12)),
           ],
         ),
       );
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       itemCount: libraryProvider.snippets.length,
       itemBuilder: (context, index) {
         final snippet = libraryProvider.snippets[index];
@@ -279,31 +282,32 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
 
   Widget _buildDraggableSnippet(BuildContext context, LibraryProvider libraryProvider, Snippet snippet, bool isDark) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 8),
       child: Draggable<Snippet>(
         data: snippet,
         feedback: Material(
-          elevation: 8,
-          borderRadius: BorderRadius.circular(12),
+          elevation: 6,
+          borderRadius: BorderRadius.circular(10),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
-            child: Text(snippet.name, style: const TextStyle(color: Colors.white)),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
+            child: Text(snippet.name, style: const TextStyle(color: Colors.white, fontSize: 12)),
           ),
         ),
         child: Card(
           margin: EdgeInsets.zero,
           color: isDark ? Colors.white.withAlpha(5) : Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: AppColors.primary.withAlpha(40)),
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: AppColors.primary.withAlpha(30)),
           ),
           child: ListTile(
             dense: true,
-            leading: const Icon(Icons.bookmark_rounded, color: AppColors.primary, size: 18),
-            title: Text(snippet.name, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+            visualDensity: VisualDensity.compact,
+            leading: const Icon(Icons.bookmark_rounded, color: AppColors.primary, size: 16),
+            title: Text(snippet.name, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600)),
             trailing: IconButton(
-              icon: const Icon(Icons.close_rounded, size: 16),
+              icon: const Icon(Icons.close_rounded, size: 14),
               onPressed: () => libraryProvider.deleteSnippet(snippet.id),
             ),
             onTap: () => Provider.of<ProjectProvider>(context, listen: false).addSnippet(snippet),
@@ -318,27 +322,18 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: Text('Save as Snippet', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+        title: Text('Save Snippet', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16)),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Snippet Name',
-            border: OutlineInputBorder(),
-          ),
-          style: GoogleFonts.inter(),
+          decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+          style: GoogleFonts.inter(fontSize: 14),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
-                Provider.of<LibraryProvider>(context, listen: false).saveSnippet(
-                  name: nameController.text,
-                  elementJson: jsonEncode(element.toJson()),
-                );
+                Provider.of<LibraryProvider>(context, listen: false).saveSnippet(name: nameController.text, elementJson: jsonEncode(element.toJson()));
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Snippet saved!')));
               }

@@ -1,16 +1,18 @@
 import '../models/readme_element.dart';
 
-enum IssueSeverity { error, warning, info }
+enum IssueSeverity { error, warning, info, success }
 
 class HealthIssue {
   final String message;
   final IssueSeverity severity;
   final String? elementId;
+  final String? suggestion;
 
   HealthIssue({
     required this.message,
     required this.severity,
     this.elementId,
+    this.suggestion,
   });
 }
 
@@ -18,131 +20,91 @@ class HealthCheckService {
   static List<HealthIssue> analyze(List<ReadmeElement> elements) {
     final List<HealthIssue> issues = [];
 
-    // 1. Check for empty project
     if (elements.isEmpty) {
       issues.add(HealthIssue(
-        message: 'Project is empty. Add some elements to get started.',
+        message: 'Your README is a blank canvas.',
         severity: IssueSeverity.info,
+        suggestion: 'Start by adding a Project Title (H1) to introduce your work.',
       ));
       return issues;
     }
 
-    // 2. Check Heading Hierarchy
-    int lastLevel = 0;
-    for (final element in elements) {
-      if (element is HeadingElement) {
-        if (element.text.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Heading is empty.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        }
+    // 1. Critical Structure Analysis
+    bool hasH1 = false;
+    int imageCount = 0;
+    int linkCount = 0;
 
-        if (lastLevel != 0 && element.level > lastLevel + 1) {
-          issues.add(HealthIssue(
-            message: 'Skipped heading level: H$lastLevel to H${element.level}.',
-            severity: IssueSeverity.warning,
-            elementId: element.id,
-          ));
-        }
-        lastLevel = element.level;
+    for (final element in elements) {
+      if (element is HeadingElement && element.level == 1) hasH1 = true;
+      if (element is ImageElement) imageCount++;
+      if (element is LinkButtonElement || element is BadgeElement) linkCount++;
+    }
+
+    if (!hasH1) {
+      issues.add(HealthIssue(
+        message: 'Missing Main Title.',
+        severity: IssueSeverity.error,
+        suggestion: 'Add an H1 heading with your project name for better SEO.',
+      ));
+    }
+
+    // 2. Visual & Media Analysis
+    if (imageCount == 0) {
+      issues.add(HealthIssue(
+        message: 'Low visual appeal.',
+        severity: IssueSeverity.warning,
+        suggestion: 'Consider adding a screenshot or a demo GIF to showcase your app.',
+      ));
+    }
+
+    // 3. Social & Networking Analysis
+    if (!elements.any((e) => e is SocialsElement)) {
+      issues.add(HealthIssue(
+        message: 'Community links missing.',
+        severity: IssueSeverity.info,
+        suggestion: 'Add a Socials element so people can find and support you.',
+      ));
+    }
+
+    // 4. Code Quality Check
+    for (final element in elements) {
+      if (element is CodeBlockElement && element.code.length < 10) {
+        issues.add(HealthIssue(
+          message: 'Short code block detected.',
+          severity: IssueSeverity.warning,
+          elementId: element.id,
+          suggestion: 'Provide a meaningful code example or installation step.',
+        ));
       }
     }
 
-    // 3. Check Images for Alt Text
-    for (final element in elements) {
-      if (element is ImageElement) {
-        if (element.url.isEmpty && element.localData == null) {
-          issues.add(HealthIssue(
-            message: 'Image has no URL or uploaded file.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        } else if (element.altText.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Image missing Alt Text (important for accessibility).',
-            severity: IssueSeverity.warning,
-            elementId: element.id,
-          ));
-        }
-      }
-    }
-
-    // 4. Check Links
-    for (final element in elements) {
-      if (element is LinkButtonElement) {
-        if (element.text.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Link button has no text.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        }
-        if (element.url.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Link button has no URL.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        }
-      }
-      if (element is BadgeElement) {
-        if (element.imageUrl.trim().isEmpty) {
-           issues.add(HealthIssue(
-            message: 'Badge image URL is empty.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        }
-      }
-    }
-
-    // 5. Check GitHub Stats
-    for (final element in elements) {
-      if (element is GitHubStatsElement) {
-        if (element.repoName.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'GitHub Stats missing repository name.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        } else if (!element.repoName.contains('/')) {
-          issues.add(HealthIssue(
-            message: 'Invalid GitHub repository format. Use "user/repo".',
-            severity: IssueSeverity.warning,
-            elementId: element.id,
-          ));
-        }
-      }
-    }
-
-    // 6. Check Contributors
-    for (final element in elements) {
-      if (element is ContributorsElement) {
-        if (element.repoName.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Contributors element missing repository name.',
-            severity: IssueSeverity.error,
-            elementId: element.id,
-          ));
-        }
-      }
-    }
-
-    // 7. Check Code Blocks
-    for (final element in elements) {
-      if (element is CodeBlockElement) {
-        if (element.code.trim().isEmpty) {
-          issues.add(HealthIssue(
-            message: 'Code block is empty.',
-            severity: IssueSeverity.warning,
-            elementId: element.id,
-          ));
-        }
-      }
+    // 5. Documentation Balance (Algo)
+    if (elements.length > 3 && issues.isEmpty) {
+      issues.add(HealthIssue(
+        message: 'Documentation looking great!',
+        severity: IssueSeverity.success,
+        suggestion: 'You have a well-balanced structure. Ready to publish!',
+      ));
     }
 
     return issues;
+  }
+
+  static double calculateDocumentationScore(List<ReadmeElement> elements) {
+    if (elements.isEmpty) return 0;
+    
+    double score = 20; // Base score for starting
+    
+    // Structure points
+    if (elements.any((e) => e is HeadingElement && e.level == 1)) score += 20;
+    if (elements.any((e) => e is HeadingElement && e.level == 2)) score += 10;
+    
+    // Content points
+    if (elements.any((e) => e is ParagraphElement)) score += 15;
+    if (elements.any((e) => e is ImageElement)) score += 15;
+    if (elements.any((e) => e is CodeBlockElement)) score += 10;
+    if (elements.any((e) => e is ListElement)) score += 10;
+    
+    return score.clamp(0, 100);
   }
 }

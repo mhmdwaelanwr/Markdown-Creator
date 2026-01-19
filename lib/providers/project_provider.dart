@@ -34,7 +34,7 @@ class ProjectProvider with ChangeNotifier {
   bool _includeIssueTemplates = false;
   Color _primaryColor = Colors.blue;
   Color _secondaryColor = Colors.green;
-  bool _showGrid = false;
+  bool _showGrid = true;
   List<String> _snapshots = [];
   String _listBullet = '*';
   int _sectionSpacing = 1;
@@ -52,6 +52,16 @@ class ProjectProvider with ChangeNotifier {
   List<ReadmeElement> get elements => _elements;
   List<ProjectTemplate> get cloudTemplates => _cloudTemplates;
   String? get selectedElementId => _selectedElementId;
+  
+  ReadmeElement? get selectedElement {
+    if (_selectedElementId == null) return null;
+    try {
+      return _elements.firstWhere((e) => e.id == _selectedElementId);
+    } catch (e) {
+      return null;
+    }
+  }
+
   ThemeMode get themeMode => _themeMode;
   Map<String, String> get variables => _variables;
   String get licenseType => _licenseType;
@@ -82,8 +92,6 @@ class ProjectProvider with ChangeNotifier {
     _listenToCloudTemplates();
   }
 
-  // --- Cloud Logic ---
-  
   void _listenToCloudTemplates() {
     _firestoreService.getPublicTemplates().listen((data) {
       _cloudTemplates = data.map((map) {
@@ -98,24 +106,7 @@ class ProjectProvider with ChangeNotifier {
     });
   }
 
-  // Combine local and cloud templates for UI
   List<ProjectTemplate> get allTemplates => [...Templates.all, ..._cloudTemplates];
-
-  // --- Core Logic ---
-
-  void _safeNotify() {
-    try {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        try {
-          notifyListeners();
-        } catch (_) {}
-      });
-    } catch (_) {
-      try {
-        notifyListeners();
-      } catch (_) {}
-    }
-  }
 
   Future<void> _loadPreferences() async {
     _themeMode = await _prefsService.loadThemeMode();
@@ -140,7 +131,7 @@ class ProjectProvider with ChangeNotifier {
     final sColor = await _prefsService.loadInt(PreferencesService.keySecondaryColor);
     if (sColor != null) _secondaryColor = Color(sColor);
 
-    _showGrid = await _prefsService.loadBool(PreferencesService.keyShowGrid) ?? false;
+    _showGrid = await _prefsService.loadBool(PreferencesService.keyShowGrid) ?? true;
     _snapshots = await _prefsService.loadStringList(PreferencesService.keySnapshots) ?? [];
     _listBullet = await _prefsService.loadString(PreferencesService.keyListBullet) ?? '*';
     _sectionSpacing = await _prefsService.loadInt(PreferencesService.keySectionSpacing) ?? 1;
@@ -152,139 +143,13 @@ class ProjectProvider with ChangeNotifier {
     if (localeCode != null) _locale = Locale(localeCode);
     _targetLanguage = await _prefsService.loadString(PreferencesService.keyTargetLanguage) ?? 'en';
 
-    _safeNotify();
-  }
-
-  void setLocale(Locale? locale) async {
-    _locale = locale;
-    if (locale != null) {
-      await _prefsService.saveString(PreferencesService.keyLocale, locale.languageCode);
-    } else {
-      await _prefsService.remove(PreferencesService.keyLocale);
-    }
-    _safeNotify();
-  }
-
-  void setTargetLanguage(String languageCode) {
-    _targetLanguage = languageCode;
-    _saveState();
-    _safeNotify();
-  }
-
-  Future<void> _saveState() async {
-    await _prefsService.saveThemeMode(_themeMode);
-    await _prefsService.saveElements(_elements);
-    await _prefsService.saveVariables(_variables);
-    await _prefsService.saveString(PreferencesService.keyLicenseType, _licenseType);
-    await _prefsService.saveBool(PreferencesService.keyIncludeContributing, _includeContributing);
-    await _prefsService.saveBool(PreferencesService.keyIncludeSecurity, _includeSecurity);
-    await _prefsService.saveBool(PreferencesService.keyIncludeSupport, _includeSupport);
-    await _prefsService.saveBool(PreferencesService.keyIncludeCodeOfConduct, _includeCodeOfConduct);
-    await _prefsService.saveBool(PreferencesService.keyIncludeIssueTemplates, _includeIssueTemplates);
-    await _prefsService.saveInt(PreferencesService.keyPrimaryColor, _primaryColor.toARGB32());
-    await _prefsService.saveInt(PreferencesService.keySecondaryColor, _secondaryColor.toARGB32());
-    await _prefsService.saveBool(PreferencesService.keyShowGrid, _showGrid);
-    await _prefsService.saveStringList(PreferencesService.keySnapshots, _snapshots);
-    await _prefsService.saveString(PreferencesService.keyListBullet, _listBullet);
-    await _prefsService.saveInt(PreferencesService.keySectionSpacing, _sectionSpacing);
-    await _prefsService.saveBool(PreferencesService.keyExportHtml, _exportHtml);
-    if (_geminiApiKey != null) await _prefsService.saveString(PreferencesService.keyGeminiApiKey, _geminiApiKey!);
-    if (_githubToken != null) await _prefsService.saveString(PreferencesService.keyGithubToken, _githubToken!);
-    await _prefsService.saveString(PreferencesService.keyTargetLanguage, _targetLanguage);
-  }
-
-  String exportToJson() {
-    final Map<String, dynamic> data = {
-      'elements': _elements.map((e) => e.toJson()).toList(),
-      'variables': _variables,
-      'licenseType': _licenseType,
-      'includeContributing': _includeContributing,
-      'includeSecurity': _includeSecurity,
-      'includeSupport': _includeSupport,
-      'includeCodeOfConduct': _includeCodeOfConduct,
-      'includeIssueTemplates': _includeIssueTemplates,
-      'primaryColor': _primaryColor.toARGB32(),
-      'secondaryColor': _secondaryColor.toARGB32(),
-      'showGrid': _showGrid,
-      'listBullet': _listBullet,
-      'sectionSpacing': _sectionSpacing,
-      'exportHtml': _exportHtml,
-      'version': 1,
-    };
-    return jsonEncode(data);
-  }
-
-  void importFromJson(String jsonString) {
-    try {
-      final Map<String, dynamic> data = jsonDecode(jsonString);
-      if (data['elements'] != null) {
-        _elements.clear();
-        final List<dynamic> elementsList = data['elements'];
-        _elements.addAll(elementsList.map((e) => ReadmeElement.fromJson(e)).toList());
-      }
-      if (data['variables'] != null) {
-        _variables.clear();
-        _variables.addAll(Map<String, String>.from(data['variables']));
-      }
-      if (data['licenseType'] != null) _licenseType = data['licenseType'];
-      if (data['includeContributing'] != null) _includeContributing = data['includeContributing'];
-      if (data['includeSecurity'] != null) _includeSecurity = data['includeSecurity'];
-      if (data['includeSupport'] != null) _includeSupport = data['includeSupport'];
-      if (data['includeCodeOfConduct'] != null) _includeCodeOfConduct = data['includeCodeOfConduct'];
-      if (data['includeIssueTemplates'] != null) _includeIssueTemplates = data['includeIssueTemplates'];
-      if (data['primaryColor'] != null) _primaryColor = Color(data['primaryColor']);
-      if (data['secondaryColor'] != null) _secondaryColor = Color(data['secondaryColor']);
-      if (data['showGrid'] != null) _showGrid = data['showGrid'];
-      if (data['listBullet'] != null) _listBullet = data['listBullet'];
-      if (data['sectionSpacing'] != null) _sectionSpacing = data['sectionSpacing'];
-      if (data['exportHtml'] != null) _exportHtml = data['exportHtml'];
-      _selectedElementId = null;
-      _saveState();
-      _safeNotify();
-    } catch (e) {
-      debugPrint('Error importing JSON: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> importMarkdown(String markdown) async {
-    _recordHistory();
-    try {
-      final newElements = await compute(_parseMarkdownIsolate, markdown);
-      _elements.clear();
-      _elements.addAll(newElements);
-      _selectedElementId = null;
-      _saveState();
-      _safeNotify();
-    } catch (e) {
-      debugPrint('Error importing Markdown: $e');
-      rethrow;
-    }
-  }
-
-  void toggleTheme() {
-    if (_themeMode == ThemeMode.system) {
-      _themeMode = ThemeMode.dark;
-    } else {
-      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    }
-    _saveState();
-    _safeNotify();
-  }
-
-  ReadmeElement? get selectedElement {
-    if (_selectedElementId == null) return null;
-    try {
-      return _elements.firstWhere((e) => e.id == _selectedElementId);
-    } catch (e) {
-      return null;
-    }
+    notifyListeners();
   }
 
   void _recordHistory() {
     _undoStack.add(exportToJson());
+    if (_undoStack.length > 30) _undoStack.removeAt(0);
     _redoStack.clear();
-    if (_undoStack.length > 20) _undoStack.removeAt(0);
   }
 
   void undo() {
@@ -299,16 +164,14 @@ class ProjectProvider with ChangeNotifier {
     importFromJson(_redoStack.removeLast());
   }
 
+  // --- Core Methods ---
   void addElement(ReadmeElementType type) {
-    insertElement(_elements.length, type);
-  }
-
-  void addElementObject(ReadmeElement element) {
     _recordHistory();
-    _elements.add(element);
-    _selectedElementId = element.id;
+    final newElement = _createElementByType(type);
+    _elements.add(newElement);
+    _selectedElementId = newElement.id;
     _saveState();
-    _safeNotify();
+    notifyListeners();
   }
 
   void insertElement(int index, ReadmeElementType type) {
@@ -317,19 +180,134 @@ class ProjectProvider with ChangeNotifier {
     _elements.insert(index.clamp(0, _elements.length), newElement);
     _selectedElementId = newElement.id;
     _saveState();
-    _safeNotify();
+    notifyListeners();
+  }
+
+  void addSnippet(Snippet snippet) {
+    _recordHistory();
+    final newElement = ReadmeElement.fromJson(jsonDecode(snippet.elementJson));
+    _elements.add(newElement);
+    _saveState();
+    notifyListeners();
+  }
+
+  void insertSnippet(int index, Snippet snippet) {
+    _recordHistory();
+    final newElement = ReadmeElement.fromJson(jsonDecode(snippet.elementJson));
+    _elements.insert(index.clamp(0, _elements.length), newElement);
+    _saveState();
+    notifyListeners();
+  }
+
+  void removeElement(String id) {
+    _recordHistory();
+    _elements.removeWhere((e) => e.id == id);
+    if (_selectedElementId == id) _selectedElementId = null;
+    _saveState();
+    notifyListeners();
+  }
+
+  void selectElement(String id) { _selectedElementId = id; notifyListeners(); }
+  void toggleGrid() { _showGrid = !_showGrid; _saveState(); notifyListeners(); }
+  void toggleTheme() { _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark; _saveState(); notifyListeners(); }
+  void setDeviceMode(DeviceMode mode) { _deviceMode = mode; notifyListeners(); }
+  void setLocale(Locale? locale) { _locale = locale; notifyListeners(); }
+  void clearElements() { _recordHistory(); _elements.clear(); _saveState(); notifyListeners(); }
+  
+  void moveElementUp(String id) { 
+    final i = _elements.indexWhere((e) => e.id == id);
+    if (i > 0) { _recordHistory(); final e = _elements.removeAt(i); _elements.insert(i-1, e); _saveState(); notifyListeners(); }
+  }
+  
+  void moveElementDown(String id) {
+    final i = _elements.indexWhere((e) => e.id == id);
+    if (i != -1 && i < _elements.length - 1) { _recordHistory(); final e = _elements.removeAt(i); _elements.insert(i+1, e); _saveState(); notifyListeners(); }
+  }
+  
+  void duplicateElement(String id) {
+    final i = _elements.indexWhere((e) => e.id == id);
+    if (i != -1) { _recordHistory(); _elements.insert(i+1, _elements[i].copy()); _saveState(); notifyListeners(); }
+  }
+  
+  void reorderElements(int oldI, int newI) {
+    if (oldI < newI) newI -= 1;
+    _recordHistory(); final e = _elements.removeAt(oldI); _elements.insert(newI, e); _saveState(); notifyListeners();
+  }
+
+  void updateElement() { _saveState(); notifyListeners(); }
+  void updateVariable(String k, String v) { _variables[k] = v; _saveState(); notifyListeners(); }
+  void setLicenseType(String t) { _licenseType = t; _saveState(); notifyListeners(); }
+  void setIncludeContributing(bool v) { _includeContributing = v; _saveState(); notifyListeners(); }
+  void setIncludeSecurity(bool v) { _includeSecurity = v; _saveState(); notifyListeners(); }
+  void setIncludeSupport(bool v) { _includeSupport = v; _saveState(); notifyListeners(); }
+  void setIncludeCodeOfConduct(bool v) { _includeCodeOfConduct = v; _saveState(); notifyListeners(); }
+  void setIncludeIssueTemplates(bool v) { _includeIssueTemplates = v; _saveState(); notifyListeners(); }
+  void setPrimaryColor(Color c) { _primaryColor = c; _saveState(); notifyListeners(); }
+  void setSecondaryColor(Color c) { _secondaryColor = c; _saveState(); notifyListeners(); }
+  void setExportHtml(bool v) { _exportHtml = v; _saveState(); notifyListeners(); }
+  void setListBullet(String b) { _listBullet = b; _saveState(); notifyListeners(); }
+  void setSectionSpacing(int s) { _sectionSpacing = s; _saveState(); notifyListeners(); }
+  void setGeminiApiKey(String k) { _geminiApiKey = k; _prefsService.saveString(PreferencesService.keyGeminiApiKey, k); notifyListeners(); }
+  void setGitHubToken(String t) { _githubToken = t; _prefsService.saveString(PreferencesService.keyGithubToken, t); notifyListeners(); }
+  
+  void saveSnapshot() { _snapshots.insert(0, exportToJson()); _saveState(); notifyListeners(); }
+  void restoreSnapshot(int i) { if (i >= 0 && i < _snapshots.length) importFromJson(_snapshots[i]); }
+  void deleteSnapshot(int i) { if (i >= 0 && i < _snapshots.length) { _snapshots.removeAt(i); _saveState(); notifyListeners(); } }
+  
+  void loadTemplate(ProjectTemplate t) { 
+    _recordHistory(); 
+    _elements.clear(); 
+    _elements.addAll(t.elements.map((e) => e.copy())); 
+    _saveState(); 
+    notifyListeners(); 
+  }
+  
+  Future<void> importMarkdown(String m) async { 
+    _recordHistory(); 
+    final e = MarkdownImporter().parse(m); 
+    _elements.clear(); 
+    _elements.addAll(e); 
+    _saveState(); 
+    notifyListeners(); 
+  }
+
+  String exportToJson() => jsonEncode({'elements': _elements.map((e) => e.toJson()).toList(), 'variables': _variables});
+  
+  void importFromJson(String s) {
+    try {
+      final d = jsonDecode(s);
+      if (d['elements'] != null) {
+        _elements.clear();
+        for (var i in d['elements']) {
+          _elements.add(ReadmeElement.fromJson(i));
+        }
+      }
+      if (d['variables'] != null) {
+        _variables.clear();
+        _variables.addAll(Map<String, String>.from(d['variables']));
+      }
+      notifyListeners();
+    } catch(e) {
+      debugPrint("Error importing JSON: $e");
+    }
+  }
+
+  Future<void> _saveState() async {
+    await _prefsService.saveElements(_elements);
+    await _prefsService.saveVariables(_variables);
+    await _prefsService.saveStringList(PreferencesService.keySnapshots, _snapshots);
   }
 
   ReadmeElement _createElementByType(ReadmeElementType type) {
     switch (type) {
       case ReadmeElementType.heading: return HeadingElement();
       case ReadmeElementType.paragraph: return ParagraphElement();
-      case ReadmeElementType.image: return ImageElement();
-      case ReadmeElementType.linkButton: return LinkButtonElement();
       case ReadmeElementType.codeBlock: return CodeBlockElement();
+      case ReadmeElementType.image: return ImageElement();
       case ReadmeElementType.list: return ListElement();
       case ReadmeElementType.badge: return BadgeElement();
       case ReadmeElementType.table: return TableElement();
+      case ReadmeElementType.linkButton: return LinkButtonElement();
       case ReadmeElementType.icon: return IconElement();
       case ReadmeElementType.embed: return EmbedElement();
       case ReadmeElementType.githubStats: return GitHubStatsElement();
@@ -344,168 +322,4 @@ class ProjectProvider with ChangeNotifier {
       case ReadmeElementType.raw: return RawElement();
     }
   }
-
-  void addSnippet(Snippet snippet) {
-    insertSnippet(_elements.length, snippet);
-  }
-
-  void insertSnippet(int index, Snippet snippet) {
-    _recordHistory();
-    try {
-      final json = jsonDecode(snippet.elementJson);
-      json.remove('id');
-      final newElement = ReadmeElement.fromJson(json);
-      _elements.insert(index.clamp(0, _elements.length), newElement);
-      _selectedElementId = newElement.id;
-      _saveState();
-      _safeNotify();
-    } catch (e) {
-      debugPrint('Error adding snippet: $e');
-    }
-  }
-
-  void removeElement(String id) {
-    _recordHistory();
-    _elements.removeWhere((e) => e.id == id);
-    if (_selectedElementId == id) _selectedElementId = null;
-    _saveState();
-    _safeNotify();
-  }
-
-  void selectElement(String id) {
-    _selectedElementId = id;
-    _safeNotify();
-  }
-
-  void reorderElements(int oldIndex, int newIndex) {
-    _recordHistory();
-    if (oldIndex < newIndex) newIndex -= 1;
-    final item = _elements.removeAt(oldIndex);
-    _elements.insert(newIndex, item);
-    _saveState();
-    _safeNotify();
-  }
-
-  void moveElementUp(String id) {
-    final index = _elements.indexWhere((e) => e.id == id);
-    if (index > 0) {
-      _recordHistory();
-      final item = _elements.removeAt(index);
-      _elements.insert(index - 1, item);
-      _saveState();
-      _safeNotify();
-    }
-  }
-
-  void moveElementDown(String id) {
-    final index = _elements.indexWhere((e) => e.id == id);
-    if (index != -1 && index < _elements.length - 1) {
-      _recordHistory();
-      final item = _elements.removeAt(index);
-      _elements.insert(index + 1, item);
-      _saveState();
-      _safeNotify();
-    }
-  }
-
-  void duplicateElement(String id) {
-    _recordHistory();
-    final index = _elements.indexWhere((e) => e.id == id);
-    if (index != -1) {
-      _elements.insert(index + 1, _elements[index].copy());
-      _selectedElementId = _elements[index + 1].id;
-      _saveState();
-      _safeNotify();
-    }
-  }
-
-  void clearElements() {
-    _recordHistory();
-    _elements.clear();
-    _selectedElementId = null;
-    _saveState();
-    _safeNotify();
-  }
-
-  void updateElement() {
-    _saveState();
-    _safeNotify();
-  }
-
-  void updateVariable(String key, String value) {
-    _recordHistory();
-    _variables[key] = value;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setLicenseType(String type) {
-    _recordHistory();
-    _licenseType = type;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setIncludeContributing(bool value) { _includeContributing = value; notifyListeners(); }
-  void setIncludeSecurity(bool value) { _includeSecurity = value; notifyListeners(); }
-  void setIncludeSupport(bool value) { _includeSupport = value; notifyListeners(); }
-  void setIncludeCodeOfConduct(bool value) { _includeCodeOfConduct = value; notifyListeners(); }
-  void setIncludeIssueTemplates(bool value) { _includeIssueTemplates = value; notifyListeners(); }
-
-  void setPrimaryColor(Color color) {
-    _recordHistory();
-    _primaryColor = color;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setSecondaryColor(Color color) {
-    _recordHistory();
-    _secondaryColor = color;
-    _saveState();
-    _safeNotify();
-  }
-
-  void toggleGrid() { _showGrid = !_showGrid; _safeNotify(); }
-
-  void saveSnapshot() {
-    final snapshot = exportToJson();
-    _snapshots.insert(0, snapshot);
-    if (_snapshots.length > 10) _snapshots.removeLast();
-    _saveState();
-    _safeNotify();
-  }
-
-  void restoreSnapshot(int index) {
-    if (index >= 0 && index < _snapshots.length) importFromJson(_snapshots[index]);
-  }
-
-  void deleteSnapshot(int index) {
-    if (index >= 0 && index < _snapshots.length) {
-      _snapshots.removeAt(index);
-      _saveState();
-      _safeNotify();
-    }
-  }
-
-  void setListBullet(String bullet) { _listBullet = bullet; _saveState(); _safeNotify(); }
-  void setSectionSpacing(int spacing) { _sectionSpacing = spacing; _saveState(); _safeNotify(); }
-  void setDeviceMode(DeviceMode mode) { _deviceMode = mode; _safeNotify(); }
-
-  void loadTemplate(ProjectTemplate template) {
-    _recordHistory();
-    _elements.clear();
-    _elements.addAll(template.elements.map((e) => e.copy()).toList());
-    _selectedElementId = null;
-    _saveState();
-    _safeNotify();
-  }
-
-  void setExportHtml(bool value) { _exportHtml = value; _saveState(); _safeNotify(); }
-  void setGeminiApiKey(String key) { _geminiApiKey = key; _saveState(); _safeNotify(); }
-  void setGitHubToken(String token) { _githubToken = token; _saveState(); _safeNotify(); }
-}
-
-List<ReadmeElement> _parseMarkdownIsolate(String markdown) {
-  return MarkdownImporter().parse(markdown);
 }

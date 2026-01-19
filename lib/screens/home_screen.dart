@@ -28,7 +28,7 @@ import 'social_preview_screen.dart';
 import 'github_actions_generator.dart';
 import '../services/health_check_service.dart';
 import '../services/auth_service.dart';
-import '../services/ai_service.dart'; // Import AIService for score calculation
+import '../services/ai_service.dart';
 
 import '../utils/toast_helper.dart';
 import '../widgets/developer_info_dialog.dart';
@@ -64,12 +64,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey _componentsKey = GlobalKey();
-  final GlobalKey _canvasKey = GlobalKey();
-  final GlobalKey _settingsKey = GlobalKey();
-  final GlobalKey _exportKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FocusNode _focusNode = FocusNode();
   final AuthService _authService = AuthService();
   bool _showPreview = false;
   bool _isFocusMode = false;
@@ -102,10 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     
                     Expanded(
                       flex: 6,
-                      child: Container(
-                        key: _canvasKey,
-                        child: const EditorCanvas(),
-                      ),
+                      child: const EditorCanvas(),
                     ),
                     
                     if (_showPreview && isDesktop) ...[
@@ -163,65 +155,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildFullDesktopActions(BuildContext context, ProjectProvider provider) {
     return [
-      // 1. Auth & Admin
-      StreamBuilder(
-        stream: _authService.user,
-        builder: (context, snapshot) {
-          final user = snapshot.data;
-          final isAdmin = user?.email == AuthService.adminEmail;
-          return Row(
-            children: [
-              if (isAdmin)
-                _appBarIconButton(Icons.dashboard_customize_rounded, 'Admin', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminDashboardScreen())), color: Colors.purpleAccent),
-              if (user == null)
-                _appBarButton(Icons.login_rounded, 'Login', () => _showLoginDialog(context))
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: InkWell(
-                    onTap: () => _authService.signOut(),
-                    child: CircleAvatar(radius: 14, backgroundImage: NetworkImage(user.photoURL ?? '')),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+      // 1. Undo/Redo
+      _appBarIconButton(Icons.undo_rounded, 'Undo', provider.undo),
+      _appBarIconButton(Icons.redo_rounded, 'Redo', provider.redo),
       _divider(),
 
       // 2. Device Modes
       _appBarIconButton(Icons.desktop_mac, 'Desktop', () => provider.setDeviceMode(DeviceMode.desktop), isActive: provider.deviceMode == DeviceMode.desktop),
       _appBarIconButton(Icons.tablet_mac, 'Tablet', () => provider.setDeviceMode(DeviceMode.tablet), isActive: provider.deviceMode == DeviceMode.tablet),
       _appBarIconButton(Icons.phone_iphone, 'Mobile', () => provider.setDeviceMode(DeviceMode.mobile), isActive: provider.deviceMode == DeviceMode.mobile),
-      
       _divider(),
 
-      // 3. Project Tools & Settings
+      // 3. Project Tools
       _appBarIconButton(Icons.file_copy_outlined, 'Templates', () => _showTemplatesMenu(context, provider)),
-      _appBarIconButton(Icons.settings_outlined, 'Settings', () => _showProjectSettingsDialog(context, provider)),
-      _appBarIconButton(Theme.of(context).brightness == Brightness.dark ? Icons.light_mode : Icons.dark_mode, 'Theme', () => provider.toggleTheme()),
-      _appBarIconButton(provider.showGrid ? Icons.grid_on : Icons.grid_off, 'Grid', () => provider.toggleGrid(), isActive: provider.showGrid),
-      
+      _appBarIconButton(Icons.library_books_outlined, 'Library', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen()))),
+      _appBarIconButton(Icons.health_and_safety_outlined, 'Health', () {
+        final issues = HealthCheckService.analyze(provider.elements);
+        _showHealthCheckDialog(context, issues, provider);
+      }),
       _divider(),
 
       // 4. View Controls
       _appBarIconButton(_showPreview ? Icons.visibility : Icons.visibility_off, 'Preview', () => setState(() => _showPreview = !_showPreview), isActive: _showPreview),
       _appBarIconButton(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, 'Focus', () => setState(() => _isFocusMode = !_isFocusMode), isActive: _isFocusMode),
       
-      _divider(),
-
-      // 5. Library & Utilities
-      _appBarIconButton(Icons.library_books_outlined, 'Library', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen()))),
-      _appBarIconButton(Icons.health_and_safety_outlined, 'Health', () {
-        final issues = HealthCheckService.analyze(provider.elements);
-        _showHealthCheckDialog(context, issues, provider);
-      }),
-      _appBarIconButton(Icons.print_outlined, 'Print/PDF', () => _printReadme(context, provider)),
-      
       const SizedBox(width: 8),
-      // 6. Main Action
       _appBarButton(Icons.download_rounded, 'Export', () => _handleExport(provider), isPrimary: true),
-      const SizedBox(width: 4),
       _buildMoreOptionsButton(context),
       const SizedBox(width: 8),
     ];
@@ -272,92 +231,33 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: const Icon(Icons.more_vert_rounded),
       tooltip: 'More Options',
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      offset: const Offset(0, 48),
       itemBuilder: (context) => [
         _buildMenuHeader('Project & Files'),
-        _buildMenuItem(context, 'save_library', Icons.save_alt, 'Save to Library', color: Colors.blue),
-        _buildMenuItem(context, 'snapshots', Icons.history, 'Local Snapshots', color: Colors.blue),
-        _buildMenuItem(context, 'import_markdown', Icons.file_upload, 'Import Markdown', color: Colors.blue),
-        _buildMenuItem(context, 'export_json', Icons.javascript, 'Export Project (JSON)', color: Colors.blue),
-        _buildMenuItem(context, 'import_json', Icons.data_object, 'Import Project (JSON)', color: Colors.blue),
-        _buildMenuItem(context, 'clear_workspace', Icons.delete_forever, 'Clear Workspace', color: Colors.red, isDestructive: true),
-
+        _buildMenuItem(context, 'save', Icons.save_alt, 'Save to Library', color: Colors.blue),
+        _buildMenuItem(context, 'import_md', Icons.file_upload, 'Import Markdown', color: Colors.blue),
         const PopupMenuDivider(),
-        _buildMenuHeader('Tools & Generators'),
-        _buildMenuItem(context, 'gallery', Icons.collections, 'Showcase Gallery', color: Colors.orange),
-        _buildMenuItem(context, 'social_preview', Icons.image, 'Social Preview Designer', color: Colors.orange),
-        _buildMenuItem(context, 'github_actions', Icons.build, 'GitHub Actions Generator', color: Colors.orange),
-        _buildMenuItem(context, 'funding', Icons.volunteer_activism, 'Funding Generator', color: Colors.pink),
-        _buildMenuItem(context, 'extra_files', Icons.library_add, 'Generate Extra Files', color: Colors.deepOrange),
-
-        const PopupMenuDivider(),
-        _buildMenuHeader('AI Features'),
-        _buildMenuItem(context, 'ai_settings', Icons.psychology, 'AI Settings', color: Colors.purple),
-        _buildMenuItem(context, 'generate_codebase', Icons.auto_awesome, 'Generate From Codebase', color: Colors.purple),
-
-        const PopupMenuDivider(),
-        _buildMenuHeader('Publish'),
-        _buildMenuItem(context, 'publish_github', Icons.cloud_upload, 'Publish to GitHub', color: Colors.teal),
-
-        const PopupMenuDivider(),
-        _buildMenuHeader('App'),
-        _buildMenuItem(context, 'change_language', Icons.language, 'Change Language', color: Colors.grey),
-        _buildMenuItem(context, 'shortcuts', Icons.keyboard, 'Keyboard Shortcuts', color: Colors.grey),
-        _buildMenuItem(context, 'about_dev', Icons.person, 'About Developer', color: Colors.grey),
-        _buildMenuItem(context, 'about', Icons.info_outline, 'About App', color: Colors.grey),
+        _buildMenuHeader('App Settings'),
+        _buildMenuItem(context, 'ai', Icons.psychology, 'AI Magic Compose', color: Colors.purple),
+        _buildMenuItem(context, 'lang', Icons.language, 'Change Language', color: Colors.grey),
       ],
-      onSelected: (value) async {
+      onSelected: (val) {
         final provider = Provider.of<ProjectProvider>(context, listen: false);
-        if (value == 'save_library') _showSaveToLibraryDialog(context, provider);
-        else if (value == 'snapshots') _showSnapshotsDialog(context, provider);
-        else if (value == 'import_markdown') _showImportMarkdownDialog(context, provider);
-        else if (value == 'gallery') Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen()));
-        else if (value == 'social_preview') Navigator.push(context, MaterialPageRoute(builder: (_) => const SocialPreviewScreen()));
-        else if (value == 'github_actions') Navigator.push(context, MaterialPageRoute(builder: (_) => const GitHubActionsGenerator()));
-        else if (value == 'funding') Navigator.push(context, MaterialPageRoute(builder: (_) => const FundingGeneratorScreen()));
-        else if (value == 'publish_github') _showPublishToGitHubDialog(context, provider);
-        else if (value == 'ai_settings') _showAISettingsDialog(context, provider);
-        else if (value == 'generate_codebase') _showGenerateFromCodebaseDialog(context, provider);
-        else if (value == 'extra_files') _showExtraFilesDialog(context, provider);
-        else if (value == 'change_language') _showLanguageDialog(context, provider);
-        else if (value == 'shortcuts') _showKeyboardShortcutsDialog(context);
-        else if (value == 'about_dev') _showDeveloperInfoDialog(context);
-        else if (value == 'about') _showAboutAppDialog(context);
-        else if (value == 'clear_workspace') {
-          showSafeDialog(context, builder: (context) => ConfirmDialog(
-            title: 'Clear Workspace?',
-            content: 'This will remove all elements. This action cannot be undone.',
-            confirmText: 'Clear',
-            isDestructive: true,
-            onConfirm: () => provider.clearElements(),
-          ));
-        } else if (value == 'export_json') {
-          final json = provider.exportToJson();
-          downloadJsonFile(json, 'readme_project.json');
-        } else if (value == 'import_json') {
-          _handleImportJson(provider);
-        }
+        if (val == 'save') _showSaveToLibraryDialog(context, provider);
+        else if (val == 'ai') _showAISettingsDialog(context, provider);
+        else if (val == 'lang') _showLanguageDialog(context, provider);
+        else if (val == 'import_md') _showImportMarkdownDialog(context, provider);
       },
     );
   }
 
-  PopupMenuItem<String> _buildMenuItem(BuildContext context, String value, IconData icon, String text, {Color? color, bool isDestructive = false}) {
-    final themeColor = color ?? Theme.of(context).iconTheme.color;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  PopupMenuItem<String> _buildMenuItem(BuildContext context, String value, IconData icon, String text, {Color? color}) {
     return PopupMenuItem<String>(
       value: value,
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: (themeColor ?? Colors.grey).withAlpha(isDark ? 50 : 30),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: themeColor, size: 20),
-          ),
+          Icon(icon, color: color, size: 20),
           const SizedBox(width: 12),
-          Text(text, style: GoogleFonts.inter(color: isDestructive ? Colors.red : null, fontWeight: FontWeight.w500)),
+          Text(text),
         ],
       ),
     );
@@ -366,8 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
   PopupMenuItem<String> _buildMenuHeader(String title) {
     return PopupMenuItem<String>(
       enabled: false,
-      height: 32,
-      child: Text(title.toUpperCase(), style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.2)),
+      child: Text(title.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey)),
     );
   }
 
@@ -393,16 +292,13 @@ class _HomeScreenState extends State<HomeScreen> {
         styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
           p: GoogleFonts.inter(height: 1.6, color: isDark ? const Color(0xFFC9D1D9) : const Color(0xFF24292F)),
           h1: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-          code: GoogleFonts.firaCode(backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
         ),
       ),
     );
   }
 
   Widget _buildModernStatusBar(BuildContext context, ProjectProvider provider, bool isDark) {
-    // Dynamically calculate score using AIService
     final score = AIService.calculateHealthScore(provider.elements);
-    
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -411,13 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _statusItem(Icons.widgets_outlined, '${provider.elements.length} Elements'),
           const SizedBox(width: 24),
-          _statusItem(
-            Icons.analytics_outlined, 
-            'Quality Score: ${score.toInt()}/100', 
-            color: score > 70 ? Colors.green : (score > 40 ? Colors.orange : Colors.redAccent)
-          ),
+          _statusItem(Icons.analytics_outlined, 'Quality Score: ${score.toInt()}/100', color: score > 70 ? Colors.green : Colors.orange),
           const Spacer(),
-          _statusItem(Icons.cloud_done_outlined, 'Sync Active', color: Colors.blueAccent),
+          _statusItem(Icons.cloud_done_outlined, 'Auto-saved', color: Colors.blueAccent),
         ],
       ),
     );
@@ -436,42 +328,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _handleImportJson(ProjectProvider provider) async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
-      if (result != null) {
-        String? content;
-        if (result.files.first.bytes != null) content = utf8.decode(result.files.first.bytes!);
-        if (content != null) {
-          provider.importFromJson(content);
-          if (context.mounted) ToastHelper.show(context, 'Project imported successfully');
-        }
-      }
-    } catch (e) {
-      if (context.mounted) ToastHelper.show(context, 'Error: $e', isError: true);
-    }
-  }
-
-  // Logic wrappers
   void _handleExport(ProjectProvider provider) => ProjectExporter.export(elements: provider.elements, variables: provider.variables, licenseType: provider.licenseType, includeContributing: provider.includeContributing);
-  void _printReadme(BuildContext context, ProjectProvider provider) async {
-    final markdown = MarkdownGenerator().generate(provider.elements, variables: provider.variables);
-    final html = md.markdownToHtml(markdown, extensionSet: md.ExtensionSet.gitHubWeb);
-    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => await Printing.convertHtml(format: format, html: '<html><body style="font-family:sans-serif;padding:40px">$html</body></html>'));
-  }
-
   void _showLoginDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const LoginDialog());
-  void _showProjectSettingsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ProjectSettingsDialog());
   void _showSaveToLibraryDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const SaveToLibraryDialog());
-  void _showSnapshotsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const SnapshotsDialog());
   void _showHealthCheckDialog(BuildContext context, List<HealthIssue> issues, ProjectProvider provider) => showSafeDialog(context, builder: (_) => HealthCheckDialog(issues: issues, provider: provider));
   void _showImportMarkdownDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ImportMarkdownDialog());
   void _showAISettingsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const AISettingsDialog());
-  void _showPublishToGitHubDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const PublishToGitHubDialog());
-  void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const GenerateCodebaseDialog());
-  void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ExtraFilesDialog());
   void _showLanguageDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const LanguageDialog());
-  void _showKeyboardShortcutsDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const KeyboardShortcutsDialog());
-  void _showDeveloperInfoDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const DeveloperInfoDialog());
-  void _showAboutAppDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const AboutAppDialog());
 }

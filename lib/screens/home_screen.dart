@@ -29,6 +29,7 @@ import 'github_actions_generator.dart';
 import '../services/health_check_service.dart';
 import '../services/auth_service.dart';
 import '../services/ai_service.dart';
+import '../core/constants/app_colors.dart';
 
 import '../utils/toast_helper.dart';
 import '../widgets/developer_info_dialog.dart';
@@ -76,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.initState();
     _entranceController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = CurvedAnimation(parent: _entranceController, curve: Curves.easeIn);
+    _fadeAnimation = CurvedAnimation(parent: _entranceController, curve: Curves.easeInOut);
     _entranceController.forward();
   }
 
@@ -160,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.description_rounded, color: Colors.blueAccent, size: 24),
+          const Icon(Icons.description_rounded, color: AppColors.primary, size: 24),
           const SizedBox(width: 10),
           Text('Markdown Creator', style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 17)),
         ],
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       icon: Icon(icon, size: 20),
       tooltip: tooltip,
       onPressed: onTap,
-      color: isActive ? Colors.blueAccent : color,
+      color: isActive ? AppColors.primary : color,
     );
   }
 
@@ -222,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isPrimary ? Colors.blueAccent : Colors.transparent,
+              color: isPrimary ? AppColors.primary : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -242,43 +243,48 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildMoreOptionsButton(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context, listen: false);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert_rounded),
       tooltip: 'More Options',
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      offset: const Offset(0, 48),
+      surfaceTintColor: Colors.transparent,
+      elevation: 20,
+      shadowColor: Colors.black.withOpacity(0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+      ),
+      offset: const Offset(0, 52),
       itemBuilder: (context) => [
         _buildMenuHeader('Project & Files'),
-        _buildMenuItem(context, 'save', Icons.save_alt, 'Save to Library', color: Colors.blue),
-        _buildMenuItem(context, 'snapshots', Icons.history, 'Local Snapshots', color: Colors.blue),
-        _buildMenuItem(context, 'import_md', Icons.file_upload, 'Import Markdown', color: Colors.blue),
-        _buildMenuItem(context, 'export_json', Icons.javascript, 'Export Project (JSON)', color: Colors.blue),
-        _buildMenuItem(context, 'import_json', Icons.data_object, 'Import Project (JSON)', color: Colors.blue),
-        _buildMenuItem(context, 'clear', Icons.delete_forever, 'Clear Workspace', color: Colors.red, isDestructive: true),
+        _buildMenuItem(context, 'save', Icons.save_alt_rounded, 'Save to Library', color: Colors.blueAccent),
+        _buildMenuItem(context, 'snapshots', Icons.history_rounded, 'Local Snapshots', color: Colors.blueAccent),
+        _buildMenuItem(context, 'import_md', Icons.file_upload_outlined, 'Import Markdown', color: Colors.blueAccent),
+        _buildMenuItem(context, 'export_json', Icons.javascript_rounded, 'Export Project (JSON)', color: Colors.blueAccent),
+        _buildMenuItem(context, 'import_json', Icons.data_object_rounded, 'Import Project (JSON)', color: Colors.blueAccent),
+        _buildMenuItem(context, 'clear', Icons.delete_sweep_rounded, 'Clear Workspace', color: Colors.redAccent, isDestructive: true),
 
-        const PopupMenuDivider(),
+        const PopupMenuDivider(height: 1),
         _buildMenuHeader('Tools & Generators'),
-        _buildMenuItem(context, 'gallery', Icons.collections, 'Showcase Gallery', color: Colors.orange),
-        _buildMenuItem(context, 'social', Icons.image, 'Social Preview Designer', color: Colors.orange),
-        _buildMenuItem(context, 'actions', Icons.build, 'GitHub Actions Generator', color: Colors.orange),
-        _buildMenuItem(context, 'funding', Icons.volunteer_activism, 'Funding Generator', color: Colors.pink),
-        _buildMenuItem(context, 'extra', Icons.library_add, 'Generate Extra Files', color: Colors.deepOrange),
+        _buildMenuItem(context, 'gallery', Icons.auto_awesome_mosaic_rounded, 'Showcase Gallery', color: Colors.orangeAccent),
+        _buildMenuItem(context, 'social', Icons.auto_graph_rounded, 'Social Preview Designer', color: Colors.orangeAccent),
+        _buildMenuItem(context, 'actions', Icons.terminal_rounded, 'GitHub Actions Generator', color: Colors.orangeAccent),
+        _buildMenuItem(context, 'funding', Icons.volunteer_activism_rounded, 'Funding Generator', color: Colors.pinkAccent),
+        _buildMenuItem(context, 'extra', Icons.library_add_rounded, 'Generate Extra Files', color: Colors.deepOrangeAccent),
 
-        const PopupMenuDivider(),
-        _buildMenuHeader('AI Features'),
-        _buildMenuItem(context, 'ai', Icons.psychology, 'AI Settings', color: Colors.purple),
-        _buildMenuItem(context, 'codebase', Icons.auto_awesome, 'Generate From Codebase', color: Colors.purple),
+        const PopupMenuDivider(height: 1),
+        _buildMenuHeader('Intelligence & Cloud'),
+        _buildMenuItem(context, 'ai', Icons.psychology_rounded, 'AI Settings & Magic', color: Colors.purpleAccent),
+        _buildMenuItem(context, 'codebase', Icons.auto_awesome_rounded, 'Generate From Codebase', color: Colors.purpleAccent),
+        _buildMenuItem(context, 'publish', Icons.cloud_upload_rounded, 'Publish to GitHub', color: Colors.tealAccent),
 
-        const PopupMenuDivider(),
-        _buildMenuHeader('Publish'),
-        _buildMenuItem(context, 'publish', Icons.cloud_upload, 'Publish to GitHub', color: Colors.teal),
-
-        const PopupMenuDivider(),
-        _buildMenuHeader('App Settings'),
-        _buildMenuItem(context, 'lang', Icons.language, 'Change Language', color: Colors.grey),
-        _buildMenuItem(context, 'shortcuts', Icons.keyboard, 'Keyboard Shortcuts', color: Colors.grey),
-        _buildMenuItem(context, 'about_dev', Icons.person, 'About Developer', color: Colors.grey),
-        _buildMenuItem(context, 'about', Icons.info_outline, 'About App', color: Colors.grey),
+        const PopupMenuDivider(height: 1),
+        _buildMenuHeader('Application'),
+        _buildMenuItem(context, 'lang', Icons.translate_rounded, 'Change Language', color: Colors.grey),
+        _buildMenuItem(context, 'shortcuts', Icons.keyboard_command_key_rounded, 'Keyboard Shortcuts', color: Colors.grey),
+        _buildMenuItem(context, 'about_dev', Icons.badge_rounded, 'About Developer', color: Colors.grey),
+        _buildMenuItem(context, 'about', Icons.info_outline_rounded, 'About Application', color: Colors.grey),
       ],
       onSelected: (value) async {
         if (value == 'save') _showSaveToLibraryDialog(context, provider);
@@ -317,21 +323,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   PopupMenuItem<String> _buildMenuItem(BuildContext context, String value, IconData icon, String text, {Color? color, bool isDestructive = false}) {
     final themeColor = color ?? Theme.of(context).iconTheme.color;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return PopupMenuItem<String>(
       value: value,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: (themeColor ?? Colors.grey).withAlpha(isDark ? 50 : 30),
-              borderRadius: BorderRadius.circular(8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: themeColor!.withOpacity(isDark ? 0.15 : 0.08),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: themeColor, size: 18),
             ),
-            child: Icon(icon, color: themeColor, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Text(text, style: GoogleFonts.inter(color: isDestructive ? Colors.red : null, fontWeight: FontWeight.w500)),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                text,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isDestructive ? Colors.redAccent : (isDark ? Colors.white : Colors.black87),
+                ),
+              ),
+            ),
+            if (!isDestructive)
+              Icon(Icons.chevron_right_rounded, size: 14, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)),
+          ],
+        ),
       ),
     );
   }
@@ -339,8 +361,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   PopupMenuItem<String> _buildMenuHeader(String title) {
     return PopupMenuItem<String>(
       enabled: false,
-      height: 32,
-      child: Text(title.toUpperCase(), style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1.2)),
+      height: 36,
+      padding: const EdgeInsets.only(left: 16, top: 8),
+      child: Text(
+        title.toUpperCase(),
+        style: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+          color: Colors.grey.shade500,
+          letterSpacing: 1.5,
+        ),
+      ),
     );
   }
 
@@ -348,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Positioned.fill(
       child: Stack(
         children: [
-          Positioned(top: -100, right: -50, child: Container(width: 300, height: 300, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent.withOpacity(isDark ? 0.1 : 0.03)))),
+          Positioned(top: -100, right: -50, child: Container(width: 300, height: 300, decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withOpacity(isDark ? 0.1 : 0.03)))),
           Positioned(bottom: -50, left: -50, child: Container(width: 400, height: 400, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.purpleAccent.withOpacity(0.08)))),
         ],
       ),
@@ -384,7 +415,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           const SizedBox(width: 24),
           _statusItem(Icons.analytics_outlined, 'Quality Score: ${score.toInt()}/100', color: score > 70 ? Colors.green : Colors.orange),
           const Spacer(),
-          _statusItem(Icons.cloud_done_outlined, 'Auto-saved', color: Colors.blueAccent),
+          if (provider.isSaving) 
+            Row(children: [
+              const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
+              const SizedBox(width: 8),
+              Text('Saving...', style: GoogleFonts.inter(fontSize: 10, color: Colors.grey)),
+            ])
+          else
+            _statusItem(Icons.cloud_done_outlined, 'Sync Active', color: AppColors.primary),
         ],
       ),
     );
@@ -398,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(Rect.fromPoints(button.localToGlobal(Offset.zero, ancestor: overlay), button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay)), Offset.zero & overlay.size);
-    showMenu<ProjectTemplate>(context: context, position: position, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), items: provider.allTemplates.map((t) => PopupMenuItem(value: t, child: ListTile(leading: const Icon(Icons.article_outlined, color: Colors.blueAccent), title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text(t.description, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))))).toList()).then((template) {
+    showMenu<ProjectTemplate>(context: context, position: position, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), items: provider.allTemplates.map((t) => PopupMenuItem(value: t, child: ListTile(leading: const Icon(Icons.article_outlined, color: AppColors.primary), title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text(t.description, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))))).toList()).then((template) {
       if (template != null) showSafeDialog(context, builder: (context) => ConfirmDialog(title: 'Load Template?', content: 'This will replace your current workspace.', confirmText: 'Load', onConfirm: () => provider.loadTemplate(template)));
     });
   }
@@ -421,15 +459,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   void _handleExport(ProjectProvider provider) => ProjectExporter.export(elements: provider.elements, variables: provider.variables, licenseType: provider.licenseType, includeContributing: provider.includeContributing);
   void _showLoginDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const LoginDialog());
+  void _showProjectSettingsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ProjectSettingsDialog());
   void _showSaveToLibraryDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const SaveToLibraryDialog());
   void _showSnapshotsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const SnapshotsDialog());
   void _showHealthCheckDialog(BuildContext context, List<HealthIssue> issues, ProjectProvider provider) => showSafeDialog(context, builder: (_) => HealthCheckDialog(issues: issues, provider: provider));
   void _showImportMarkdownDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ImportMarkdownDialog());
   void _showAISettingsDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const AISettingsDialog());
-  void _showLanguageDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const LanguageDialog());
   void _showPublishToGitHubDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const PublishToGitHubDialog());
   void _showGenerateFromCodebaseDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const GenerateCodebaseDialog());
   void _showExtraFilesDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const ExtraFilesDialog());
+  void _showLanguageDialog(BuildContext context, ProjectProvider provider) => showSafeDialog(context, builder: (_) => const LanguageDialog());
   void _showKeyboardShortcutsDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const KeyboardShortcutsDialog());
   void _showDeveloperInfoDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const DeveloperInfoDialog());
   void _showAboutAppDialog(BuildContext context) => showSafeDialog(context, builder: (_) => const AboutAppDialog());

@@ -18,6 +18,7 @@ class ProjectProvider with ChangeNotifier {
   List<ProjectTemplate> _cloudTemplates = [];
   String? _selectedElementId;
   ThemeMode _themeMode = ThemeMode.system;
+  bool _isSaving = false; // Internal saving state
   
   final Map<String, String> _variables = {
     'PROJECT_NAME': 'My Project',
@@ -52,6 +53,7 @@ class ProjectProvider with ChangeNotifier {
   List<ReadmeElement> get elements => _elements;
   List<ProjectTemplate> get cloudTemplates => _cloudTemplates;
   String? get selectedElementId => _selectedElementId;
+  bool get isSaving => _isSaving; // RESTORED: Required by Status Bar
   
   ReadmeElement? get selectedElement {
     if (_selectedElementId == null) return null;
@@ -293,9 +295,17 @@ class ProjectProvider with ChangeNotifier {
   }
 
   Future<void> _saveState() async {
+    _isSaving = true; // Start saving animation
+    notifyListeners();
+    
     await _prefsService.saveElements(_elements);
     await _prefsService.saveVariables(_variables);
     await _prefsService.saveStringList(PreferencesService.keySnapshots, _snapshots);
+    
+    // Simulate delay for smooth UI feedback
+    await Future.delayed(const Duration(milliseconds: 800));
+    _isSaving = false; // End saving animation
+    notifyListeners();
   }
 
   ReadmeElement _createElementByType(ReadmeElementType type) {

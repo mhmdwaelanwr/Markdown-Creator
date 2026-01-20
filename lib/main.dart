@@ -2,6 +2,8 @@
 // Developed by: Mohamed Anwar (mhmdwaelanwr)
 
 import 'dart:async';
+import 'dart:io'; // Added for platform check
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,18 +18,15 @@ import 'package:markdown_creator/core/theme/app_theme.dart';
 import 'package:markdown_creator/services/auth_service.dart';
 
 void main() {
-  // Catch all potential errors in production
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     
-    // Smooth UI optimizations
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
 
-    // Professional Status Bar UI
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
@@ -35,8 +34,20 @@ void main() {
 
     bool firebaseInitialized = false;
     try {
-      // Safe Firebase Boot (Works offline/online)
-      await Firebase.initializeApp();
+      if (!kIsWeb && Platform.isWindows) {
+        // Windows needs explicit options if firebase_options.dart is missing
+        // You should run 'flutterfire configure' to generate the real options
+        await Firebase.initializeApp(
+          options: const FirebaseOptions(
+            apiKey: 'YOUR_API_KEY', // Placeholder
+            appId: 'YOUR_APP_ID',   // Placeholder
+            messagingSenderId: 'YOUR_SENDER_ID',
+            projectId: 'YOUR_PROJECT_ID',
+          ),
+        );
+      } else {
+        await Firebase.initializeApp();
+      }
       firebaseInitialized = true;
       debugPrint('🛡️ Firebase Engine: ACTIVE');
     } catch (e) {
@@ -70,8 +81,6 @@ class MarkdownCreatorApp extends StatelessWidget {
         return MaterialApp(
           title: 'Markdown Creator Pro',
           debugShowCheckedModeBanner: false,
-          
-          // Advanced Localization
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -80,13 +89,9 @@ class MarkdownCreatorApp extends StatelessWidget {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           locale: provider.locale,
-          
-          // Premium Theming
           themeMode: provider.themeMode,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          
-          // Clean Navigation Architecture
           initialRoute: '/',
           routes: {
             '/': (context) => const HomeScreen(),

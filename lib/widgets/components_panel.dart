@@ -48,13 +48,13 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
         if (_searchQuery.isEmpty) _buildSectionHeader(title, isDark),
         GridView.builder(
           shrinkWrap: true,
-          padding: EdgeInsets.zero, // Remove grid padding
+          padding: EdgeInsets.zero,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            childAspectRatio: 1.5, // More compact
+            childAspectRatio: 1.5,
           ),
           itemCount: filteredItems.length,
           itemBuilder: (context, index) {
@@ -62,7 +62,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
             return _buildDraggableItem(context, item.type, item.label, item.icon);
           },
         ),
-        if (_searchQuery.isEmpty) const SizedBox(height: 12), // Tighter spacing
+        if (_searchQuery.isEmpty) const SizedBox(height: 12),
       ],
     );
   }
@@ -132,7 +132,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: EdgeInsets.zero,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
                 style: GoogleFonts.inter(fontSize: 13),
               ),
@@ -142,6 +142,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                 children: [
                   // Elements Tab
                   SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Column(
                       children: [
@@ -173,7 +174,12 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                             ),
                           ),
                         ),
-                      Expanded(child: _buildSnippetsTab(libraryProvider, isDark)),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: _buildSnippetsTab(libraryProvider, isDark),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -255,7 +261,9 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
 
   Widget _buildSnippetsTab(LibraryProvider libraryProvider, bool isDark) {
     if (libraryProvider.snippets.isEmpty) {
-      return Center(
+      return Container(
+        height: 200,
+        alignment: Alignment.center, // Fixed: Changed from Center() widget to Alignment.center
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -268,6 +276,8 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     }
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       itemCount: libraryProvider.snippets.length,
       itemBuilder: (context, index) {

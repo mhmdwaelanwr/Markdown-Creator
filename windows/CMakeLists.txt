@@ -1,11 +1,15 @@
 # Project-level configuration.
-# This variable is needed by newer CMake versions to support older sub-projects like Firebase SDK
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
-cmake_minimum_required(VERSION 3.15) 
+# FIX for Firebase SDK: Force CMake to treat older versions as 3.10 to avoid deprecation errors
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 
-# FIX: Force minimum policy version to 3.5 to satisfy Firebase C++ SDK requirement
-cmake_policy(VERSION 3.5...3.25)
+cmake_minimum_required(VERSION 3.15)
+
+# Suppress policies warnings and set defaults
+if(POLICY CMP0000)
+  cmake_policy(SET CMP0000 NEW)
+endif()
+cmake_policy(VERSION 3.15...3.25)
 
 project(readme_creator LANGUAGES CXX)
 
@@ -34,12 +38,22 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 add_definitions(-DUNICODE -D_UNICODE)
 
+# Ensure Profile/Release modes use optimized CRT
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions(-DNDEBUG)
+endif()
+
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)
   target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100")
   target_compile_options(${TARGET} PRIVATE /EHsc)
   target_compile_definitions(${TARGET} PRIVATE "_HAS_EXCEPTIONS=0")
   target_compile_definitions(${TARGET} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
+
+  if(MSVC)
+    # FIX: Use consistent Runtime Library to prevent LNK2001 errors with Firebase
+    target_compile_options(${TARGET} PRIVATE "$<$<CONFIG:Debug>:/MDd>$<$<NOT:$<CONFIG:Debug>>:/MD>")
+  endif()
 endfunction()
 
 set(FLUTTER_MANAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/flutter")

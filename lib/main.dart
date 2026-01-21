@@ -2,8 +2,8 @@
 // Developed by: Mohamed Anwar (mhmdwaelanwr)
 
 import 'dart:async';
-import 'dart:io'; // Added for platform check
-import 'package:flutter/foundation.dart'; // Added for kIsWeb
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +17,10 @@ import 'package:markdown_creator/screens/home_screen.dart';
 import 'package:markdown_creator/core/theme/app_theme.dart';
 import 'package:markdown_creator/services/auth_service.dart';
 
+// سيتم إنشاء هذا الملف تلقائياً عند تشغيل flutterfire configure
+// إذا لم يظهر لك خطأ تحت هذا السطر، فالتطبيق سيعمل بشكل كامل
+import 'package:markdown_creator/firebase_options.dart';
+
 void main() {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -27,31 +31,31 @@ void main() {
       DeviceOrientation.landscapeRight,
     ]);
 
+    // تحسين مظهر شريط الحالة
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ));
 
     bool firebaseInitialized = false;
     try {
-      if (!kIsWeb && Platform.isWindows) {
-        // Windows needs explicit options if firebase_options.dart is missing
-        // You should run 'flutterfire configure' to generate the real options
-        await Firebase.initializeApp(
-          options: const FirebaseOptions(
-            apiKey: 'YOUR_API_KEY', // Placeholder
-            appId: 'YOUR_APP_ID',   // Placeholder
-            messagingSenderId: 'YOUR_SENDER_ID',
-            projectId: 'YOUR_PROJECT_ID',
-          ),
-        );
-      } else {
-        await Firebase.initializeApp();
-      }
+      // استخدام DefaultFirebaseOptions.currentPlatform هو الحل الصحيح لكل المنصات
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
       firebaseInitialized = true;
       debugPrint('🛡️ Firebase Engine: ACTIVE');
     } catch (e) {
       debugPrint('⚠️ Firebase Engine: OFFLINE MODE ($e)');
+      // إذا فشل الاتصال، يمكننا المحاولة مرة أخرى بدون خيارات لبعض المنصات
+      if (!firebaseInitialized) {
+        try {
+          await Firebase.initializeApp();
+          firebaseInitialized = true;
+        } catch (_) {}
+      }
     }
 
     runApp(
@@ -68,6 +72,7 @@ void main() {
     );
   }, (error, stack) {
     debugPrint('❌ Global Crash Guard: $error');
+    debugPrint(stack.toString());
   });
 }
 

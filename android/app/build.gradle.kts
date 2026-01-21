@@ -22,7 +22,7 @@ val resolvedApplicationId = applicationIdOverride ?: "anwar.readme.creator.readm
 
 android {
     namespace = "anwar.readme.creator.readme_creator"
-    compileSdk = 34
+    compileSdk = 36 // تم التحديث إلى 36 بناءً على متطلبات الإضافات
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -35,12 +35,9 @@ android {
     }
 
     defaultConfig {
-        // Override with appApplicationId in gradle.properties or via -PappApplicationId=... at build time.
         applicationId = resolvedApplicationId
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = 34
+        minSdk = 23 // يفضل تحديده بدقة أو تركه كما هو
+        targetSdk = 36 // تم التحديث إلى 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

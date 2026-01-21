@@ -17,9 +17,8 @@ import 'package:markdown_creator/screens/home_screen.dart';
 import 'package:markdown_creator/core/theme/app_theme.dart';
 import 'package:markdown_creator/services/auth_service.dart';
 
-// سيتم إنشاء هذا الملف تلقائياً عند تشغيل flutterfire configure
-// إذا لم يظهر لك خطأ تحت هذا السطر، فالتطبيق سيعمل بشكل كامل
-import 'package:markdown_creator/firebase_options.dart';
+// ملاحظة: قم بإلغاء التعليق عن السطر التالي بعد تشغيل 'flutterfire configure'
+// import 'package:markdown_creator/firebase_options.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -31,7 +30,6 @@ void main() {
       DeviceOrientation.landscapeRight,
     ]);
 
-    // تحسين مظهر شريط الحالة
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
@@ -41,21 +39,15 @@ void main() {
 
     bool firebaseInitialized = false;
     try {
-      // استخدام DefaultFirebaseOptions.currentPlatform هو الحل الصحيح لكل المنصات
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      // محاولة تهيئة Firebase بشكل آمن
+      // إذا قمت بتشغيل flutterfire configure، استبدل الكود أدناه بـ:
+      // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      
+      await Firebase.initializeApp(); 
       firebaseInitialized = true;
       debugPrint('🛡️ Firebase Engine: ACTIVE');
     } catch (e) {
-      debugPrint('⚠️ Firebase Engine: OFFLINE MODE ($e)');
-      // إذا فشل الاتصال، يمكننا المحاولة مرة أخرى بدون خيارات لبعض المنصات
-      if (!firebaseInitialized) {
-        try {
-          await Firebase.initializeApp();
-          firebaseInitialized = true;
-        } catch (_) {}
-      }
+      debugPrint('⚠️ Firebase Engine: OFFLINE MODE (No configuration found)');
     }
 
     runApp(

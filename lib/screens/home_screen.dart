@@ -164,20 +164,35 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               height: 64,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: (isDark ? Colors.black : Colors.white).withOpacity(0.5),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.12)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  )
+                ],
               ),
               child: Row(
                 children: [
                   _studioIcon(),
-                  const SizedBox(width: 12),
-                  Text('MD Studio', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : AppColors.primary)),
+                  const SizedBox(width: 14),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('MARKDOWN', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 0.5, color: isDark ? Colors.white : AppColors.primary)),
+                      Text('STUDIO PRO', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 10, letterSpacing: 2, color: Colors.grey)),
+                    ],
+                  ),
                   const Spacer(),
                   if (isDesktop) ..._buildFullAppBarActions(context, provider),
                   if (!isDesktop) IconButton(icon: const Icon(Icons.tune_rounded), onPressed: () => _scaffoldKey.currentState?.openEndDrawer()),
+                  const SizedBox(width: 8),
                   _buildMoreOptionsButton(context),
                 ],
               ),
@@ -191,26 +206,44 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   List<Widget> _buildFullAppBarActions(BuildContext context, ProjectProvider provider) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
+      // --- Group 1: Workspace History ---
       _actionBtn(Icons.undo_rounded, provider.undo, tooltip: 'Undo'),
       _actionBtn(Icons.redo_rounded, provider.redo, tooltip: 'Redo'),
       _divider(),
+
+      // --- Group 2: Content & Assets ---
+      _actionBtn(Icons.file_copy_outlined, () => _showTemplatesMenu(context, provider), tooltip: 'Templates'),
+      _actionBtn(Icons.library_books_outlined, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen())), tooltip: 'Projects Library'),
+      _divider(),
+
+      // --- Group 3: View & Experience ---
       _deviceBtn(Icons.desktop_mac, DeviceMode.desktop, provider),
       _deviceBtn(Icons.tablet_mac, DeviceMode.tablet, provider),
       _deviceBtn(Icons.phone_iphone, DeviceMode.mobile, provider),
+      const SizedBox(width: 8),
+      _actionBtn(_showPreview ? Icons.visibility : Icons.visibility_off, () => setState(() => _showPreview = !_showPreview), active: _showPreview, tooltip: 'Live Preview'),
+      _actionBtn(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, () => setState(() => _isFocusMode = !_isFocusMode), active: _isFocusMode, tooltip: 'Focus Mode'),
       _divider(),
-      _actionBtn(Icons.file_copy_outlined, () => _showTemplatesMenu(context, provider), tooltip: 'Templates'),
-      _actionBtn(Icons.library_books_outlined, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen())), tooltip: 'Library'),
+
+      // --- Group 4: Analysis & Tools ---
       _actionBtn(Icons.health_and_safety_outlined, () {
         final issues = HealthCheckService.analyze(provider.elements);
         _showHealthCheckDialog(context, issues, provider);
       }, tooltip: 'Health Check'),
+      _actionBtn(Icons.print_rounded, () => _handlePrint(provider), tooltip: 'Print / Export to PDF'),
       _divider(),
+
+      // --- Group 5: Configuration & Account ---
+      _actionBtn(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded, provider.toggleTheme, color: isDark ? Colors.amber : Colors.blueGrey, tooltip: 'Appearance'),
+      _actionBtn(Icons.settings_outlined, () => _showProjectSettingsDialog(context, provider), tooltip: 'Project Settings'),
+      
+      const SizedBox(width: 8),
       StreamBuilder<User?>(
         stream: _authService.user,
         builder: (context, snapshot) {
           final user = snapshot.data;
           return _actionBtn(
-            user != null ? Icons.logout_rounded : Icons.login_rounded,
+            user != null ? Icons.account_circle : Icons.login_rounded,
             () {
               if (user != null) {
                 _authService.signOut();
@@ -218,24 +251,26 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 showSafeDialog(context, builder: (_) => const LoginDialog());
               }
             },
-            tooltip: user != null ? 'Logout' : 'Login',
+            tooltip: user != null ? 'Account: ${user.email}' : 'Sign In & Sync',
             color: user != null ? Colors.teal : null,
           );
         }
       ),
-      _actionBtn(Icons.print_rounded, () => _handlePrint(provider), tooltip: 'Print / PDF'),
-      _divider(),
-      _actionBtn(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded, provider.toggleTheme, color: isDark ? Colors.amber : Colors.blueGrey, tooltip: 'Toggle Theme'),
-      _actionBtn(Icons.settings_outlined, () => _showProjectSettingsDialog(context, provider), tooltip: 'Settings'),
-      _divider(),
-      _actionBtn(_showPreview ? Icons.visibility : Icons.visibility_off, () => setState(() => _showPreview = !_showPreview), active: _showPreview, tooltip: 'Preview'),
-      _actionBtn(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, () => setState(() => _isFocusMode = !_isFocusMode), active: _isFocusMode, tooltip: 'Focus Mode'),
-      const SizedBox(width: 12),
+      
+      const SizedBox(width: 16),
+      // --- Group 6: CTA (Primary Action) ---
       ElevatedButton.icon(
         onPressed: () => _handleExport(provider),
         icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-        label: const Text('Export', style: TextStyle(fontWeight: FontWeight.bold)),
-        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), elevation: 0),
+        label: const Text('EXPORT', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1, fontSize: 12)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary, 
+          foregroundColor: Colors.white, 
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), 
+          elevation: 4,
+          shadowColor: AppColors.primary.withOpacity(0.4),
+        ),
       ),
     ];
   }
@@ -319,8 +354,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _actionBtn(IconData icon, VoidCallback onTap, {bool active = false, String? tooltip, Color? color}) => Tooltip(message: tooltip ?? '', child: IconButton(icon: Icon(icon, size: 19, color: active ? AppColors.primary : color), onPressed: onTap, splashRadius: 22));
   Widget _deviceBtn(IconData icon, DeviceMode mode, ProjectProvider provider) => IconButton(icon: Icon(icon, size: 19, color: provider.deviceMode == mode ? AppColors.primary : Colors.grey), onPressed: () => provider.setDeviceMode(mode));
-  Widget _divider() => const VerticalDivider(width: 24, indent: 20, endIndent: 20);
-  Widget _studioIcon() => Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 18));
+  Widget _divider() => const VerticalDivider(width: 24, indent: 22, endIndent: 22, thickness: 1);
+  Widget _studioIcon() => Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(gradient: AppColors.primaryGradient, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))]), child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20));
   PopupMenuItem<String> _menuHeader(String title) => PopupMenuItem(enabled: false, height: 30, child: Text(title.toUpperCase(), style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.grey, letterSpacing: 1.2)));
   PopupMenuItem<String> _menuItem(String val, IconData icon, String text, Color color, {bool isDestructive = false}) => PopupMenuItem(value: val, child: Row(children: [Icon(icon, color: isDestructive ? Colors.red : color, size: 18), const SizedBox(width: 12), Text(text, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: isDestructive ? Colors.red : null))]));
 

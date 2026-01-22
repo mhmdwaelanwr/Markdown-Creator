@@ -43,7 +43,7 @@ class AboutAppDialog extends StatelessWidget {
             _buildFeatureSection(context),
             const SizedBox(height: 32),
             
-            // --- Support & Feedback Section (SaaS Improvement) ---
+            // --- Support & Feedback Section ---
             _buildInfoCard(
               context,
               icon: Icons.support_agent_rounded,
@@ -57,6 +57,16 @@ class AboutAppDialog extends StatelessWidget {
                   builder: (context) => const FeedbackDialog(),
                 );
               },
+            ),
+
+            // --- Open Source Section ---
+            _buildInfoCard(
+              context,
+              icon: FontAwesomeIcons.github,
+              title: 'Free & Open Source',
+              subtitle: 'Contributions are Welcome',
+              trailing: 'Source',
+              onTap: () => _launchUrl('https://github.com/mhmdwaelanwr/Markdown-Creator'),
             ),
 
             _buildInfoCard(
@@ -80,9 +90,7 @@ class AboutAppDialog extends StatelessWidget {
               title: 'Legal & Transparency',
               subtitle: 'Privacy Policy & Licenses',
               trailing: 'View',
-              onTap: () {
-                _showLegalMenu(context);
-              },
+              onTap: () => _showLegalMenu(context),
             ),
             const SizedBox(height: 32),
             _buildTechStackFooter(context),
@@ -121,7 +129,7 @@ class AboutAppDialog extends StatelessWidget {
               title: const Text('Privacy Policy'),
               onTap: () {
                 Navigator.pop(context);
-                _launchUrl('https://your-domain.com/privacy'); // Replace with actual URL
+                _launchUrl('https://your-domain.com/privacy'); 
               },
             ),
             ListTile(
@@ -129,7 +137,7 @@ class AboutAppDialog extends StatelessWidget {
               title: const Text('Terms of Service'),
               onTap: () {
                 Navigator.pop(context);
-                _launchUrl('https://your-domain.com/terms'); // Replace with actual URL
+                _launchUrl('https://your-domain.com/terms');
               },
             ),
             ListTile(

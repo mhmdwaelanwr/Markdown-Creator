@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../models/readme_element.dart';
 import '../models/snippet.dart';
 import '../providers/project_provider.dart';
@@ -20,6 +21,7 @@ class EditorCanvas extends StatelessWidget {
     final provider = Provider.of<ProjectProvider>(context);
     final authService = AuthService();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     double maxWidth = 850;
     double? deviceHeight;
@@ -54,9 +56,6 @@ class EditorCanvas extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Main Scrollable Area
-              // FIX: DragTarget must be wrapped in Positioned.fill if it's a child of Stack,
-              // but the Positioned itself shouldn't be inside the DragTarget builder.
               Positioned.fill(
                 child: DragTarget<Object>(
                   onWillAcceptWithDetails: (details) => details.data is ReadmeElementType || details.data is Snippet,
@@ -73,7 +72,7 @@ class EditorCanvas extends StatelessWidget {
                       child: Column(
                         children: [
                           const SizedBox(height: 100),
-                          _buildAuthContextBanner(context, authService, isDark),
+                          _buildAuthContextBanner(context, authService, isDark, l10n),
                           const SizedBox(height: 20),
                           Center(
                             child: AnimatedContainer(
@@ -114,7 +113,7 @@ class EditorCanvas extends StatelessWidget {
                                     onTap: () => provider.selectElement(''),
                                     behavior: HitTestBehavior.opaque,
                                     child: provider.elements.isEmpty
-                                        ? _buildEmptyState(context)
+                                        ? _buildEmptyState(context, l10n)
                                         : _buildElementList(provider, canvasPadding, isDark),
                                   ),
                                 ],
@@ -129,12 +128,11 @@ class EditorCanvas extends StatelessWidget {
                 ),
               ),
 
-              // Floating Toolbar
               Positioned(
                 top: 20,
                 left: 0,
                 right: 0,
-                child: _buildFloatingToolbar(context, provider, isDark),
+                child: _buildFloatingToolbar(context, provider, isDark, l10n),
               ),
             ],
           ),
@@ -143,7 +141,7 @@ class EditorCanvas extends StatelessWidget {
     );
   }
 
-  Widget _buildAuthContextBanner(BuildContext context, AuthService auth, bool isDark) {
+  Widget _buildAuthContextBanner(BuildContext context, AuthService auth, bool isDark, AppLocalizations l10n) {
     if (auth.githubToken != null) return const SizedBox.shrink();
 
     return Container(
@@ -160,13 +158,13 @@ class EditorCanvas extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'GitHub integration inactive. Login to enable auto-import.',
+              l10n.githubIntegrationInactive,
               style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.black87),
             ),
           ),
           TextButton(
             onPressed: () => showSafeDialog(context, builder: (context) => const LoginDialog()),
-            child: const Text('Login', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            child: Text(l10n.login, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -205,7 +203,7 @@ class EditorCanvas extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingToolbar(BuildContext context, ProjectProvider provider, bool isDark) {
+  Widget _buildFloatingToolbar(BuildContext context, ProjectProvider provider, bool isDark, AppLocalizations l10n) {
     return Center(
       child: Container(
         height: 48,
@@ -221,12 +219,12 @@ class EditorCanvas extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _toolbarButton(Icons.undo_rounded, 'Undo', provider.undo),
-            _toolbarButton(Icons.redo_rounded, 'Redo', provider.redo),
+            _toolbarButton(Icons.undo_rounded, l10n.undo, provider.undo),
+            _toolbarButton(Icons.redo_rounded, l10n.redo, provider.redo),
             const VerticalDivider(width: 20, indent: 12, endIndent: 12),
             _toolbarButton(
               Icons.delete_sweep_rounded,
-              'Delete',
+              l10n.delete,
               provider.selectedElementId != null ? () => provider.removeElement(provider.selectedElementId!) : null,
               color: Colors.redAccent,
             ),
@@ -239,10 +237,10 @@ class EditorCanvas extends StatelessWidget {
             ),
             _toolbarButton(
               Icons.delete_forever_rounded,
-              'Clear',
+              l10n.clearWorkspace,
               () {
                 provider.clearElements();
-                ToastHelper.show(context, 'Workspace cleared');
+                ToastHelper.show(context, l10n.success);
               },
               color: Colors.orange,
             ),
@@ -262,7 +260,7 @@ class EditorCanvas extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 40),
@@ -271,11 +269,11 @@ class EditorCanvas extends StatelessWidget {
             const Icon(Icons.auto_awesome_mosaic_rounded, size: 80, color: Colors.blue),
             const SizedBox(height: 32),
             Text(
-              'Start Your Masterpiece',
+              l10n.startMasterpiece,
               style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text('Drag components from the library to build your documentation', style: TextStyle(color: Colors.grey)),
+            Text(l10n.dragComponentsHint, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),

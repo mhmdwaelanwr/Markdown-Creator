@@ -18,7 +18,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get localSnapshots => 'Lokale Schnappschüsse';
 
   @override
-  String get clearWorkspace => 'Arbeitsbereich leeren';
+  String get clearWorkspace => 'Arbeitsbereich löschen';
 
   @override
   String get importMarkdown => 'Markdown importieren';
@@ -45,7 +45,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get showTour => 'Tour anzeigen';
 
   @override
-  String get keyboardShortcuts => 'Kürzel';
+  String get keyboardShortcuts => 'Tastenkombinationen';
 
   @override
   String get aboutDeveloper => 'Über den Entwickler';
@@ -99,7 +99,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get restore => 'Wiederherstellen';
 
   @override
-  String get confirmClearWorkspace => 'Arbeitsbereich leeren?';
+  String get confirmClearWorkspace => 'Arbeitsbereich löschen?';
 
   @override
   String get confirmClearWorkspaceContent =>
@@ -121,7 +121,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get githubToken => 'GitHub-Token';
 
   @override
-  String get getApiKey => 'KI-Schlüssel von Google erhalten';
+  String get getApiKey => 'API-Schlüssel von Google anfordern';
 
   @override
   String get generateToken => 'GitHub-Token generieren';
@@ -142,7 +142,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get warnings => 'Verbesserungen';
 
   @override
-  String get focusMode => 'Fokus-Modus';
+  String get focusMode => 'Fokusmodus';
 
   @override
   String get autoSaved => 'Änderungen gespeichert';
@@ -160,7 +160,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get contributing => 'Mitwirken';
 
   @override
-  String get colors => 'Markenfarben';
+  String get colors => 'Branding-Farben';
 
   @override
   String get formatting => 'Formatierung';
@@ -241,13 +241,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get openSettings => 'Präferenzen';
 
   @override
-  String get help => 'Support';
+  String get help => 'Hilfe';
 
   @override
   String get addHeading => 'Überschrift hinzufügen';
 
   @override
-  String get addSubheading => 'Unterüberschrift';
+  String get addSubheading => 'Unterüberschrift hinzufügen';
 
   @override
   String get addParagraph => 'Absatz hinzufügen';
@@ -273,14 +273,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get enterGeminiKey =>
-      'Gemini-Schlüssel eingeben, um KI-Funktionen freizuschalten.';
+      'Gemini API-Schlüssel eingeben, um KI-Funktionen freizuschalten.';
 
   @override
   String get githubIntegration => 'GitHub-Synchronisierung';
 
   @override
   String get enterGithubToken =>
-      'Optional: GitHub-Token für besseres Repo-Scanning.';
+      'Optional: GitHub-Token für verbessertes Repository-Scanning.';
 
   @override
   String get localFolder => 'Lokales Verzeichnis';
@@ -293,10 +293,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ordner scannen, um Dokumentation zu erstellen.';
 
   @override
-  String get scanGithubRepo => 'Doku aus öffentlichem GitHub-Repo generieren.';
+  String get scanGithubRepo =>
+      'Dokumentation aus öffentlichem GitHub-Repo generieren.';
 
   @override
-  String get fetchingRepo => 'Repo wird synchronisiert...';
+  String get fetchingRepo => 'Repository wird synchronisiert...';
 
   @override
   String get analyzingAI => 'KI-Engine analysiert...';
@@ -317,28 +318,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generateExtraFiles => 'Zusätzliche Projektdateien';
 
   @override
-  String get publishToGithub => 'Push zu GitHub';
+  String get publishToGithub => 'Auf GitHub veröffentlichen';
 
   @override
   String get contributionGuidelinesBuilder => 'Community-Builder';
 
   @override
-  String get contributionGuidelinesDesc => 'Standard Open-Source Richtlinien.';
+  String get contributionGuidelinesDesc => 'Standard-Open-Source-Richtlinien.';
 
   @override
-  String get contributingMdDesc => 'Leitfaden für Beiträge.';
+  String get contributingMdDesc => 'Leitfaden für Mitwirkende.';
 
   @override
   String get generate => 'Generieren';
 
   @override
-  String get codeOfConductDesc => 'Verhaltenskodex.';
+  String get codeOfConductDesc => 'Verhaltenskodex-Richtlinie.';
 
   @override
   String get githubTokenMissing => 'GitHub-Token erforderlich.';
 
   @override
-  String get owner => 'Eigentümer';
+  String get owner => 'Besitzer';
 
   @override
   String get repoName => 'Repo-Name';
@@ -350,7 +351,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commitMessage => 'Nachricht';
 
   @override
-  String get publishDialogDesc => 'Neuen Branch und PR sofort erstellen.';
+  String get publishDialogDesc => 'Sofort neuen Branch und PR erstellen.';
 
   @override
   String get ownerRepoRequired => 'Identität erforderlich';
@@ -365,7 +366,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get copiedToClipboard => 'Kopiert!';
 
   @override
-  String get download => 'Download';
+  String get download => 'Herunterladen';
 
   @override
   String get copy => 'Kopieren';
@@ -383,22 +384,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get becomeSponsor => 'Sponsor werden';
 
   @override
-  String get claimReward => 'Belohnung anfordern';
+  String get claimReward => 'Belohnung einfordern';
 
   @override
-  String get supportAndFeedback => 'Support & Feedback';
+  String get supportAndFeedback => 'Hilfe & Feedback';
 
   @override
   String get adminDashboard => 'Admin-Dashboard';
 
   @override
-  String get totalUsers => 'Gesamtbenutzer';
+  String get totalUsers => 'Benutzer insgesamt';
 
   @override
   String get proMembers => 'Pro-Mitglieder';
 
   @override
-  String get feedbackTitle => 'Benutzerfeedback';
+  String get feedbackTitle => 'Benutzer-Feedback';
 
   @override
   String get viewAttachment => 'Anhang ansehen';
@@ -408,4 +409,665 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ctrlPasteHint => 'Strg+V zum Einfügen von Bildern';
+
+  @override
+  String get projectsLibrary => 'Projektbibliothek';
+
+  @override
+  String get docQuality => 'Dokumentqualität';
+
+  @override
+  String get synced => 'Synchronisiert';
+
+  @override
+  String get loadTemplate => 'Vorlage laden?';
+
+  @override
+  String get replaceWorkspace => 'Dies ersetzt Ihren aktuellen Arbeitsbereich.';
+
+  @override
+  String get fundingGenerator => 'Funding-Generator';
+
+  @override
+  String get showcaseGallery => 'Showcase-Galerie';
+
+  @override
+  String get projectAndFiles => 'Projekt & Dateien';
+
+  @override
+  String get toolsAndGenerators => 'Tools & Generatoren';
+
+  @override
+  String get intelligence => 'Intelligenz';
+
+  @override
+  String get application => 'Anwendung';
+
+  @override
+  String get signInSync => 'Anmelden & Synchronisieren';
+
+  @override
+  String get account => 'Konto';
+
+  @override
+  String get community => 'Gemeinschaft';
+
+  @override
+  String get branding => 'Branding';
+
+  @override
+  String get selectLicense => 'Lizenz auswählen';
+
+  @override
+  String get licenseInfo =>
+      'Eine LICENSE-Datei wird generiert und in den Export aufgenommen.';
+
+  @override
+  String get communityStandards => 'Gemeinschaftsstandards';
+
+  @override
+  String get contributingDesc =>
+      'Fügt einen Standard-Leitfaden für Mitwirkende hinzu.';
+
+  @override
+  String get securityPolicy => 'Sicherheitsrichtlinie';
+
+  @override
+  String get securityDesc => 'Fügt eine Sicherheitsrichtlinie hinzu.';
+
+  @override
+  String get supportInfo => 'Support-Informationen';
+
+  @override
+  String get supportDesc => 'Fügt Informationen zur Unterstützung hinzu.';
+
+  @override
+  String get cocDesc => 'Fügt einen Verhaltenskodex hinzu.';
+
+  @override
+  String get issueTemplates => 'Issue-Vorlagen';
+
+  @override
+  String get issueTemplatesDesc => 'Fügt GitHub-Issue- und PR-Vorlagen hinzu.';
+
+  @override
+  String get includeHtml => 'Eine formatierte HTML-Datei einschließen.';
+
+  @override
+  String get markdownStyle => 'Markdown-Stil';
+
+  @override
+  String get pickColor => 'Farbe wählen';
+
+  @override
+  String get typography => 'Typografie';
+
+  @override
+  String get mediaAndGraphics => 'Medien & Grafiken';
+
+  @override
+  String get structure => 'Struktur';
+
+  @override
+  String get snippets => 'Snippets';
+
+  @override
+  String get searchHint => 'Suchen...';
+
+  @override
+  String get saveSelected => 'Auswahl speichern';
+
+  @override
+  String get noSnippets => 'Keine Snippets gefunden';
+
+  @override
+  String get saveSnippet => 'Snippet speichern';
+
+  @override
+  String get snippetName => 'Snippet-Name';
+
+  @override
+  String get snippetSaved => 'Snippet erfolgreich gespeichert!';
+
+  @override
+  String get heading => 'Überschrift';
+
+  @override
+  String get paragraph => 'Absatz';
+
+  @override
+  String get quote => 'Zitat';
+
+  @override
+  String get code => 'Code';
+
+  @override
+  String get image => 'Bild';
+
+  @override
+  String get icon => 'Icon';
+
+  @override
+  String get button => 'Schaltfläche';
+
+  @override
+  String get badge => 'Badge';
+
+  @override
+  String get socials => 'Socials';
+
+  @override
+  String get stats => 'Statistiken';
+
+  @override
+  String get people => 'Personen';
+
+  @override
+  String get widget => 'Widget';
+
+  @override
+  String get list => 'Liste';
+
+  @override
+  String get table => 'Tabelle';
+
+  @override
+  String get divider => 'Trennlinie';
+
+  @override
+  String get foldout => 'Ausklappbar';
+
+  @override
+  String get designShowcase => 'Design-Showcase';
+
+  @override
+  String get exploreTemplates => 'Vorlagen erkunden';
+
+  @override
+  String get jumpstartDoc =>
+      'Starten Sie Ihre Dokumentation mit professionellen Layouts.';
+
+  @override
+  String get cloud => 'CLOUD';
+
+  @override
+  String get useThisTemplate => 'Diese Vorlage verwenden';
+
+  @override
+  String applyTemplate(String name) {
+    return '$name anwenden?';
+  }
+
+  @override
+  String get templateApplied => 'Vorlage angewendet!';
+
+  @override
+  String get proceed => 'Fortfahren?';
+
+  @override
+  String get replaceCurrentWorkspace =>
+      'Dies ersetzt Ihre aktuellen Arbeitsbereichselemente. Fortfahren?';
+
+  @override
+  String get selectElementToPreview =>
+      'Wählen Sie ein Element aus, um den Code anzuzeigen';
+
+  @override
+  String get githubIntegrationInactive =>
+      'GitHub-Integration inaktiv. Anmelden, um Auto-Import zu aktivieren.';
+
+  @override
+  String get login => 'Anmelden';
+
+  @override
+  String get startMasterpiece => 'Starten Sie Ihr Meisterwerk';
+
+  @override
+  String get dragComponentsHint =>
+      'Ziehen Sie Komponenten aus der Bibliothek, um Ihre Dokumentation zu erstellen';
+
+  @override
+  String get compact => 'Kompakt';
+
+  @override
+  String get standard => 'Standard';
+
+  @override
+  String get spacious => 'Geräumig';
+
+  @override
+  String get projectIntelligenceImport => 'Projektintelligenz-Import';
+
+  @override
+  String get connectNow => 'Jetzt verbinden';
+
+  @override
+  String get limitedAccessGitHub =>
+      'Eingeschränkter Zugriff. Verbinden Sie GitHub für nahtloses Projekt-Engineering';
+
+  @override
+  String get manualFile => 'Manuell / Datei';
+
+  @override
+  String get projectContext => 'Projektkontext #';
+
+  @override
+  String get writingPasteHint => '... Schreiben oder hier einfügen';
+
+  @override
+  String get finalizeImport => 'Import abschließen';
+
+  @override
+  String get contentSettings => 'Inhaltseinstellungen';
+
+  @override
+  String get cardDescription => 'Kartenbeschreibung';
+
+  @override
+  String get awesomeProjectDesc => 'Tolle Projektbeschreibung hier einfügen';
+
+  @override
+  String get designSettings => 'Design-Einstellungen';
+
+  @override
+  String get upload => 'Hochladen';
+
+  @override
+  String get projectLogo => 'Projektlogo';
+
+  @override
+  String get useGradientBackground => 'Gradienten-Hintergrund verwenden';
+
+  @override
+  String get backgroundColor => 'Hintergrundfarbe';
+
+  @override
+  String get textColor => 'Textfarbe';
+
+  @override
+  String get typographySettings => 'Typografie-Einstellungen';
+
+  @override
+  String get fontFamily => 'Schriftfamilie';
+
+  @override
+  String get titleFontSize => 'Titel-Schriftgröße';
+
+  @override
+  String get fundingGeneratorTitle => 'Funding-Generator (FUNDING.yml)';
+
+  @override
+  String get sponsorships => 'Sponsoring';
+
+  @override
+  String get sponsorshipsDesc =>
+      'Sponsorships helfen Ihrer Community zu wissen, wie sie dieses Repository finanziell unterstützen kann. Dies generiert eine FUNDING.yml-Datei für Ihren .github-Ordner';
+
+  @override
+  String get supportedPlatforms => 'Unterstützte Plattformen';
+
+  @override
+  String get githubUsernames => 'GitHub-Benutzername(n)';
+
+  @override
+  String get patreonUsername => 'Patreon-Benutzername';
+
+  @override
+  String get openCollective => 'Open Collective';
+
+  @override
+  String get kofiUsername => 'Ko-fi-Benutzername';
+
+  @override
+  String get tidelift => 'Tidelift';
+
+  @override
+  String get communityBridge => 'Community Bridge';
+
+  @override
+  String get liberapay => 'Liberapay';
+
+  @override
+  String get issueHunt => 'IssueHunt';
+
+  @override
+  String get extraFilesSelectionDesc =>
+      'Wählen Sie Standard-Dokumentationsdateien aus, die für Ihr Projekt-Repository generiert und heruntergeladen werden sollen.';
+
+  @override
+  String get licenseLegalPermission =>
+      'Rechtliche Erlaubnis für andere, Ihren Code zu verwenden';
+
+  @override
+  String get contributingGuidelinesHint =>
+      'Richtlinien für Personen, die mitwirken möchten';
+
+  @override
+  String get securityInstructionsHint =>
+      'Anweisungen zum Melden von Sicherheitslücken';
+
+  @override
+  String get cocPolicyHint => 'Richtlinie für das Verhalten von Mitwirkenden';
+
+  @override
+  String get googleGeminiAi => 'Google Gemini KI';
+
+  @override
+  String get geminiAiDesc =>
+      'Unterstützt Ihre README-Generierung mit modernster Intelligenz.';
+
+  @override
+  String get apiConfiguration => 'API-KONFIGURATION';
+
+  @override
+  String get apiKeyStorageHint =>
+      'Ihr API-Schlüssel wird lokal auf Ihrem Gerät gespeichert und nur zur Kommunikation mit Google Gemini KI-Diensten verwendet';
+
+  @override
+  String get analyzeCodeAi => 'Code analysieren (mit KI)';
+
+  @override
+  String get pointToFolderHint =>
+      'Geben Sie Ihren Projektordner an, und unsere KI analysiert die Struktur, um eine maßgeschneiderte README zu generieren';
+
+  @override
+  String get projectPath => 'Projektpfad';
+
+  @override
+  String get pasteGithubUrlHint =>
+      'Fügen Sie eine öffentliche GitHub-URL ein, um Ihr Repository automatisch abzurufen und zu dokumentieren.';
+
+  @override
+  String get githubRepoUrl => 'GitHub-Repository-URL';
+
+  @override
+  String get fetchAndGenerate => 'Abrufen & Generieren';
+
+  @override
+  String get publishToGithubDesc =>
+      'Dies erstellt einen neuen Branch und öffnet einen Pull Request mit Ihrer generierten README.md direkt auf GitHub';
+
+  @override
+  String get authentication => 'AUTHENTIFIZIERUNG';
+
+  @override
+  String get personalAccessToken => 'Persönlicher Zugriffs-Token';
+
+  @override
+  String get needTokenHint =>
+      'Token benötigt? Generieren Sie einen in den GitHub-Einstellungen mit \'repo\'-Berechtigung';
+
+  @override
+  String get repositoryDetails => 'REPOSITORY-DETAILS';
+
+  @override
+  String get repository => 'Repository';
+
+  @override
+  String get newBranchName => 'Neuer Branch-Name';
+
+  @override
+  String get createPullRequest => 'Pull Request erstellen';
+
+  @override
+  String get premiumAccess => 'Premium-Zugang';
+
+  @override
+  String get proStatusActive => 'Pro-Status: AKTIV';
+
+  @override
+  String get proStatusInactive => 'Pro-Status: INAKTIV';
+
+  @override
+  String get unlimitedAiGeneration => 'Unbegrenzte KI-Dokumentgenerierung';
+
+  @override
+  String get unlockGeminiPower =>
+      'Schalten Sie die volle Leistung von Gemini KI frei';
+
+  @override
+  String get proPdfExporting => 'Pro PDF-Export';
+
+  @override
+  String get exportFormattedDocs =>
+      'Exportieren Sie wunderschön formatierte Dokumente';
+
+  @override
+  String get cloudSyncLibrary => 'Cloud-Synchronisierung & Bibliothek';
+
+  @override
+  String get saveProjectsCloud => 'Speichern Sie Ihre Projekte in der Cloud';
+
+  @override
+  String get zeroAdvertisements => 'Keine Werbung';
+
+  @override
+  String get enjoyFocusedWorkspace =>
+      'Genießen Sie einen sauberen, fokussierten Arbeitsbereich';
+
+  @override
+  String get donateSupportReward =>
+      'Spenden Sie, um die Entwicklung zu unterstützen, und erhalten Sie Lifetime Pro-Zugang als Belohnung';
+
+  @override
+  String get maybeLater => 'Vielleicht später';
+
+  @override
+  String get headingText => 'Überschriftstext';
+
+  @override
+  String get level => 'Ebene';
+
+  @override
+  String get text => 'Text';
+
+  @override
+  String get imageUrl => 'Bild-URL';
+
+  @override
+  String get altText => 'Alt-Text';
+
+  @override
+  String get uploadFile => 'Hochladen';
+
+  @override
+  String get giphy => 'GIPHY';
+
+  @override
+  String get buttonText => 'Schaltflächentext';
+
+  @override
+  String get url => 'URL';
+
+  @override
+  String get linkToSection => 'Oder Link zum Abschnitt';
+
+  @override
+  String get language => 'Sprache';
+
+  @override
+  String get orderedList => 'Geordnete Liste';
+
+  @override
+  String get addItem => 'Element hinzufügen';
+
+  @override
+  String itemN(String number) {
+    return 'Element $number';
+  }
+
+  @override
+  String get searchIcon => 'Icon-Name suchen';
+
+  @override
+  String get size => 'Größe';
+
+  @override
+  String get embedType => 'Einbettungstyp';
+
+  @override
+  String get embedUrl => 'Einbettungs-URL';
+
+  @override
+  String get repoUserRepo => 'Repo-Name (Benutzer/Repo)';
+
+  @override
+  String get fetchInfo => 'Info abrufen';
+
+  @override
+  String get showStars => 'Sterne anzeigen';
+
+  @override
+  String get showForks => 'Forks anzeigen';
+
+  @override
+  String get showIssues => 'Issues anzeigen';
+
+  @override
+  String get showLicense => 'Lizenz anzeigen';
+
+  @override
+  String get style => 'Stil';
+
+  @override
+  String get gridAvatars => 'Gitter (Avatare)';
+
+  @override
+  String get listNames => 'Liste (Namen)';
+
+  @override
+  String get addColumn => 'Spalte';
+
+  @override
+  String get addRow => 'Zeile';
+
+  @override
+  String get columnsHeaders => 'Spalten & Überschriften';
+
+  @override
+  String headerN(String number) {
+    return 'Überschrift $number';
+  }
+
+  @override
+  String get rowsData => 'Zeilendaten';
+
+  @override
+  String rowN(String number) {
+    return 'Zeile $number';
+  }
+
+  @override
+  String get insertImageBadge => 'Bild/Badge einfügen';
+
+  @override
+  String get mermaidCode => 'Mermaid-Code';
+
+  @override
+  String get tocAutoDesc =>
+      'Dieses Element generiert automatisch ein Inhaltsverzeichnis basierend auf den Überschriften in Ihrem Projekt.';
+
+  @override
+  String get rawMarkdownHtml => 'Roh-Markdown / HTML';
+
+  @override
+  String get rawHint =>
+      'Geben Sie hier einen gültigen Markdown- oder HTML-Code ein.';
+
+  @override
+  String get rawRenderDesc =>
+      'Dieser Inhalt wird genau so gerendert, wie er in der finalen README steht.';
+
+  @override
+  String get widgetType => 'Widget-Typ';
+
+  @override
+  String get themeOptional => 'Thema (Optional)';
+
+  @override
+  String get badgeBuilder => 'Statischer Badge-Builder';
+
+  @override
+  String get labelLeft => 'Label (Links)';
+
+  @override
+  String get messageRight => 'Nachricht (Rechts)';
+
+  @override
+  String get colorRight => 'Farbe (Rechts)';
+
+  @override
+  String get logoSlug => 'Logo (Slug)';
+
+  @override
+  String get logoColor => 'Logo-Farbe';
+
+  @override
+  String get labelColor => 'Label-Farbe (Links Hintergrund)';
+
+  @override
+  String get simpleIconsHint =>
+      'Verfügbare Logos finden Sie auf simpleicons.org. Verwenden Sie den \"Slug\" oder Namen.';
+
+  @override
+  String get openInBrowser => 'Im Browser öffnen';
+
+  @override
+  String get copyLink => 'Link kopieren';
+
+  @override
+  String get profiles => 'Profile';
+
+  @override
+  String get addProfile => 'Profil hinzufügen';
+
+  @override
+  String get platform => 'Plattform';
+
+  @override
+  String get usernameHandle => 'Benutzername / Handle';
+
+  @override
+  String get phoneNumber => 'Telefonnummer';
+
+  @override
+  String get editCell => 'Zelleninhalt bearbeiten';
+
+  @override
+  String get cellContent => 'Inhalt (Text, Markdown, HTML)';
+
+  @override
+  String get insertMedia => 'Medien einfügen:';
+
+  @override
+  String get youtubeHelper => 'YouTube-URL-Helfer';
+
+  @override
+  String get youtubeDesc =>
+      'Um ein YouTube-Video einzubetten, fügen Sie die Video-URL unten ein. Wir helfen Ihnen bei Bedarf, die Video-ID zu extrahieren.';
+
+  @override
+  String get preview => 'Vorschau:';
+
+  @override
+  String get useThisVideo => 'Dieses Video verwenden';
+
+  @override
+  String get codepenHelper => 'CodePen-Helfer';
+
+  @override
+  String get codepenDesc =>
+      'Fügen Sie Ihre CodePen-URL ein. Wir generieren einen Vorschaubild-Link für Ihre README.';
+
+  @override
+  String get useThisPen => 'Dieses Pen verwenden';
+
+  @override
+  String get gistHelper => 'GitHub Gist-Helfer';
+
+  @override
+  String get gistDesc => 'Fügen Sie Ihre Gist-URL oder ID ein.';
+
+  @override
+  String get useThisGist => 'Dieses Gist verwenden';
 }

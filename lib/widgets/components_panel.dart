@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../models/readme_element.dart';
 import '../providers/library_provider.dart';
 import '../providers/project_provider.dart';
@@ -54,7 +55,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
             crossAxisCount: 2,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            childAspectRatio: 1.4, // Slightly adjusted for better fit
+            childAspectRatio: 1.4,
           ),
           itemCount: filteredItems.length,
           itemBuilder: (context, index) {
@@ -72,30 +73,31 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final libraryProvider = Provider.of<LibraryProvider>(context);
     final projectProvider = Provider.of<ProjectProvider>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final typographyItems = [
-      ComponentItem(ReadmeElementType.heading, 'Heading', Icons.title_rounded),
-      ComponentItem(ReadmeElementType.paragraph, 'Paragraph', Icons.text_fields_rounded),
-      ComponentItem(ReadmeElementType.blockquote, 'Quote', Icons.format_quote_rounded),
-      ComponentItem(ReadmeElementType.codeBlock, 'Code', Icons.code_rounded),
+      ComponentItem(ReadmeElementType.heading, l10n.heading, Icons.title_rounded),
+      ComponentItem(ReadmeElementType.paragraph, l10n.paragraph, Icons.text_fields_rounded),
+      ComponentItem(ReadmeElementType.blockquote, l10n.quote, Icons.format_quote_rounded),
+      ComponentItem(ReadmeElementType.codeBlock, l10n.code, Icons.code_rounded),
     ];
 
     final mediaItems = [
-      ComponentItem(ReadmeElementType.image, 'Image', Icons.image_rounded),
-      ComponentItem(ReadmeElementType.icon, 'Icon', Icons.emoji_emotions_rounded),
-      ComponentItem(ReadmeElementType.linkButton, 'Button', Icons.link_rounded),
-      ComponentItem(ReadmeElementType.badge, 'Badge', Icons.shield_rounded),
-      ComponentItem(ReadmeElementType.socials, 'Socials', Icons.share_rounded),
-      ComponentItem(ReadmeElementType.githubStats, 'Stats', Icons.bar_chart_rounded),
-      ComponentItem(ReadmeElementType.contributors, 'People', Icons.people_rounded),
-      ComponentItem(ReadmeElementType.dynamicWidget, 'Widget', Icons.extension_rounded),
+      ComponentItem(ReadmeElementType.image, l10n.image, Icons.image_rounded),
+      ComponentItem(ReadmeElementType.icon, l10n.icon, Icons.emoji_emotions_rounded),
+      ComponentItem(ReadmeElementType.linkButton, l10n.button, Icons.link_rounded),
+      ComponentItem(ReadmeElementType.badge, l10n.badge, Icons.shield_rounded),
+      ComponentItem(ReadmeElementType.socials, l10n.socials, Icons.share_rounded),
+      ComponentItem(ReadmeElementType.githubStats, l10n.stats, Icons.bar_chart_rounded),
+      ComponentItem(ReadmeElementType.contributors, l10n.people, Icons.people_rounded),
+      ComponentItem(ReadmeElementType.dynamicWidget, l10n.widget, Icons.extension_rounded),
     ];
 
     final structureItems = [
-      ComponentItem(ReadmeElementType.list, 'List', Icons.list_rounded),
-      ComponentItem(ReadmeElementType.table, 'Table', Icons.table_chart_rounded),
-      ComponentItem(ReadmeElementType.divider, 'Divider', Icons.horizontal_rule_rounded),
-      ComponentItem(ReadmeElementType.collapsible, 'Foldout', Icons.unfold_more_rounded),
+      ComponentItem(ReadmeElementType.list, l10n.list, Icons.list_rounded),
+      ComponentItem(ReadmeElementType.table, l10n.table, Icons.table_chart_rounded),
+      ComponentItem(ReadmeElementType.divider, l10n.divider, Icons.horizontal_rule_rounded),
+      ComponentItem(ReadmeElementType.collapsible, l10n.foldout, Icons.unfold_more_rounded),
     ];
 
     return DefaultTabController(
@@ -114,9 +116,9 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
-              tabs: const [
-                Tab(text: 'Elements'),
-                Tab(text: 'Snippets'),
+              tabs: [
+                Tab(text: l10n.elements),
+                Tab(text: l10n.snippets),
               ],
             ),
             Padding(
@@ -124,7 +126,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search...',
+                  hintText: l10n.searchHint,
                   prefixIcon: const Icon(Icons.search_rounded, size: 18),
                   filled: true,
                   fillColor: isDark ? Colors.white.withAlpha(5) : Colors.black.withAlpha(3),
@@ -146,9 +148,9 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Column(
                       children: [
-                        _buildFilteredSection('Typography', typographyItems, isDark),
-                        _buildFilteredSection('Media & Graphics', mediaItems, isDark),
-                        _buildFilteredSection('Structure', structureItems, isDark),
+                        _buildFilteredSection(l10n.typography, typographyItems, isDark),
+                        _buildFilteredSection(l10n.mediaAndGraphics, mediaItems, isDark),
+                        _buildFilteredSection(l10n.structure, structureItems, isDark),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -162,9 +164,9 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
-                              onPressed: () => _showSaveSnippetDialog(context, projectProvider.selectedElement!),
+                              onPressed: () => _showSaveSnippetDialog(context, projectProvider.selectedElement!, l10n),
                               icon: const Icon(Icons.add_box_rounded, size: 18),
-                              label: const Text('Save Selected', style: TextStyle(fontSize: 12)),
+                              label: Text(l10n.saveSelected, style: const TextStyle(fontSize: 12)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary.withAlpha(20),
                                 foregroundColor: AppColors.primary,
@@ -177,7 +179,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
                       Expanded(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
-                          child: _buildSnippetsTab(libraryProvider, isDark),
+                          child: _buildSnippetsTab(libraryProvider, isDark, l10n),
                         ),
                       ),
                     ],
@@ -228,7 +230,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min, // Fix for vertical overflow
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Icon(icon, size: 18, color: AppColors.primary),
@@ -270,7 +272,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     );
   }
 
-  Widget _buildSnippetsTab(LibraryProvider libraryProvider, bool isDark) {
+  Widget _buildSnippetsTab(LibraryProvider libraryProvider, bool isDark, AppLocalizations l10n) {
     if (libraryProvider.snippets.isEmpty) {
       return Container(
         height: 200,
@@ -280,7 +282,7 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
           children: [
             Icon(Icons.bookmark_border_rounded, size: 40, color: Colors.grey.withAlpha(80)),
             const SizedBox(height: 12),
-            Text('No snippets', style: GoogleFonts.inter(color: Colors.grey, fontSize: 12)),
+            Text(l10n.noSnippets, style: GoogleFonts.inter(color: Colors.grey, fontSize: 12)),
           ],
         ),
       );
@@ -338,28 +340,28 @@ class _ComponentsPanelState extends State<ComponentsPanel> {
     );
   }
 
-  void _showSaveSnippetDialog(BuildContext context, ReadmeElement element) {
+  void _showSaveSnippetDialog(BuildContext context, ReadmeElement element, AppLocalizations l10n) {
     final nameController = TextEditingController(text: element.description);
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
-        title: Text('Save Snippet', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text(l10n.saveSnippet, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16)),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: l10n.snippetName, border: const OutlineInputBorder()),
           style: GoogleFonts.inter(fontSize: 14),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
                 Provider.of<LibraryProvider>(context, listen: false).saveSnippet(name: nameController.text, elementJson: jsonEncode(element.toJson()));
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Snippet saved!')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.snippetSaved)));
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),

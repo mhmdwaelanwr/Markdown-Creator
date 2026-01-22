@@ -119,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDesktop = MediaQuery.of(context).size.width > 1200;
     final provider = Provider.of<ProjectProvider>(context);
     final subService = Provider.of<SubscriptionService>(context);
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         key: _scaffoldKey,
         extendBodyBehindAppBar: true,
         backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-        appBar: _buildFutureAppBar(context, isDesktop, provider, subService),
+        appBar: _buildFutureAppBar(context, isDesktop, provider, subService, l10n),
         drawer: isDesktop ? null : const Drawer(child: ComponentsPanel()),
         endDrawer: isDesktop ? null : const Drawer(child: SettingsPanel()),
         body: Stack(
@@ -179,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     child: AdWidget(ad: _bannerAd!),
                   ),
 
-                _buildModernStatusBar(context, provider, subService, isDark),
+                _buildModernStatusBar(context, provider, subService, isDark, l10n),
               ],
             ),
           ],
@@ -188,13 +189,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  PreferredSizeWidget _buildFutureAppBar(BuildContext context, bool isDesktop, ProjectProvider provider, SubscriptionService subService) {
+  PreferredSizeWidget _buildFutureAppBar(BuildContext context, bool isDesktop, ProjectProvider provider, SubscriptionService subService, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return PreferredSize(
       preferredSize: const Size.fromHeight(100),
       child: Container(
-        margin: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+        margin: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
@@ -213,10 +214,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   const SizedBox(width: 14),
                   _buildBrandName(isDark, subService.isPro),
                   const Spacer(),
-                  if (isDesktop) ..._buildFullAppBarActions(context, provider, subService),
+                  if (isDesktop) ..._buildFullAppBarActions(context, provider, subService, l10n),
                   if (!isDesktop) IconButton(icon: const Icon(Icons.tune_rounded), onPressed: () => _scaffoldKey.currentState?.openEndDrawer()),
                   const SizedBox(width: 8),
-                  _buildMoreOptionsButton(context, subService),
+                  _buildMoreOptionsButton(context, subService, l10n),
                 ],
               ),
             ),
@@ -236,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             Text('MARKDOWN', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 0.5, color: isDark ? Colors.white : AppColors.primary)),
             if (isPro)
               Container(
-                margin: const EdgeInsets.only(left: 8),
+                margin: const EdgeInsetsDirectional.only(start: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(4)),
                 child: const Text('PRO', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.black)),
@@ -248,43 +249,43 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  List<Widget> _buildFullAppBarActions(BuildContext context, ProjectProvider provider, SubscriptionService subService) {
+  List<Widget> _buildFullAppBarActions(BuildContext context, ProjectProvider provider, SubscriptionService subService, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return [
-      _actionBtn(Icons.undo_rounded, provider.undo, tooltip: 'Undo'),
-      _actionBtn(Icons.redo_rounded, provider.redo, tooltip: 'Redo'),
+      _actionBtn(Icons.undo_rounded, provider.undo, tooltip: l10n.undo),
+      _actionBtn(Icons.redo_rounded, provider.redo, tooltip: l10n.redo),
       _divider(),
-      _actionBtn(Icons.file_copy_outlined, () => _showTemplatesMenu(context, provider), tooltip: 'Templates'),
-      _actionBtn(Icons.library_books_outlined, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen())), tooltip: 'Projects Library'),
+      _actionBtn(Icons.file_copy_outlined, () => _showTemplatesMenu(context, provider, l10n), tooltip: l10n.templates),
+      _actionBtn(Icons.library_books_outlined, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectsLibraryScreen())), tooltip: l10n.projectsLibrary),
       _divider(),
       _deviceBtn(Icons.desktop_mac, DeviceMode.desktop, provider),
       _deviceBtn(Icons.tablet_mac, DeviceMode.tablet, provider),
       _deviceBtn(Icons.phone_iphone, DeviceMode.mobile, provider),
       const SizedBox(width: 8),
-      _actionBtn(_showPreview ? Icons.visibility : Icons.visibility_off, () => setState(() => _showPreview = !_showPreview), active: _showPreview, tooltip: 'Live Preview'),
-      _actionBtn(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, () => setState(() => _isFocusMode = !_isFocusMode), active: _isFocusMode, tooltip: 'Focus Mode'),
+      _actionBtn(_showPreview ? Icons.visibility : Icons.visibility_off, () => setState(() => _showPreview = !_showPreview), active: _showPreview, tooltip: l10n.showPreview),
+      _actionBtn(_isFocusMode ? Icons.fullscreen_exit : Icons.fullscreen, () => setState(() => _isFocusMode = !_isFocusMode), active: _isFocusMode, tooltip: l10n.focusMode),
       _divider(),
       _actionBtn(Icons.health_and_safety_outlined, () {
         final issues = HealthCheckService.analyze(provider.elements);
         _showHealthCheckDialog(context, issues, provider);
-      }, tooltip: 'Health Check'),
-      _actionBtn(Icons.print_rounded, () => _handleProtectedAction(context, subService, () => _handlePrint(provider)), tooltip: 'Print / Export to PDF'),
+      }, tooltip: l10n.healthy),
+      _actionBtn(Icons.print_rounded, () => _handleProtectedAction(context, subService, () => _handlePrint(provider)), tooltip: l10n.print),
       _divider(),
-      _actionBtn(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded, provider.toggleTheme, color: isDark ? Colors.amber : Colors.blueGrey, tooltip: 'Appearance'),
-      _actionBtn(Icons.settings_outlined, () => _showProjectSettingsDialog(context, provider), tooltip: 'Project Settings'),
+      _actionBtn(isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded, provider.toggleTheme, color: isDark ? Colors.amber : Colors.blueGrey, tooltip: l10n.toggleTheme),
+      _actionBtn(Icons.settings_outlined, () => _showProjectSettingsDialog(context, provider), tooltip: l10n.projectSettings),
       const SizedBox(width: 8),
-      _buildAccountButton(context),
+      _buildAccountButton(context, l10n),
       const SizedBox(width: 16),
       ElevatedButton.icon(
         onPressed: () => _handleExport(provider),
         icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-        label: const Text('EXPORT', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1, fontSize: 12)),
+        label: Text(l10n.export.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1, fontSize: 12)),
         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
       ),
     ];
   }
 
-  Widget _buildAccountButton(BuildContext context) {
+  Widget _buildAccountButton(BuildContext context, AppLocalizations l10n) {
     return StreamBuilder<User?>(
       stream: _authService.user,
       builder: (context, snapshot) {
@@ -298,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               showSafeDialog(context, builder: (_) => const LoginDialog());
             }
           },
-          tooltip: user != null ? 'Account: ${user.email}' : 'Sign In & Sync',
+          tooltip: user != null ? '${l10n.account}: ${user.email}' : l10n.signInSync,
           color: user != null ? Colors.teal : null,
         );
       }
@@ -313,40 +314,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     }
   }
 
-  Widget _buildMoreOptionsButton(BuildContext context, SubscriptionService subService) {
+  Widget _buildMoreOptionsButton(BuildContext context, SubscriptionService subService, AppLocalizations l10n) {
     final provider = Provider.of<ProjectProvider>(context, listen: false);
     return PopupMenuButton<String>(
       icon: const Icon(Icons.grid_view_rounded, size: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       offset: const Offset(0, 50),
       itemBuilder: (context) => [
-        _menuHeader('Project & Files'),
-        _menuItem('save', Icons.save_alt_rounded, 'Save Project', Colors.blue),
-        _menuItem('snapshots', Icons.history_rounded, 'Local Snapshots', Colors.blue),
-        _menuItem('import_md', Icons.file_upload_outlined, 'Import Markdown', Colors.blue),
-        _menuItem('export_json', Icons.javascript_rounded, 'Export JSON', Colors.blue),
-        _menuItem('import_json', Icons.data_object_rounded, 'Import JSON', Colors.blue),
-        _menuItem('clear', Icons.delete_sweep_rounded, 'Clear Workspace', Colors.red, isDestructive: true),
+        _menuHeader(l10n.projectAndFiles),
+        _menuItem('save', Icons.save_alt_rounded, l10n.saveProject, Colors.blue),
+        _menuItem('snapshots', Icons.history_rounded, l10n.localSnapshots, Colors.blue),
+        _menuItem('import_md', Icons.file_upload_outlined, l10n.importMarkdown, Colors.blue),
+        _menuItem('export_json', Icons.javascript_rounded, l10n.exportProjectJson, Colors.blue),
+        _menuItem('import_json', Icons.data_object_rounded, l10n.importProjectJson, Colors.blue),
+        _menuItem('clear', Icons.delete_sweep_rounded, l10n.clearWorkspace, Colors.red, isDestructive: true),
         const PopupMenuDivider(),
-        _menuHeader('Tools & Generators'),
-        _menuItem('gallery', Icons.auto_awesome_mosaic_rounded, 'Showcase Gallery', Colors.orange),
-        _menuItem('social', Icons.auto_graph_rounded, 'Social Designer', Colors.orange),
-        _menuItem('actions', Icons.terminal_rounded, 'GitHub Actions', Colors.orange),
-        _menuItem('funding', Icons.volunteer_activism_rounded, 'Funding Generator', Colors.pink),
-        _menuItem('extra', Icons.library_add_rounded, 'Generate Extra Files', Colors.deepOrange),
+        _menuHeader(l10n.toolsAndGenerators),
+        _menuItem('gallery', Icons.auto_awesome_mosaic_rounded, l10n.showcaseGallery, Colors.orange),
+        _menuItem('social', Icons.auto_graph_rounded, l10n.socialPreviewDesigner, Colors.orange),
+        _menuItem('actions', Icons.terminal_rounded, l10n.githubActionsGenerator, Colors.orange),
+        _menuItem('funding', Icons.volunteer_activism_rounded, l10n.fundingGenerator, Colors.pink),
+        _menuItem('extra', Icons.library_add_rounded, l10n.generateExtraFiles, Colors.deepOrange),
         const PopupMenuDivider(),
-        _menuHeader('Intelligence'),
-        _menuItem('ai', Icons.psychology_rounded, 'AI Settings', Colors.purple),
-        _menuItem('codebase', Icons.auto_awesome_rounded, 'Code Scan', Colors.purple),
-        _menuItem('publish', Icons.cloud_upload_rounded, 'Publish to GitHub', Colors.teal),
+        _menuHeader(l10n.intelligence),
+        _menuItem('ai', Icons.psychology_rounded, l10n.aiSettings, Colors.purple),
+        _menuItem('codebase', Icons.auto_awesome_rounded, l10n.generateFromCodebase, Colors.purple),
+        _menuItem('publish', Icons.cloud_upload_rounded, l10n.publishToGithub, Colors.teal),
         const PopupMenuDivider(),
-        _menuHeader('Application'),
-        if (_authService.isAdmin) _menuItem('admin', Icons.admin_panel_settings_rounded, 'Admin Dashboard', Colors.purpleAccent),
-        _menuItem('upgrade', Icons.star_rounded, 'Upgrade to Pro', Colors.amber),
-        _menuItem('lang', Icons.translate_rounded, 'Change Language', Colors.grey),
-        _menuItem('shortcuts', Icons.keyboard_rounded, 'Shortcuts', Colors.grey),
-        _menuItem('about_dev', Icons.person_rounded, 'About Developer', Colors.grey),
-        _menuItem('about', Icons.info_outline_rounded, 'About App', Colors.grey),
+        _menuHeader(l10n.application),
+        if (_authService.isAdmin) _menuItem('admin', Icons.admin_panel_settings_rounded, l10n.adminDashboard, Colors.purpleAccent),
+        _menuItem('upgrade', Icons.star_rounded, l10n.upgradeToPro, Colors.amber),
+        _menuItem('lang', Icons.translate_rounded, l10n.changeLanguage, Colors.grey),
+        _menuItem('shortcuts', Icons.keyboard_rounded, l10n.keyboardShortcuts, Colors.grey),
+        _menuItem('about_dev', Icons.person_rounded, l10n.aboutDeveloper, Colors.grey),
+        _menuItem('about', Icons.info_outline_rounded, l10n.aboutApp, Colors.grey),
       ],
       onSelected: (val) {
         if (val == 'save') _showSaveToLibraryDialog(context, provider);
@@ -354,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         else if (val == 'import_md') _showImportMarkdownDialog(context, provider);
         else if (val == 'export_json') downloadJsonFile(provider.exportToJson(), 'readme_project.json');
         else if (val == 'import_json') _handleImportJson(provider);
-        else if (val == 'clear') showSafeDialog(context, builder: (context) => ConfirmDialog(title: 'Clear Workspace?', content: 'This will remove all elements.', confirmText: 'Clear', isDestructive: true, onConfirm: () => provider.clearElements()));
+        else if (val == 'clear') showSafeDialog(context, builder: (context) => ConfirmDialog(title: l10n.confirmClearWorkspace, content: l10n.confirmClearWorkspaceContent, confirmText: l10n.delete, isDestructive: true, onConfirm: () => provider.clearElements()));
         else if (val == 'gallery') Navigator.push(context, MaterialPageRoute(builder: (_) => const GalleryScreen()));
         else if (val == 'social') Navigator.push(context, MaterialPageRoute(builder: (_) => const SocialPreviewScreen()));
         else if (val == 'actions') Navigator.push(context, MaterialPageRoute(builder: (_) => const GitHubActionsGenerator()));
@@ -411,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Padding(padding: const EdgeInsets.all(24), child: Markdown(data: markdown, styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))));
   }
 
-  Widget _buildModernStatusBar(BuildContext context, ProjectProvider provider, SubscriptionService subService, bool isDark) {
+  Widget _buildModernStatusBar(BuildContext context, ProjectProvider provider, SubscriptionService subService, bool isDark, AppLocalizations l10n) {
     final score = HealthCheckService.calculateDocumentationScore(provider.elements);
     return Container(
       height: 36, 
@@ -419,28 +420,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       decoration: BoxDecoration(color: isDark ? Colors.black38 : Colors.white70, border: Border(top: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)))), 
       child: Row(
         children: [
-          _statusItem(Icons.widgets_outlined, '${provider.elements.length} Elements'), 
+          _statusItem(Icons.widgets_outlined, '${provider.elements.length} ${l10n.elements}'), 
           const SizedBox(width: 24), 
-          _statusItem(Icons.analytics_outlined, 'Doc Quality: ${score.toInt()}%', color: score > 70 ? Colors.greenAccent : Colors.orangeAccent), 
+          _statusItem(Icons.analytics_outlined, '${l10n.docQuality}: ${score.toInt()}%', color: score > 70 ? Colors.greenAccent : Colors.orangeAccent), 
           const Spacer(),
           if (subService.isPro)
-            _statusItem(Icons.verified_rounded, 'PRO ACTIVE', color: Colors.amber)
+            _statusItem(Icons.verified_rounded, l10n.proActive, color: Colors.amber)
           else
-            _statusItem(Icons.ads_click_rounded, 'FREE PLAN', color: Colors.grey),
+            _statusItem(Icons.ads_click_rounded, l10n.freePlan, color: Colors.grey),
           const SizedBox(width: 16),
-          if (provider.isSaving) const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)) else _statusItem(Icons.cloud_done_rounded, 'Synced', color: AppColors.primary)
+          if (provider.isSaving) const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)) else _statusItem(Icons.cloud_done_rounded, l10n.synced, color: AppColors.primary)
         ]
       )
     );
   }
   Widget _statusItem(IconData icon, String label, {Color? color}) => Row(children: [Icon(icon, size: 14, color: color ?? Colors.grey), const SizedBox(width: 6), Text(label, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: color ?? Colors.grey))]);
 
-  void _showTemplatesMenu(BuildContext context, ProjectProvider provider) {
+  void _showTemplatesMenu(BuildContext context, ProjectProvider provider, AppLocalizations l10n) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(Rect.fromPoints(button.localToGlobal(Offset.zero, ancestor: overlay), button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay)), Offset.zero & overlay.size);
     showMenu<ProjectTemplate>(context: context, position: position, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), items: provider.allTemplates.map((t) => PopupMenuItem(value: t, child: ListTile(leading: const Icon(Icons.article_outlined, color: AppColors.primary), title: Text(t.name, style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text(t.description, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))))).toList()).then((template) {
-      if (template != null) showSafeDialog(context, builder: (context) => ConfirmDialog(title: 'Load Template?', content: 'This will replace your current workspace.', confirmText: 'Load', onConfirm: () => provider.loadTemplate(template)));
+      if (template != null) showSafeDialog(context, builder: (context) => ConfirmDialog(title: l10n.loadTemplate, content: l10n.replaceWorkspace, confirmText: l10n.load, onConfirm: () => provider.loadTemplate(template)));
     });
   }
 

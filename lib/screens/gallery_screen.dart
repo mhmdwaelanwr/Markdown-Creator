@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../l10n/app_localizations.dart';
 import '../utils/templates.dart';
 import '../providers/project_provider.dart';
 import '../generator/markdown_generator.dart';
@@ -14,6 +15,7 @@ class GalleryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final provider = Provider.of<ProjectProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
@@ -23,14 +25,14 @@ class GalleryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppColors.editorBackgroundDark : AppColors.editorBackgroundLight,
       appBar: AppBar(
-        title: Text('Design Showcase', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        title: Text(l10n.designShowcase, style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeroSection(isDark),
+          _buildHeroSection(isDark, l10n),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(24),
@@ -45,7 +47,7 @@ class GalleryScreen extends StatelessWidget {
                 final template = allTemplates[index];
                 // Detect if it's a cloud template (not in local Templates.all)
                 final isCloud = !Templates.all.any((t) => t.name == template.name);
-                return _buildTemplateCard(context, template, isDark, isCloud);
+                return _buildTemplateCard(context, template, isDark, isCloud, l10n);
               },
             ),
           ),
@@ -54,18 +56,18 @@ class GalleryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(bool isDark) {
+  Widget _buildHeroSection(bool isDark, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Explore Templates',
+            l10n.exploreTemplates,
             style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -0.5),
           ),
           Text(
-            'Jumpstart your documentation with professional layouts.',
+            l10n.jumpstartDoc,
             style: GoogleFonts.inter(color: Colors.grey, fontSize: 15),
           ),
         ],
@@ -73,7 +75,7 @@ class GalleryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTemplateCard(BuildContext context, ProjectTemplate template, bool isDark, bool isCloud) {
+  Widget _buildTemplateCard(BuildContext context, ProjectTemplate template, bool isDark, bool isCloud, AppLocalizations l10n) {
     final markdown = MarkdownGenerator().generate(template.elements);
 
     return Card(
@@ -124,12 +126,12 @@ class GalleryScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [BoxShadow(color: AppColors.primary.withAlpha(100), blurRadius: 8)],
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.cloud_done_rounded, size: 12, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text('CLOUD', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const Icon(Icons.cloud_done_rounded, size: 12, color: Colors.white),
+                          const SizedBox(width: 4),
+                          Text(l10n.cloud, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -162,13 +164,13 @@ class GalleryScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () => _confirmLoad(context, template),
+                    onPressed: () => _confirmLoad(context, template, l10n),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isCloud ? AppColors.primary : null,
                       foregroundColor: isCloud ? Colors.white : null,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
-                    child: const Text('Use This Template', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(l10n.useThisTemplate, style: const TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -179,24 +181,24 @@ class GalleryScreen extends StatelessWidget {
     );
   }
 
-  void _confirmLoad(BuildContext context, ProjectTemplate template) {
+  void _confirmLoad(BuildContext context, ProjectTemplate template, AppLocalizations l10n) {
     final provider = Provider.of<ProjectProvider>(context, listen: false);
     showSafeDialog(
       context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Apply ${template.name}?', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-        content: const Text('This will replace your current workspace elements. Proceed?'),
+        title: Text(l10n.applyTemplate(template.name), style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        content: Text(l10n.replaceCurrentWorkspace),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           FilledButton(
             onPressed: () {
               provider.loadTemplate(template);
               Navigator.pop(context); // Close dialog
               Navigator.pop(context); // Close gallery
-              ToastHelper.show(context, 'Template Applied!');
+              ToastHelper.show(context, l10n.templateApplied);
             },
-            child: const Text('Load Template'),
+            child: Text(l10n.load),
           ),
         ],
       ),

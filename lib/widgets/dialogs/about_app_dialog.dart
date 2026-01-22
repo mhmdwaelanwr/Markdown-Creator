@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:markdown_creator/l10n/app_localizations.dart';
 import '../../core/constants/app_colors.dart';
 import '../../utils/dialog_helper.dart';
 import '../developer_info_dialog.dart';
@@ -12,9 +13,11 @@ class AboutAppDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return StyledDialog(
-      title: const DialogHeader(
-        title: 'About App',
+      title: DialogHeader(
+        title: l10n.aboutApp,
         icon: Icons.auto_awesome_rounded,
         color: AppColors.primary,
       ),
@@ -24,12 +27,12 @@ class AboutAppDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 8),
-            _buildHeroSection(context),
+            _buildHeroSection(context, l10n),
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Markdown Creator is an advanced development utility designed to simplify the process of creating high-quality documentation. Built with a focus on speed, aesthetics, and developer experience.',
+                l10n.aboutDescription,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 14,
@@ -43,12 +46,11 @@ class AboutAppDialog extends StatelessWidget {
             _buildFeatureSection(context),
             const SizedBox(height: 32),
             
-            // --- Support & Feedback Section ---
             _buildInfoCard(
               context,
               icon: Icons.support_agent_rounded,
-              title: 'Need Help or Have a Suggestion?',
-              subtitle: 'Support & Feedback',
+              title: l10n.help,
+              subtitle: l10n.supportAndFeedback,
               trailing: 'Contact',
               onTap: () {
                 Navigator.pop(context);
@@ -59,7 +61,6 @@ class AboutAppDialog extends StatelessWidget {
               },
             ),
 
-            // --- Open Source Section ---
             _buildInfoCard(
               context,
               icon: FontAwesomeIcons.github,
@@ -72,7 +73,7 @@ class AboutAppDialog extends StatelessWidget {
             _buildInfoCard(
               context,
               icon: Icons.face_retouching_natural_rounded,
-              title: 'Mastermind Behind the Project',
+              title: l10n.aboutDeveloper,
               subtitle: 'Mohamed Anwar',
               trailing: 'Profile',
               onTap: () {
@@ -100,7 +101,7 @@ class AboutAppDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Dismiss', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+          child: Text(l10n.close, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
         FilledButton.icon(
           onPressed: () => _launchUrl('https://github.com/mhmdwaelanwr/Markdown-Creator/stargazers'),
@@ -113,6 +114,62 @@ class AboutAppDialog extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  // ... بقية الوظائف المساعدة مع تحديث النصوص فيها ...
+  Widget _buildHeroSection(BuildContext context, AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GlassCard(
+      opacity: 0.1,
+      color: AppColors.primary,
+      borderRadius: 28,
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F172A) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withAlpha(isDark ? 100 : 40),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.description_rounded, size: 48, color: AppColors.primary),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l10n.appTitle,
+            style: GoogleFonts.poppins(
+              fontSize: 32,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1,
+              color: isDark ? Colors.white : AppColors.primary,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withAlpha(30),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'v1.0.0 Stable',
+              style: GoogleFonts.firaCode(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -154,61 +211,6 @@ class AboutAppDialog extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeroSection(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GlassCard(
-      opacity: 0.1,
-      color: AppColors.primary,
-      borderRadius: 28,
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      child: Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F172A) : Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withAlpha(isDark ? 100 : 40),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.description_rounded, size: 48, color: AppColors.primary),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Markdown Creator',
-            style: GoogleFonts.poppins(
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
-              color: isDark ? Colors.white : AppColors.primary,
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(30),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'v1.0.0 Stable',
-              style: GoogleFonts.firaCode(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

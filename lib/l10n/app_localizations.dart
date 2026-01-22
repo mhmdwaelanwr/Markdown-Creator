@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Markdown Creator Pro'**
+  /// **'Markdown Studio Pro'**
   String get appTitle;
 
   /// No description provided for @saveToLibrary.
@@ -905,6 +905,1254 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ctrl+V to paste image'**
   String get ctrlPasteHint;
+
+  /// No description provided for @projectsLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Projects Library'**
+  String get projectsLibrary;
+
+  /// No description provided for @docQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Doc Quality'**
+  String get docQuality;
+
+  /// No description provided for @synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get synced;
+
+  /// No description provided for @loadTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Load Template?'**
+  String get loadTemplate;
+
+  /// No description provided for @replaceWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'This will replace your current workspace.'**
+  String get replaceWorkspace;
+
+  /// No description provided for @fundingGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding Generator'**
+  String get fundingGenerator;
+
+  /// No description provided for @showcaseGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Showcase Gallery'**
+  String get showcaseGallery;
+
+  /// No description provided for @projectAndFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Project & Files'**
+  String get projectAndFiles;
+
+  /// No description provided for @toolsAndGenerators.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools & Generators'**
+  String get toolsAndGenerators;
+
+  /// No description provided for @intelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'Intelligence'**
+  String get intelligence;
+
+  /// No description provided for @application.
+  ///
+  /// In en, this message translates to:
+  /// **'Application'**
+  String get application;
+
+  /// No description provided for @signInSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In & Sync'**
+  String get signInSync;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @community.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get community;
+
+  /// No description provided for @branding.
+  ///
+  /// In en, this message translates to:
+  /// **'Branding'**
+  String get branding;
+
+  /// No description provided for @selectLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Select License'**
+  String get selectLicense;
+
+  /// No description provided for @licenseInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'A LICENSE file will be generated and included in the export.'**
+  String get licenseInfo;
+
+  /// No description provided for @communityStandards.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Standards'**
+  String get communityStandards;
+
+  /// No description provided for @contributingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds a standard contributing guide.'**
+  String get contributingDesc;
+
+  /// No description provided for @securityPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Policy'**
+  String get securityPolicy;
+
+  /// No description provided for @securityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds a security policy.'**
+  String get securityDesc;
+
+  /// No description provided for @supportInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Info'**
+  String get supportInfo;
+
+  /// No description provided for @supportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds support information.'**
+  String get supportDesc;
+
+  /// No description provided for @cocDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds a code of conduct.'**
+  String get cocDesc;
+
+  /// No description provided for @issueTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Templates'**
+  String get issueTemplates;
+
+  /// No description provided for @issueTemplatesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds GitHub issue and PR templates.'**
+  String get issueTemplatesDesc;
+
+  /// No description provided for @includeHtml.
+  ///
+  /// In en, this message translates to:
+  /// **'Include a formatted HTML file.'**
+  String get includeHtml;
+
+  /// No description provided for @markdownStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Markdown Style'**
+  String get markdownStyle;
+
+  /// No description provided for @pickColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Color'**
+  String get pickColor;
+
+  /// No description provided for @typography.
+  ///
+  /// In en, this message translates to:
+  /// **'Typography'**
+  String get typography;
+
+  /// No description provided for @mediaAndGraphics.
+  ///
+  /// In en, this message translates to:
+  /// **'Media & Graphics'**
+  String get mediaAndGraphics;
+
+  /// No description provided for @structure.
+  ///
+  /// In en, this message translates to:
+  /// **'Structure'**
+  String get structure;
+
+  /// No description provided for @snippets.
+  ///
+  /// In en, this message translates to:
+  /// **'Snippets'**
+  String get snippets;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get searchHint;
+
+  /// No description provided for @saveSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Selected'**
+  String get saveSelected;
+
+  /// No description provided for @noSnippets.
+  ///
+  /// In en, this message translates to:
+  /// **'No snippets found'**
+  String get noSnippets;
+
+  /// No description provided for @saveSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Snippet'**
+  String get saveSnippet;
+
+  /// No description provided for @snippetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Snippet Name'**
+  String get snippetName;
+
+  /// No description provided for @snippetSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Snippet saved successfully!'**
+  String get snippetSaved;
+
+  /// No description provided for @heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading'**
+  String get heading;
+
+  /// No description provided for @paragraph.
+  ///
+  /// In en, this message translates to:
+  /// **'Paragraph'**
+  String get paragraph;
+
+  /// No description provided for @quote.
+  ///
+  /// In en, this message translates to:
+  /// **'Quote'**
+  String get quote;
+
+  /// No description provided for @code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get code;
+
+  /// No description provided for @image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get image;
+
+  /// No description provided for @icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get icon;
+
+  /// No description provided for @button.
+  ///
+  /// In en, this message translates to:
+  /// **'Button'**
+  String get button;
+
+  /// No description provided for @badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Badge'**
+  String get badge;
+
+  /// No description provided for @socials.
+  ///
+  /// In en, this message translates to:
+  /// **'Socials'**
+  String get socials;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
+
+  /// No description provided for @people.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get people;
+
+  /// No description provided for @widget.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget'**
+  String get widget;
+
+  /// No description provided for @list.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get list;
+
+  /// No description provided for @table.
+  ///
+  /// In en, this message translates to:
+  /// **'Table'**
+  String get table;
+
+  /// No description provided for @divider.
+  ///
+  /// In en, this message translates to:
+  /// **'Divider'**
+  String get divider;
+
+  /// No description provided for @foldout.
+  ///
+  /// In en, this message translates to:
+  /// **'Foldout'**
+  String get foldout;
+
+  /// No description provided for @designShowcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Design Showcase'**
+  String get designShowcase;
+
+  /// No description provided for @exploreTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Templates'**
+  String get exploreTemplates;
+
+  /// No description provided for @jumpstartDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumpstart your documentation with professional layouts.'**
+  String get jumpstartDoc;
+
+  /// No description provided for @cloud.
+  ///
+  /// In en, this message translates to:
+  /// **'CLOUD'**
+  String get cloud;
+
+  /// No description provided for @useThisTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Use This Template'**
+  String get useThisTemplate;
+
+  /// No description provided for @applyTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply {name}?'**
+  String applyTemplate(String name);
+
+  /// No description provided for @templateApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Applied!'**
+  String get templateApplied;
+
+  /// No description provided for @proceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed?'**
+  String get proceed;
+
+  /// No description provided for @replaceCurrentWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'This will replace your current workspace elements. Proceed?'**
+  String get replaceCurrentWorkspace;
+
+  /// No description provided for @selectElementToPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an element to preview code'**
+  String get selectElementToPreview;
+
+  /// No description provided for @githubIntegrationInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub integration inactive. Login to enable auto-import.'**
+  String get githubIntegrationInactive;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @startMasterpiece.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your Masterpiece'**
+  String get startMasterpiece;
+
+  /// No description provided for @dragComponentsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag components from the library to build your documentation'**
+  String get dragComponentsHint;
+
+  /// No description provided for @compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact'**
+  String get compact;
+
+  /// No description provided for @standard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get standard;
+
+  /// No description provided for @spacious.
+  ///
+  /// In en, this message translates to:
+  /// **'Spacious'**
+  String get spacious;
+
+  /// No description provided for @projectIntelligenceImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Intelligence Import'**
+  String get projectIntelligenceImport;
+
+  /// No description provided for @connectNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Now'**
+  String get connectNow;
+
+  /// No description provided for @limitedAccessGitHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited access. Connect GitHub for seamless project engineering'**
+  String get limitedAccessGitHub;
+
+  /// No description provided for @manualFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual / File'**
+  String get manualFile;
+
+  /// No description provided for @projectContext.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Context #'**
+  String get projectContext;
+
+  /// No description provided for @writingPasteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'... Starting writing or paste here'**
+  String get writingPasteHint;
+
+  /// No description provided for @finalizeImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalize Import'**
+  String get finalizeImport;
+
+  /// No description provided for @contentSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Settings'**
+  String get contentSettings;
+
+  /// No description provided for @cardDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Description'**
+  String get cardDescription;
+
+  /// No description provided for @awesomeProjectDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome project description goes here'**
+  String get awesomeProjectDesc;
+
+  /// No description provided for @designSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Design Settings'**
+  String get designSettings;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @projectLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Logo'**
+  String get projectLogo;
+
+  /// No description provided for @useGradientBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Gradient Background'**
+  String get useGradientBackground;
+
+  /// No description provided for @backgroundColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Background Color'**
+  String get backgroundColor;
+
+  /// No description provided for @textColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Color'**
+  String get textColor;
+
+  /// No description provided for @typographySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Typography Settings'**
+  String get typographySettings;
+
+  /// No description provided for @fontFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Family'**
+  String get fontFamily;
+
+  /// No description provided for @titleFontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Title Font Size'**
+  String get titleFontSize;
+
+  /// No description provided for @fundingGeneratorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding Generator (FUNDING.yml)'**
+  String get fundingGeneratorTitle;
+
+  /// No description provided for @sponsorships.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsorships'**
+  String get sponsorships;
+
+  /// No description provided for @sponsorshipsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsorships help your community know how to financially support this repository. This generates a FUNDING.yml file for your .github folder'**
+  String get sponsorshipsDesc;
+
+  /// No description provided for @supportedPlatforms.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported Platforms'**
+  String get supportedPlatforms;
+
+  /// No description provided for @githubUsernames.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Username(s)'**
+  String get githubUsernames;
+
+  /// No description provided for @patreonUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Patreon Username'**
+  String get patreonUsername;
+
+  /// No description provided for @openCollective.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Collective'**
+  String get openCollective;
+
+  /// No description provided for @kofiUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Ko-fi Username'**
+  String get kofiUsername;
+
+  /// No description provided for @tidelift.
+  ///
+  /// In en, this message translates to:
+  /// **'Tidelift'**
+  String get tidelift;
+
+  /// No description provided for @communityBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Bridge'**
+  String get communityBridge;
+
+  /// No description provided for @liberapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Liberapay'**
+  String get liberapay;
+
+  /// No description provided for @issueHunt.
+  ///
+  /// In en, this message translates to:
+  /// **'IssueHunt'**
+  String get issueHunt;
+
+  /// No description provided for @extraFilesSelectionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select standard documentation files to generate and download for your project repository.'**
+  String get extraFilesSelectionDesc;
+
+  /// No description provided for @licenseLegalPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal permission for others to use your code'**
+  String get licenseLegalPermission;
+
+  /// No description provided for @contributingGuidelinesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Guidelines for people who want to contribute'**
+  String get contributingGuidelinesHint;
+
+  /// No description provided for @securityInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions for reporting vulnerabilities'**
+  String get securityInstructionsHint;
+
+  /// No description provided for @cocPolicyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy for contributor behavior'**
+  String get cocPolicyHint;
+
+  /// No description provided for @googleGeminiAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Gemini AI'**
+  String get googleGeminiAi;
+
+  /// No description provided for @geminiAiDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Powering your README generation with next-gen intelligence.'**
+  String get geminiAiDesc;
+
+  /// No description provided for @apiConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'API CONFIGURATION'**
+  String get apiConfiguration;
+
+  /// No description provided for @apiKeyStorageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your API key is stored locally on your device and is only used to communicate with Google Gemini AI services'**
+  String get apiKeyStorageHint;
+
+  /// No description provided for @analyzeCodeAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze Code (with AI)'**
+  String get analyzeCodeAi;
+
+  /// No description provided for @pointToFolderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point to your project folder, and our AI will analyze the structure to generate a tailored README'**
+  String get pointToFolderHint;
+
+  /// No description provided for @projectPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Path'**
+  String get projectPath;
+
+  /// No description provided for @pasteGithubUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a public GitHub URL to automatically fetch and document your repository.'**
+  String get pasteGithubUrlHint;
+
+  /// No description provided for @githubRepoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Repository URL'**
+  String get githubRepoUrl;
+
+  /// No description provided for @fetchAndGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch & Generate'**
+  String get fetchAndGenerate;
+
+  /// No description provided for @publishToGithubDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This will create a new branch and open a Pull Request with your generated README.md directly on GitHub'**
+  String get publishToGithubDesc;
+
+  /// No description provided for @authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'AUTHENTICATION'**
+  String get authentication;
+
+  /// No description provided for @personalAccessToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Access Token'**
+  String get personalAccessToken;
+
+  /// No description provided for @needTokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Need a token? Generate one in GitHub settings with \'repo\' scope'**
+  String get needTokenHint;
+
+  /// No description provided for @repositoryDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'REPOSITORY DETAILS'**
+  String get repositoryDetails;
+
+  /// No description provided for @repository.
+  ///
+  /// In en, this message translates to:
+  /// **'Repository'**
+  String get repository;
+
+  /// No description provided for @newBranchName.
+  ///
+  /// In en, this message translates to:
+  /// **'New Branch Name'**
+  String get newBranchName;
+
+  /// No description provided for @createPullRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Pull Request'**
+  String get createPullRequest;
+
+  /// No description provided for @premiumAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Access'**
+  String get premiumAccess;
+
+  /// No description provided for @proStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Status: ACTIVE'**
+  String get proStatusActive;
+
+  /// No description provided for @proStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Status: INACTIVE'**
+  String get proStatusInactive;
+
+  /// No description provided for @unlimitedAiGeneration.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited AI Document Generation'**
+  String get unlimitedAiGeneration;
+
+  /// No description provided for @unlockGeminiPower.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the full power of Gemini AI'**
+  String get unlockGeminiPower;
+
+  /// No description provided for @proPdfExporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro PDF Exporting'**
+  String get proPdfExporting;
+
+  /// No description provided for @exportFormattedDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Export beautifully formatted documents'**
+  String get exportFormattedDocs;
+
+  /// No description provided for @cloudSyncLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync & Library'**
+  String get cloudSyncLibrary;
+
+  /// No description provided for @saveProjectsCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your projects to the cloud'**
+  String get saveProjectsCloud;
+
+  /// No description provided for @zeroAdvertisements.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero Advertisements'**
+  String get zeroAdvertisements;
+
+  /// No description provided for @enjoyFocusedWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy a clean, focused workspace'**
+  String get enjoyFocusedWorkspace;
+
+  /// No description provided for @donateSupportReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate to support development and get Lifetime Pro Access as a reward'**
+  String get donateSupportReward;
+
+  /// No description provided for @maybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get maybeLater;
+
+  /// No description provided for @headingText.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading Text'**
+  String get headingText;
+
+  /// No description provided for @level.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get level;
+
+  /// No description provided for @text.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get text;
+
+  /// No description provided for @imageUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Image URL'**
+  String get imageUrl;
+
+  /// No description provided for @altText.
+  ///
+  /// In en, this message translates to:
+  /// **'Alt Text'**
+  String get altText;
+
+  /// No description provided for @uploadFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get uploadFile;
+
+  /// No description provided for @giphy.
+  ///
+  /// In en, this message translates to:
+  /// **'GIPHY'**
+  String get giphy;
+
+  /// No description provided for @buttonText.
+  ///
+  /// In en, this message translates to:
+  /// **'Button Text'**
+  String get buttonText;
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'URL'**
+  String get url;
+
+  /// No description provided for @linkToSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Or link to section'**
+  String get linkToSection;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @orderedList.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered List'**
+  String get orderedList;
+
+  /// No description provided for @addItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Item'**
+  String get addItem;
+
+  /// No description provided for @itemN.
+  ///
+  /// In en, this message translates to:
+  /// **'Item {number}'**
+  String itemN(String number);
+
+  /// No description provided for @searchIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Icon Name'**
+  String get searchIcon;
+
+  /// No description provided for @size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get size;
+
+  /// No description provided for @embedType.
+  ///
+  /// In en, this message translates to:
+  /// **'Embed Type'**
+  String get embedType;
+
+  /// No description provided for @embedUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Embed URL'**
+  String get embedUrl;
+
+  /// No description provided for @repoUserRepo.
+  ///
+  /// In en, this message translates to:
+  /// **'Repo Name (user/repo)'**
+  String get repoUserRepo;
+
+  /// No description provided for @fetchInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetch Info'**
+  String get fetchInfo;
+
+  /// No description provided for @showStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Stars'**
+  String get showStars;
+
+  /// No description provided for @showForks.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Forks'**
+  String get showForks;
+
+  /// No description provided for @showIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Issues'**
+  String get showIssues;
+
+  /// No description provided for @showLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Show License'**
+  String get showLicense;
+
+  /// No description provided for @style.
+  ///
+  /// In en, this message translates to:
+  /// **'Style'**
+  String get style;
+
+  /// No description provided for @gridAvatars.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid (Avatars)'**
+  String get gridAvatars;
+
+  /// No description provided for @listNames.
+  ///
+  /// In en, this message translates to:
+  /// **'List (Names)'**
+  String get listNames;
+
+  /// No description provided for @addColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Col'**
+  String get addColumn;
+
+  /// No description provided for @addRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Row'**
+  String get addRow;
+
+  /// No description provided for @columnsHeaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns & Headers'**
+  String get columnsHeaders;
+
+  /// No description provided for @headerN.
+  ///
+  /// In en, this message translates to:
+  /// **'Header {number}'**
+  String headerN(String number);
+
+  /// No description provided for @rowsData.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows Data'**
+  String get rowsData;
+
+  /// No description provided for @rowN.
+  ///
+  /// In en, this message translates to:
+  /// **'Row {number}'**
+  String rowN(String number);
+
+  /// No description provided for @insertImageBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert Image/Badge'**
+  String get insertImageBadge;
+
+  /// No description provided for @mermaidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mermaid Code'**
+  String get mermaidCode;
+
+  /// No description provided for @tocAutoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This element will automatically generate a table of contents based on headings in your project.'**
+  String get tocAutoDesc;
+
+  /// No description provided for @rawMarkdownHtml.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw Markdown / HTML'**
+  String get rawMarkdownHtml;
+
+  /// No description provided for @rawHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter any valid Markdown or HTML code here.'**
+  String get rawHint;
+
+  /// No description provided for @rawRenderDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This content will be rendered exactly as written in the final README.'**
+  String get rawRenderDesc;
+
+  /// No description provided for @widgetType.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget Type'**
+  String get widgetType;
+
+  /// No description provided for @themeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme (Optional)'**
+  String get themeOptional;
+
+  /// No description provided for @badgeBuilder.
+  ///
+  /// In en, this message translates to:
+  /// **'Static Badge Builder'**
+  String get badgeBuilder;
+
+  /// No description provided for @labelLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Label (Left)'**
+  String get labelLeft;
+
+  /// No description provided for @messageRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Message (Right)'**
+  String get messageRight;
+
+  /// No description provided for @colorRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Color (Right)'**
+  String get colorRight;
+
+  /// No description provided for @logoSlug.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo (Slug)'**
+  String get logoSlug;
+
+  /// No description provided for @logoColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo Color'**
+  String get logoColor;
+
+  /// No description provided for @labelColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Label Color (Left Background)'**
+  String get labelColor;
+
+  /// No description provided for @simpleIconsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Available logos can be found on simpleicons.org. Use the \"slug\" or name.'**
+  String get simpleIconsHint;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Browser'**
+  String get openInBrowser;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// No description provided for @profiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Profiles'**
+  String get profiles;
+
+  /// No description provided for @addProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Profile'**
+  String get addProfile;
+
+  /// No description provided for @platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get platform;
+
+  /// No description provided for @usernameHandle.
+  ///
+  /// In en, this message translates to:
+  /// **'Username / Handle'**
+  String get usernameHandle;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @editCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Cell Content'**
+  String get editCell;
+
+  /// No description provided for @cellContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Content (Text, Markdown, HTML)'**
+  String get cellContent;
+
+  /// No description provided for @insertMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert Media:'**
+  String get insertMedia;
+
+  /// No description provided for @youtubeHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube URL Helper'**
+  String get youtubeHelper;
+
+  /// No description provided for @youtubeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'To embed a YouTube video, paste the video URL below. We will help you extract the video ID if needed.'**
+  String get youtubeDesc;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview:'**
+  String get preview;
+
+  /// No description provided for @useThisVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Use This Video'**
+  String get useThisVideo;
+
+  /// No description provided for @codepenHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'CodePen Helper'**
+  String get codepenHelper;
+
+  /// No description provided for @codepenDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your CodePen URL. We will generate a preview image link for your README.'**
+  String get codepenDesc;
+
+  /// No description provided for @useThisPen.
+  ///
+  /// In en, this message translates to:
+  /// **'Use This Pen'**
+  String get useThisPen;
+
+  /// No description provided for @gistHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Gist Helper'**
+  String get gistHelper;
+
+  /// No description provided for @gistDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your Gist URL or ID.'**
+  String get gistDesc;
+
+  /// No description provided for @useThisGist.
+  ///
+  /// In en, this message translates to:
+  /// **'Use This Gist'**
+  String get useThisGist;
 }
 
 class _AppLocalizationsDelegate

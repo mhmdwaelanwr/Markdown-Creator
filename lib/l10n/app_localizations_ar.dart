@@ -406,4 +406,657 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ctrlPasteHint => 'Ctrl+V للصق صورة من الحافظة';
+
+  @override
+  String get projectsLibrary => 'مكتبة المشاريع';
+
+  @override
+  String get docQuality => 'جودة التوثيق';
+
+  @override
+  String get synced => 'تمت المزامنة';
+
+  @override
+  String get loadTemplate => 'تحميل القالب؟';
+
+  @override
+  String get replaceWorkspace => 'سيؤدي هذا إلى استبدال مساحة العمل الحالية.';
+
+  @override
+  String get fundingGenerator => 'مولد الدعم المادي';
+
+  @override
+  String get showcaseGallery => 'معرض النماذج';
+
+  @override
+  String get projectAndFiles => 'المشروع والملفات';
+
+  @override
+  String get toolsAndGenerators => 'الأدوات والمولدات';
+
+  @override
+  String get intelligence => 'الذكاء الاصطناعي';
+
+  @override
+  String get application => 'التطبيق';
+
+  @override
+  String get signInSync => 'تسجيل الدخول والمزامنة';
+
+  @override
+  String get account => 'الحساب';
+
+  @override
+  String get community => 'المجتمع';
+
+  @override
+  String get branding => 'الهوية البصرية';
+
+  @override
+  String get selectLicense => 'اختر الرخصة';
+
+  @override
+  String get licenseInfo => 'سيتم إنشاء ملف LICENSE وتضمينه في التصدير.';
+
+  @override
+  String get communityStandards => 'معايير المجتمع';
+
+  @override
+  String get contributingDesc => 'يضيف دليل مساهمة قياسي.';
+
+  @override
+  String get securityPolicy => 'سياسة الأمان';
+
+  @override
+  String get securityDesc => 'يضيف ملف سياسة الأمان.';
+
+  @override
+  String get supportInfo => 'معلومات الدعم';
+
+  @override
+  String get supportDesc => 'يضيف معلومات حول كيفية الحصول على الدعم.';
+
+  @override
+  String get cocDesc => 'يضيف ميثاق السلوك للمشروع.';
+
+  @override
+  String get issueTemplates => 'نماذج البلاغات';
+
+  @override
+  String get issueTemplatesDesc => 'يضيف نماذج لبلاغات الأخطاء وطلبات السحب.';
+
+  @override
+  String get includeHtml => 'تضمين ملف HTML منسق.';
+
+  @override
+  String get markdownStyle => 'نمط المارك داون';
+
+  @override
+  String get pickColor => 'اختر اللون';
+
+  @override
+  String get typography => 'النصوص والخطوط';
+
+  @override
+  String get mediaAndGraphics => 'الوسائط والجرافيك';
+
+  @override
+  String get structure => 'الهيكل والتنظيم';
+
+  @override
+  String get snippets => 'القصاصات الجاهزة';
+
+  @override
+  String get searchHint => 'بحث...';
+
+  @override
+  String get saveSelected => 'حفظ المحدد';
+
+  @override
+  String get noSnippets => 'لا توجد قصاصات محفوظة';
+
+  @override
+  String get saveSnippet => 'حفظ قصاصة';
+
+  @override
+  String get snippetName => 'اسم القصاصة';
+
+  @override
+  String get snippetSaved => 'تم حفظ القصاصة بنجاح!';
+
+  @override
+  String get heading => 'عنوان';
+
+  @override
+  String get paragraph => 'فقرة';
+
+  @override
+  String get quote => 'اقتباس';
+
+  @override
+  String get code => 'كود برمي';
+
+  @override
+  String get image => 'صورة';
+
+  @override
+  String get icon => 'أيقونة';
+
+  @override
+  String get button => 'زر رابط';
+
+  @override
+  String get badge => 'شارة';
+
+  @override
+  String get socials => 'تواصل';
+
+  @override
+  String get stats => 'إحصائيات';
+
+  @override
+  String get people => 'أشخاص';
+
+  @override
+  String get widget => 'ودجت';
+
+  @override
+  String get list => 'المنظمة';
+
+  @override
+  String get table => 'جدول';
+
+  @override
+  String get divider => 'فاصل';
+
+  @override
+  String get foldout => 'قائمة منسدلة';
+
+  @override
+  String get designShowcase => 'معرض التصاميم';
+
+  @override
+  String get exploreTemplates => 'استكشف القوالب';
+
+  @override
+  String get jumpstartDoc => 'ابدأ توثيقك بسرعة مع تصاميم احترافية.';
+
+  @override
+  String get cloud => 'سحابي';
+
+  @override
+  String get useThisTemplate => 'استخدم هذا القالب';
+
+  @override
+  String applyTemplate(String name) {
+    return 'تطبيق $name؟';
+  }
+
+  @override
+  String get templateApplied => 'تم تطبيق القالب بنجاح!';
+
+  @override
+  String get proceed => 'هل تود المتابعة؟';
+
+  @override
+  String get replaceCurrentWorkspace =>
+      'سيؤدي هذا إلى استبدال جميع العناصر في مساحة العمل الحالية. هل تود المتابعة؟';
+
+  @override
+  String get selectElementToPreview => 'اختر عنصراً لمعاينة الكود';
+
+  @override
+  String get githubIntegrationInactive =>
+      'مزامنة جيت هاب غير نشطة. سجل الدخول لتفعيل الاستيراد التلقائي.';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get startMasterpiece => 'ابدأ ابداعك الآن';
+
+  @override
+  String get dragComponentsHint =>
+      'اسحب المكونات من المكتبة لبناء التوثيق الخاص بك';
+
+  @override
+  String get compact => 'مضغوط';
+
+  @override
+  String get standard => 'قياسي';
+
+  @override
+  String get spacious => 'واسع';
+
+  @override
+  String get projectIntelligenceImport => 'استيراد ذكاء المشروع';
+
+  @override
+  String get connectNow => 'اتصل الآن';
+
+  @override
+  String get limitedAccessGitHub =>
+      'وصول محدود. اتصل بجيت هاب لهندسة مشاريع سلسة';
+
+  @override
+  String get manualFile => 'يدوي / ملف';
+
+  @override
+  String get projectContext => 'سياق المشروع #';
+
+  @override
+  String get writingPasteHint => '... ابدأ الكتابة أو الصق هنا';
+
+  @override
+  String get finalizeImport => 'إنهاء الاستيراد';
+
+  @override
+  String get contentSettings => 'إعدادات المحتوى';
+
+  @override
+  String get cardDescription => 'وصف البطاقة';
+
+  @override
+  String get awesomeProjectDesc => 'وصف المشروع الرائع يوضع هنا';
+
+  @override
+  String get designSettings => 'إعدادات التصميم';
+
+  @override
+  String get upload => 'رفع';
+
+  @override
+  String get projectLogo => 'شعار المشروع';
+
+  @override
+  String get useGradientBackground => 'استخدام خلفية متدرجة';
+
+  @override
+  String get backgroundColor => 'لون الخلفية';
+
+  @override
+  String get textColor => 'لون النص';
+
+  @override
+  String get typographySettings => 'إعدادات الخطوط';
+
+  @override
+  String get fontFamily => 'عائلة الخط';
+
+  @override
+  String get titleFontSize => 'حجم خط العنوان';
+
+  @override
+  String get fundingGeneratorTitle => 'مولد الدعم (FUNDING.yml)';
+
+  @override
+  String get sponsorships => 'الرعايات';
+
+  @override
+  String get sponsorshipsDesc =>
+      'تساعد الرعايات مجتمعك على معرفة كيفية دعم هذا المستودع مالياً. هذا يولد ملف FUNDING.yml لمجلد .github الخاص بك';
+
+  @override
+  String get supportedPlatforms => 'المنصات المدعومة';
+
+  @override
+  String get githubUsernames => 'اسم مستخدم جيت هاب';
+
+  @override
+  String get patreonUsername => 'اسم مستخدم باتريون';
+
+  @override
+  String get openCollective => 'Open Collective';
+
+  @override
+  String get kofiUsername => 'اسم مستخدم Ko-fi';
+
+  @override
+  String get tidelift => 'Tidelift';
+
+  @override
+  String get communityBridge => 'Community Bridge';
+
+  @override
+  String get liberapay => 'Liberapay';
+
+  @override
+  String get issueHunt => 'IssueHunt';
+
+  @override
+  String get extraFilesSelectionDesc =>
+      'اختر ملفات التوثيق القياسية لتوليدها وتحميلها لمستودع مشروعك.';
+
+  @override
+  String get licenseLegalPermission =>
+      'إذن قانوني للآخرين لاستخدام الكود الخاص بك';
+
+  @override
+  String get contributingGuidelinesHint =>
+      'إرشادات للأشخاص الذين يرغبون في المساهمة';
+
+  @override
+  String get securityInstructionsHint => 'تعليمات للإبلاغ عن الثغرات الأمنية';
+
+  @override
+  String get cocPolicyHint => 'سياسة سلوك المساهمين';
+
+  @override
+  String get googleGeminiAi => 'Google Gemini AI';
+
+  @override
+  String get geminiAiDesc =>
+      'دعم توليد الـ README الخاص بك بذكاء الجيل القادم.';
+
+  @override
+  String get apiConfiguration => 'إعدادات الـ API';
+
+  @override
+  String get apiKeyStorageHint =>
+      'يتم تخزين مفتاح الـ API الخاص بك محلياً على جهازك ويستخدم فقط للتواصل مع خدمات Google Gemini AI';
+
+  @override
+  String get analyzeCodeAi => 'تحليل الكود (بالذكاء الاصطناعي)';
+
+  @override
+  String get pointToFolderHint =>
+      'وجهنا إلى مجلد مشروعك، وسيقوم ذكاؤنا الاصطناعي بتحليل الهيكل لتوليد README مخصص';
+
+  @override
+  String get projectPath => 'مسار المشروع';
+
+  @override
+  String get pasteGithubUrlHint =>
+      'الصق رابط جيت هاب عام لجلب وتوثيق المستودع الخاص بك تلقائياً.';
+
+  @override
+  String get githubRepoUrl => 'رابط مستودع جيت هاب';
+
+  @override
+  String get fetchAndGenerate => 'جلب وتوليد';
+
+  @override
+  String get publishToGithubDesc =>
+      'سيؤدي هذا إلى إنشاء فرع جديد وفتح طلب سحب (PR) بملف README.md الذي تم إنشاؤه مباشرة على جيت هاب';
+
+  @override
+  String get authentication => 'المصادقة';
+
+  @override
+  String get personalAccessToken => 'رمز الوصول الشخصي';
+
+  @override
+  String get needTokenHint =>
+      'هل تحتاج إلى رمز؟ قم بتوليد واحد في إعدادات جيت هاب بصلاحية \'repo\'';
+
+  @override
+  String get repositoryDetails => 'تفاصيل المستودع';
+
+  @override
+  String get repository => 'المستودع';
+
+  @override
+  String get newBranchName => 'اسم الفرع الجديد';
+
+  @override
+  String get createPullRequest => 'إنشاء طلب سحب';
+
+  @override
+  String get premiumAccess => 'الوصول المميز';
+
+  @override
+  String get proStatusActive => 'حالة برو: مفعلة';
+
+  @override
+  String get proStatusInactive => 'حالة برو: غير مفعلة';
+
+  @override
+  String get unlimitedAiGeneration =>
+      'توليد مستندات غير محدود بالذكاء الاصطناعي';
+
+  @override
+  String get unlockGeminiPower => 'افتح القوة الكاملة لـ Gemini AI';
+
+  @override
+  String get proPdfExporting => 'تصدير PDF احترافي';
+
+  @override
+  String get exportFormattedDocs => 'تصدير مستندات منسقة بشكل جميل';
+
+  @override
+  String get cloudSyncLibrary => 'مزامنة سحابية ومكتبة';
+
+  @override
+  String get saveProjectsCloud => 'احفظ مشاريعك على السحابة';
+
+  @override
+  String get zeroAdvertisements => 'بدون إعلانات';
+
+  @override
+  String get enjoyFocusedWorkspace => 'استمتع بمساحة عمل نظيفة ومركزة';
+
+  @override
+  String get donateSupportReward =>
+      'تبرع لدعم التطوير واحصل على وصول برو مدى الحياة كمكافأة';
+
+  @override
+  String get maybeLater => 'ربما لاحقاً';
+
+  @override
+  String get headingText => 'نص العنوان';
+
+  @override
+  String get level => 'المستوى';
+
+  @override
+  String get text => 'النص';
+
+  @override
+  String get imageUrl => 'رابط الصورة';
+
+  @override
+  String get altText => 'النص البديل';
+
+  @override
+  String get uploadFile => 'رفع ملف';
+
+  @override
+  String get giphy => 'GIPHY';
+
+  @override
+  String get buttonText => 'نص الزر';
+
+  @override
+  String get url => 'الرابط';
+
+  @override
+  String get linkToSection => 'أو رابط لقسم';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get orderedList => 'قائمة مرتبة';
+
+  @override
+  String get addItem => 'إضافة عنصر';
+
+  @override
+  String itemN(String number) {
+    return 'العنصر $number';
+  }
+
+  @override
+  String get searchIcon => 'البحث عن اسم الأيقونة';
+
+  @override
+  String get size => 'الحجم';
+
+  @override
+  String get embedType => 'نوع التضمين';
+
+  @override
+  String get embedUrl => 'رابط التضمين';
+
+  @override
+  String get repoUserRepo => 'اسم المستودع (المستخدم/المستودع)';
+
+  @override
+  String get fetchInfo => 'جلب المعلومات';
+
+  @override
+  String get showStars => 'عرض النجوم';
+
+  @override
+  String get showForks => 'عرض التفرعات';
+
+  @override
+  String get showIssues => 'عرض البلاغات';
+
+  @override
+  String get showLicense => 'عرض الرخصة';
+
+  @override
+  String get style => 'النمط';
+
+  @override
+  String get gridAvatars => 'شبكة (صور)';
+
+  @override
+  String get listNames => 'قائمة (أسماء)';
+
+  @override
+  String get addColumn => 'عمود';
+
+  @override
+  String get addRow => 'صف';
+
+  @override
+  String get columnsHeaders => 'الأعمدة والعناوين';
+
+  @override
+  String headerN(String number) {
+    return 'عنوان $number';
+  }
+
+  @override
+  String get rowsData => 'بيانات الصفوف';
+
+  @override
+  String rowN(String number) {
+    return 'الصف $number';
+  }
+
+  @override
+  String get insertImageBadge => 'إدراج صورة/شارة';
+
+  @override
+  String get mermaidCode => 'كود Mermaid';
+
+  @override
+  String get tocAutoDesc =>
+      'سيقوم هذا العنصر تلقائياً بتوليد جدول محتويات بناءً على العناوين في مشروعك.';
+
+  @override
+  String get rawMarkdownHtml => 'مارك داون / HTML خام';
+
+  @override
+  String get rawHint => 'أدخل أي كود مارك داون أو HTML صالح هنا.';
+
+  @override
+  String get rawRenderDesc =>
+      'سيتم عرض هذا المحتوى تماماً كما هو مكتوب في ملف README النهائي.';
+
+  @override
+  String get widgetType => 'نوع الودجت';
+
+  @override
+  String get themeOptional => 'المظهر (اختياري)';
+
+  @override
+  String get badgeBuilder => 'باني الشارات الثابتة';
+
+  @override
+  String get labelLeft => 'العلامة (يسار)';
+
+  @override
+  String get messageRight => 'الرسالة (يمين)';
+
+  @override
+  String get colorRight => 'اللون (يمين)';
+
+  @override
+  String get logoSlug => 'الشعار (Slug)';
+
+  @override
+  String get logoColor => 'لون الشعار';
+
+  @override
+  String get labelColor => 'لون العلامة (خلفية اليسار)';
+
+  @override
+  String get simpleIconsHint =>
+      'يمكن العثور على الشعارات المتاحة في simpleicons.org. استخدم الـ \'slug\' أو الاسم.';
+
+  @override
+  String get openInBrowser => 'فتح في المتصفح';
+
+  @override
+  String get copyLink => 'نسخ الرابط';
+
+  @override
+  String get profiles => 'الملفات الشخصية';
+
+  @override
+  String get addProfile => 'إضافة ملف شخصي';
+
+  @override
+  String get platform => 'المنصة';
+
+  @override
+  String get usernameHandle => 'اسم المستخدم / المعرف';
+
+  @override
+  String get phoneNumber => 'رقم الهاتف';
+
+  @override
+  String get editCell => 'تعديل محتوى الخلية';
+
+  @override
+  String get cellContent => 'المحتوى (نص، مارك داون، HTML)';
+
+  @override
+  String get insertMedia => 'إدراج وسائط:';
+
+  @override
+  String get youtubeHelper => 'مساعد روابط يوتيوب';
+
+  @override
+  String get youtubeDesc =>
+      'لتضمين فيديو يوتيوب، الصق رابط الفيديو أدناه. سنساعدك في استخراج معرف الفيديو إذا لزم الأمر.';
+
+  @override
+  String get preview => 'معاينة:';
+
+  @override
+  String get useThisVideo => 'استخدم هذا الفيديو';
+
+  @override
+  String get codepenHelper => 'مساعد CodePen';
+
+  @override
+  String get codepenDesc =>
+      'الصق رابط CodePen الخاص بك. سنقوم بتوليد رابط صورة معاينة لملف README الخاص بك.';
+
+  @override
+  String get useThisPen => 'استخدم هذا الـ Pen';
+
+  @override
+  String get gistHelper => 'مساعد GitHub Gist';
+
+  @override
+  String get gistDesc => 'الصق رابط أو معرف Gist الخاص بك.';
+
+  @override
+  String get useThisGist => 'استخدم هذا الـ Gist';
 }

@@ -29,10 +29,11 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProjectProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return StyledDialog(
       title: DialogHeader(
-        title: AppLocalizations.of(context)!.projectSettings,
+        title: l10n.projectSettings,
         icon: Icons.tune_rounded,
         color: AppColors.primary,
       ),
@@ -63,11 +64,11 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
                   dividerColor: Colors.transparent,
                   labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13),
                   tabs: [
-                    Tab(text: AppLocalizations.of(context)!.variables),
-                    Tab(text: AppLocalizations.of(context)!.license),
-                    const Tab(text: 'Community'),
-                    Tab(text: AppLocalizations.of(context)!.colors),
-                    Tab(text: AppLocalizations.of(context)!.formatting),
+                    Tab(text: l10n.variables),
+                    Tab(text: l10n.license),
+                    Tab(text: l10n.community),
+                    Tab(text: l10n.colors),
+                    Tab(text: l10n.formatting),
                   ],
                 ),
               ),
@@ -75,11 +76,11 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
             Expanded(
               child: TabBarView(
                 children: [
-                  _buildVariablesTab(provider),
-                  _buildLicenseTab(provider),
-                  _buildCommunityTab(provider),
-                  _buildColorsTab(provider),
-                  _buildFormattingTab(provider),
+                  _buildVariablesTab(provider, l10n),
+                  _buildLicenseTab(provider, l10n),
+                  _buildCommunityTab(provider, l10n),
+                  _buildColorsTab(provider, l10n),
+                  _buildFormattingTab(provider, l10n),
                 ],
               ),
             ),
@@ -89,19 +90,19 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context)!.close, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+          child: Text(l10n.close, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
       ],
     );
   }
 
-  Widget _buildVariablesTab(ProjectProvider provider) {
+  Widget _buildVariablesTab(ProjectProvider provider, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('PROJECT VARIABLES'),
+          _buildSectionTitle(l10n.variables.toUpperCase()),
           const SizedBox(height: 16),
           ...provider.variables.entries.map((entry) {
             return Padding(
@@ -123,13 +124,13 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
     );
   }
 
-  Widget _buildLicenseTab(ProjectProvider provider) {
+  Widget _buildLicenseTab(ProjectProvider provider, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('SOFTWARE LICENSE'),
+          _buildSectionTitle(l10n.license.toUpperCase()),
           const SizedBox(height: 16),
           GlassCard(
             opacity: 0.1,
@@ -138,7 +139,7 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
                 DropdownButtonFormField<String>(
                   value: provider.licenseType,
                   decoration: InputDecoration(
-                    labelText: 'Select License',
+                    labelText: l10n.selectLicense,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   items: [
@@ -149,14 +150,14 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
-                    SizedBox(width: 8),
+                    const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primary),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'A LICENSE file will be generated and included in the export.',
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        l10n.licenseInfo,
+                        style: const TextStyle(color: Colors.grey, fontSize: 13),
                       ),
                     ),
                   ],
@@ -169,45 +170,45 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
     );
   }
 
-  Widget _buildCommunityTab(ProjectProvider provider) {
+  Widget _buildCommunityTab(ProjectProvider provider, AppLocalizations l10n) {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        _buildSectionTitle('COMMUNITY STANDARDS'),
+        _buildSectionTitle(l10n.communityStandards.toUpperCase()),
         const SizedBox(height: 16),
-        _buildSwitchTile('CONTRIBUTING.md', 'Adds a standard contributing guide.', provider.includeContributing, (v) => provider.setIncludeContributing(v), Icons.handshake_rounded),
-        _buildSwitchTile('SECURITY.md', 'Adds a security policy.', provider.includeSecurity, (v) => provider.setIncludeSecurity(v), Icons.security_rounded),
-        _buildSwitchTile('SUPPORT.md', 'Adds support information.', provider.includeSupport, (v) => provider.setIncludeSupport(v), Icons.help_outline_rounded),
-        _buildSwitchTile('CODE_OF_CONDUCT.md', 'Adds a code of conduct.', provider.includeCodeOfConduct, (v) => provider.setIncludeCodeOfConduct(v), Icons.gavel_rounded),
-        _buildSwitchTile('Issue Templates', 'Adds GitHub issue and PR templates.', provider.includeIssueTemplates, (v) => provider.setIncludeIssueTemplates(v), Icons.bug_report_rounded),
+        _buildSwitchTile('CONTRIBUTING.md', l10n.contributingDesc, provider.includeContributing, (v) => provider.setIncludeContributing(v), Icons.handshake_rounded),
+        _buildSwitchTile('SECURITY.md', l10n.securityDesc, provider.includeSecurity, (v) => provider.setIncludeSecurity(v), Icons.security_rounded),
+        _buildSwitchTile('SUPPORT.md', l10n.supportDesc, provider.includeSupport, (v) => provider.setIncludeSupport(v), Icons.help_outline_rounded),
+        _buildSwitchTile('CODE_OF_CONDUCT.md', l10n.cocDesc, provider.includeCodeOfConduct, (v) => provider.setIncludeCodeOfConduct(v), Icons.gavel_rounded),
+        _buildSwitchTile(l10n.issueTemplates, l10n.issueTemplatesDesc, provider.includeIssueTemplates, (v) => provider.setIncludeIssueTemplates(v), Icons.bug_report_rounded),
       ],
     );
   }
 
-  Widget _buildColorsTab(ProjectProvider provider) {
+  Widget _buildColorsTab(ProjectProvider provider, AppLocalizations l10n) {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        _buildSectionTitle('BRANDING COLORS'),
+        _buildSectionTitle(l10n.colors.toUpperCase()),
         const SizedBox(height: 16),
-        _buildColorTile(AppLocalizations.of(context)!.primaryColor, provider.primaryColor, (c) => provider.setPrimaryColor(c)),
-        _buildColorTile(AppLocalizations.of(context)!.secondaryColor, provider.secondaryColor, (c) => provider.setSecondaryColor(c)),
+        _buildColorTile(l10n.primaryColor, provider.primaryColor, (c) => provider.setPrimaryColor(c), l10n),
+        _buildColorTile(l10n.secondaryColor, provider.secondaryColor, (c) => provider.setSecondaryColor(c), l10n),
       ],
     );
   }
 
-  Widget _buildFormattingTab(ProjectProvider provider) {
+  Widget _buildFormattingTab(ProjectProvider provider, AppLocalizations l10n) {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        _buildSectionTitle('EXPORT FORMATTING'),
+        _buildSectionTitle(l10n.formatting.toUpperCase()),
         const SizedBox(height: 16),
-        _buildSwitchTile(AppLocalizations.of(context)!.exportHtml, 'Include a formatted HTML file.', provider.exportHtml, (v) => provider.setExportHtml(v), Icons.html_rounded),
+        _buildSwitchTile(l10n.exportHtml, l10n.includeHtml, provider.exportHtml, (v) => provider.setExportHtml(v), Icons.html_rounded),
         const SizedBox(height: 16),
-        _buildSectionTitle('MARKDOWN STYLE'),
+        _buildSectionTitle(l10n.markdownStyle.toUpperCase()),
         const SizedBox(height: 16),
         _buildDropdownSetting(
-          label: AppLocalizations.of(context)!.listBulletStyle,
+          label: l10n.listBulletStyle,
           value: provider.listBullet,
           items: {'*': '* (Asterisk)', '-': '- (Dash)', '+': '+ (Plus)'},
           onChanged: (v) => provider.setListBullet(v!),
@@ -215,7 +216,7 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
         ),
         const SizedBox(height: 16),
         _buildDropdownSetting(
-          label: AppLocalizations.of(context)!.sectionSpacing,
+          label: l10n.sectionSpacing,
           value: provider.sectionSpacing,
           items: {0: 'Compact', 1: 'Standard', 2: 'Spacious'},
           onChanged: (v) => provider.setSectionSpacing(v!),
@@ -268,10 +269,10 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
     );
   }
 
-  Widget _buildColorTile(String title, Color color, ValueChanged<Color> onColorChanged) {
+  Widget _buildColorTile(String title, Color color, ValueChanged<Color> onColorChanged, AppLocalizations l10n) {
     return GlassCard(
       padding: EdgeInsets.zero,
-      onTap: () => _showColorPicker(context, color, onColorChanged),
+      onTap: () => _showColorPicker(context, color, onColorChanged, l10n),
       child: ListTile(
         leading: Container(
           width: 40, height: 40,
@@ -284,13 +285,13 @@ class _ProjectSettingsDialogState extends State<ProjectSettingsDialog> {
     );
   }
 
-  void _showColorPicker(BuildContext context, Color initialColor, ValueChanged<Color> onColorChanged) {
+  void _showColorPicker(BuildContext context, Color initialColor, ValueChanged<Color> onColorChanged, AppLocalizations l10n) {
     showSafeDialog(
       context,
       builder: (context) => ConfirmDialog(
-        title: 'Pick Color',
+        title: l10n.pickColor,
         onConfirm: () {},
-        confirmText: 'Done',
+        confirmText: l10n.save,
         content: '',
         icon: Icons.colorize_rounded,
       ),

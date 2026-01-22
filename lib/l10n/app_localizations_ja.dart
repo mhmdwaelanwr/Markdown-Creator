@@ -9,7 +9,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => '高度なReadme作成ツール';
+  String get appTitle => 'Markdown Studio Pro';
 
   @override
   String get saveToLibrary => 'ライブラリに保存';
@@ -39,13 +39,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aiSettings => 'AI設定';
 
   @override
-  String get generateFromCodebase => 'コードベースから生成 (AI)';
+  String get generateFromCodebase => 'コードベースをスキャン (AI)';
 
   @override
   String get showTour => 'ツアーを表示';
 
   @override
-  String get keyboardShortcuts => 'キーボードショートカット';
+  String get keyboardShortcuts => 'ショートカット';
 
   @override
   String get aboutDeveloper => '開発者について';
@@ -54,7 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get aboutApp => 'アプリについて';
 
   @override
-  String get changeLanguage => '言語を変更';
+  String get changeLanguage => '言語';
 
   @override
   String get settings => '設定';
@@ -81,10 +81,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get description => '説明';
 
   @override
-  String get tags => 'タグ (カンマ区切り)';
+  String get tags => 'タグ';
 
   @override
-  String get projectSaved => 'プロジェクトがライブラリに保存されました';
+  String get projectSaved => 'プロジェクトを保存しました';
 
   @override
   String get error => 'エラー';
@@ -99,53 +99,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String get restore => '復元';
 
   @override
-  String get confirmClearWorkspace => 'ワークスペースをクリアしますか？';
+  String get confirmClearWorkspace => 'クリアしますか？';
 
   @override
-  String get confirmClearWorkspaceContent =>
-      'これにより、すべての要素が削除されます。この操作は元に戻せません（スナップショットがない場合）。';
+  String get confirmClearWorkspaceContent => 'すべての要素が削除されます。この操作は取り消せません。';
 
   @override
-  String get pickProjectFolder => 'プロジェクトフォルダを選択';
+  String get pickProjectFolder => 'フォルダを選択';
 
   @override
   String get repoUrl => 'リポジトリURL';
 
   @override
-  String get scanAndGenerate => 'スキャンして生成';
+  String get scanAndGenerate => '分析して生成';
 
   @override
   String get geminiApiKey => 'Gemini APIキー';
 
   @override
-  String get githubToken => 'GitHubトークン (オプション)';
+  String get githubToken => 'GitHubトークン';
 
   @override
-  String get getApiKey => 'Google AI StudioからAPIキーを取得';
+  String get getApiKey => 'Googleからキーを取得';
 
   @override
-  String get generateToken => '個人アクセストークンを生成';
+  String get generateToken => 'GitHubトークンを生成';
 
   @override
   String get elements => '要素';
 
   @override
-  String get words => '単語数';
+  String get words => '単語';
 
   @override
-  String get healthy => '正常';
+  String get healthy => '最適';
 
   @override
-  String get errors => 'エラー';
+  String get errors => '重大な問題';
 
   @override
-  String get warnings => '警告';
+  String get warnings => '改善案';
 
   @override
   String get focusMode => 'フォーカスモード';
 
   @override
-  String get autoSaved => '自動保存済み';
+  String get autoSaved => '変更を保存しました';
 
   @override
   String get projectSettings => 'プロジェクト設定';
@@ -160,7 +159,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get contributing => '貢献';
 
   @override
-  String get colors => '色';
+  String get colors => 'ブランドカラー';
 
   @override
   String get formatting => 'フォーマット';
@@ -175,10 +174,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get exportHtml => 'HTMLをエクスポート';
 
   @override
-  String get listBulletStyle => 'リストの箇条書きスタイル';
+  String get listBulletStyle => '箇条書きスタイル';
 
   @override
-  String get sectionSpacing => 'セクションの間隔 (改行)';
+  String get sectionSpacing => 'セクション間隔';
 
   @override
   String get templates => 'テンプレート';
@@ -187,25 +186,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get load => '読み込む';
 
   @override
-  String get viewOnGithub => 'GitHubで表示';
+  String get viewOnGithub => 'GitHub';
 
   @override
   String get version => 'バージョン';
 
   @override
-  String get rightsReserved => '全著作権所有。';
+  String get rightsReserved => 'All rights reserved.';
 
   @override
   String get systemDefault => 'システムデフォルト';
 
   @override
-  String get settingsSaved => '設定を保存しました！';
+  String get settingsSaved => '設定を更新しました！';
 
   @override
-  String get commonShortcuts => '一般的なショートカット';
+  String get commonShortcuts => '全般ショートカット';
 
   @override
-  String get elementShortcuts => '要素のショートカット';
+  String get elementShortcuts => 'エディタショートカット';
 
   @override
   String get newProject => '新規プロジェクト';
@@ -220,7 +219,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get exportProject => 'プロジェクトをエクスポート';
 
   @override
-  String get print => '印刷';
+  String get print => 'PDF印刷';
 
   @override
   String get undo => '元に戻す';
@@ -229,25 +228,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get redo => 'やり直し';
 
   @override
-  String get showPreview => 'プレビューを表示';
+  String get showPreview => 'ライブプレビュー';
 
   @override
-  String get toggleGrid => 'グリッドを切り替え';
+  String get toggleGrid => 'グリッド切り替え';
 
   @override
-  String get toggleTheme => 'テーマを切り替え';
+  String get toggleTheme => '外観';
 
   @override
-  String get openSettings => '設定を開く';
+  String get openSettings => '環境設定';
 
   @override
-  String get help => 'ヘルプ';
+  String get help => 'サポート';
 
   @override
   String get addHeading => '見出しを追加';
 
   @override
-  String get addSubheading => '小見出しを追加';
+  String get addSubheading => '小見出し';
 
   @override
   String get addParagraph => '段落を追加';
@@ -269,102 +268,140 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Readme Creatorは、プロジェクト用のプロフェッショナルなREADMEファイルを生成するための強力なツールです。すべての機能はデスクトップ、モバイル、ウェブで動作します。';
+      'プロフェッショナルなMarkdownドキュメント作成のための究極のSaaSスイート。スピードと精度を追求。';
 
   @override
-  String get enterGeminiKey => '実際のAI機能を有効にするには��Gemini APIキーを入力してください。';
+  String get enterGeminiKey => 'AI機能を使用するにはGemini APIキーを入力してください。';
 
   @override
-  String get githubIntegration => 'GitHub統合';
+  String get githubIntegration => 'GitHub同期';
 
   @override
-  String get enterGithubToken =>
-      'オプション：リポジトリのスキャン時にレート制限を高くするには、GitHubトークンを入力してください。';
+  String get enterGithubToken => 'オプション：高度なスキャンのためのGitHubトークン。';
 
   @override
-  String get localFolder => 'ローカルフォルダ';
+  String get localFolder => 'ローカルディレクトリ';
 
   @override
   String get githubRepo => 'GitHubリポジトリ';
 
   @override
-  String get scanLocalFolder => 'ローカルプロジェクトフォルダをスキャンしてREADMEを生成します。';
+  String get scanLocalFolder => 'フォルダをスキャンしてドキュメントを作成。';
 
   @override
-  String get scanGithubRepo => '公開GitHubリポジトリをスキャンします。';
+  String get scanGithubRepo => '公開リポジトリからドキュメントを生成。';
 
   @override
-  String get fetchingRepo => 'リポジトリデータを取得中...';
+  String get fetchingRepo => 'リポジトリを同期中...';
 
   @override
-  String get analyzingAI => 'AIで分析中...';
+  String get analyzingAI => 'AIエンジンが分析中...';
 
   @override
-  String get readmeGenerated => 'READMEが正常に生成されました！';
+  String get readmeGenerated => 'READMEを作成しました！';
 
   @override
-  String get projectImported => 'プロジェクトが正常にインポートされました';
+  String get projectImported => 'インポート成功';
 
   @override
-  String get contentFetched => 'コンテンツを取得しました！確認するには「テキスト / ファイル」タブに切り替えてください。';
+  String get contentFetched => '確認の準備ができました。';
 
   @override
-  String get fetchFailed => '取得に失敗しました';
+  String get fetchFailed => '同期失敗';
 
   @override
-  String get generateExtraFiles => '追加ファイルを生成';
+  String get generateExtraFiles => '追加プロジェクトファイル';
 
   @override
-  String get publishToGithub => 'GitHubに公開';
+  String get publishToGithub => 'GitHubへプッシュ';
 
   @override
-  String get contributionGuidelinesBuilder => '貢献ガイドラインビルダー';
+  String get contributionGuidelinesBuilder => 'コミュニティビルダー';
 
   @override
-  String get contributionGuidelinesDesc => 'プロジェクト用の標準的なコミュニティファイルを生成します。';
+  String get contributionGuidelinesDesc => '標準的なオープンソースガイドライン。';
 
   @override
-  String get contributingMdDesc => 'プロジェクトへの貢献方法に関するガイドライン。';
+  String get contributingMdDesc => '貢献ワークフローガイド。';
 
   @override
   String get generate => '生成';
 
   @override
-  String get codeOfConductDesc => '貢献者行動規範。';
+  String get codeOfConductDesc => '行動規範。';
 
   @override
-  String get githubTokenMissing => 'GitHubトークンがありません。AI設定で設定してください。';
+  String get githubTokenMissing => 'GitHubトークンが必要です。';
 
   @override
-  String get owner => '所有者 (ユーザー名/組織)';
+  String get owner => 'オーナー';
 
   @override
   String get repoName => 'リポジトリ名';
 
   @override
-  String get branchName => '新しいブランチ名';
+  String get branchName => 'ブランチ名';
 
   @override
-  String get commitMessage => 'コミットメッセージ';
+  String get commitMessage => 'メッセージ';
 
   @override
-  String get publishDialogDesc => 'これにより、新しいブランチとプルリクエストが作成されます。';
+  String get publishDialogDesc => '新しいブランチとPRを即座に作成。';
 
   @override
-  String get ownerRepoRequired => '所有者とリポジトリは必須です';
+  String get ownerRepoRequired => 'IDが必要です';
 
   @override
-  String get prCreated => 'プルリクエストが正常に作成されました。';
+  String get prCreated => 'プルリクエストを送信しました！';
 
   @override
   String get viewPrs => 'PRを表示';
 
   @override
-  String get copiedToClipboard => 'クリップボードにコピーしました';
+  String get copiedToClipboard => 'コピーしました！';
 
   @override
   String get download => 'ダウンロード';
 
   @override
   String get copy => 'コピー';
+
+  @override
+  String get proActive => 'PROプラン有効';
+
+  @override
+  String get freePlan => 'フリープラン';
+
+  @override
+  String get upgradeToPro => 'PROにアップグレード';
+
+  @override
+  String get becomeSponsor => 'スポンサーになる';
+
+  @override
+  String get claimReward => '特典を受け取る';
+
+  @override
+  String get supportAndFeedback => 'サポートとフィードバック';
+
+  @override
+  String get adminDashboard => '管理ダッシュボード';
+
+  @override
+  String get totalUsers => '総ユーザー数';
+
+  @override
+  String get proMembers => 'PROメンバー';
+
+  @override
+  String get feedbackTitle => 'ユーザーフィードバック';
+
+  @override
+  String get viewAttachment => '添付ファイルを表示';
+
+  @override
+  String get dragAndDropHint => 'ここにファイルをドラッグ＆ドロップ';
+
+  @override
+  String get ctrlPasteHint => 'Ctrl+Vで画像を貼り付け';
 }

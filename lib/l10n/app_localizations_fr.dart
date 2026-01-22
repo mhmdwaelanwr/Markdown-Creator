@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Créateur de Readme';
+  String get appTitle => 'Markdown Studio Pro';
 
   @override
   String get saveToLibrary => 'Enregistrer dans la bibliothèque';
@@ -39,13 +39,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiSettings => 'Paramètres IA';
 
   @override
-  String get generateFromCodebase => 'Générer depuis le code (IA)';
+  String get generateFromCodebase => 'Scanner le code (IA)';
 
   @override
   String get showTour => 'Afficher la visite';
 
   @override
-  String get keyboardShortcuts => 'Raccourcis clavier';
+  String get keyboardShortcuts => 'Raccourcis';
 
   @override
   String get aboutDeveloper => 'À propos du développeur';
@@ -54,7 +54,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutApp => 'À propos de l\'application';
 
   @override
-  String get changeLanguage => 'Changer de langue';
+  String get changeLanguage => 'Langue';
 
   @override
   String get settings => 'Paramètres';
@@ -81,10 +81,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get description => 'Description';
 
   @override
-  String get tags => 'Étiquettes (séparées par des virgules)';
+  String get tags => 'Étiquettes';
 
   @override
-  String get projectSaved => 'Projet enregistré dans la bibliothèque';
+  String get projectSaved => 'Projet enregistré avec succès';
 
   @override
   String get error => 'Erreur';
@@ -99,32 +99,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get restore => 'Restaurer';
 
   @override
-  String get confirmClearWorkspace => 'Effacer l\'espace de travail ?';
+  String get confirmClearWorkspace => 'Effacer l\'espace ?';
 
   @override
   String get confirmClearWorkspaceContent =>
-      'Cela supprimera tous les éléments. Cette action est irréversible (sauf si vous avez un instantané).';
+      'Cela supprimera tous les éléments. Cette action est irréversible.';
 
   @override
-  String get pickProjectFolder => 'Choisir le dossier du projet';
+  String get pickProjectFolder => 'Choisir le dossier';
 
   @override
   String get repoUrl => 'URL du dépôt';
 
   @override
-  String get scanAndGenerate => 'Scanner et générer';
+  String get scanAndGenerate => 'Analyser et générer';
 
   @override
   String get geminiApiKey => 'Clé API Gemini';
 
   @override
-  String get githubToken => 'Jeton GitHub (Optionnel)';
+  String get githubToken => 'Jeton GitHub';
 
   @override
-  String get getApiKey => 'Obtenez votre clé API depuis Google AI Studio';
+  String get getApiKey => 'Obtenir la clé de Google';
 
   @override
-  String get generateToken => 'Générer un jeton d\'accès personnel';
+  String get generateToken => 'Générer un jeton GitHub';
 
   @override
   String get elements => 'Éléments';
@@ -133,19 +133,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get words => 'Mots';
 
   @override
-  String get healthy => 'Sain';
+  String get healthy => 'Optimal';
 
   @override
-  String get errors => 'Erreurs';
+  String get errors => 'Problèmes critiques';
 
   @override
-  String get warnings => 'Avertissements';
+  String get warnings => 'Améliorations';
 
   @override
-  String get focusMode => 'MODE FOCUS';
+  String get focusMode => 'Mode focus';
 
   @override
-  String get autoSaved => 'Enregistré automatiquement';
+  String get autoSaved => 'Changements enregistrés';
 
   @override
   String get projectSettings => 'Paramètres du projet';
@@ -160,7 +160,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get contributing => 'Contribution';
 
   @override
-  String get colors => 'Couleurs';
+  String get colors => 'Couleurs de marque';
 
   @override
   String get formatting => 'Formatage';
@@ -175,10 +175,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get exportHtml => 'Exporter HTML';
 
   @override
-  String get listBulletStyle => 'Style de puce de liste';
+  String get listBulletStyle => 'Style de puce';
 
   @override
-  String get sectionSpacing => 'Espacement des sections (Nouvelles lignes)';
+  String get sectionSpacing => 'Espacement';
 
   @override
   String get templates => 'Modèles';
@@ -187,7 +187,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get load => 'Charger';
 
   @override
-  String get viewOnGithub => 'Voir sur GitHub';
+  String get viewOnGithub => 'GitHub';
 
   @override
   String get version => 'Version';
@@ -196,16 +196,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rightsReserved => 'Tous droits réservés.';
 
   @override
-  String get systemDefault => 'Défaut système';
+  String get systemDefault => 'Système';
 
   @override
-  String get settingsSaved => 'Paramètres enregistrés !';
+  String get settingsSaved => 'Paramètres mis à jour !';
 
   @override
-  String get commonShortcuts => 'Raccourcis courants';
+  String get commonShortcuts => 'Raccourcis généraux';
 
   @override
-  String get elementShortcuts => 'Raccourcis d\'éléments';
+  String get elementShortcuts => 'Raccourcis éditeur';
 
   @override
   String get newProject => 'Nouveau projet';
@@ -220,7 +220,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get exportProject => 'Exporter le projet';
 
   @override
-  String get print => 'Imprimer';
+  String get print => 'Imprimer PDF';
 
   @override
   String get undo => 'Annuler';
@@ -229,25 +229,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get redo => 'Rétablir';
 
   @override
-  String get showPreview => 'Afficher l\'aperçu';
+  String get showPreview => 'Aperçu en direct';
 
   @override
   String get toggleGrid => 'Basculer la grille';
 
   @override
-  String get toggleTheme => 'Basculer le thème';
+  String get toggleTheme => 'Apparence';
 
   @override
-  String get openSettings => 'Ouvrir les paramètres';
+  String get openSettings => 'Préférences';
 
   @override
-  String get help => 'Aide';
+  String get help => 'Support';
 
   @override
   String get addHeading => 'Ajouter un titre';
 
   @override
-  String get addSubheading => 'Ajouter un sous-titre';
+  String get addSubheading => 'Sous-titre';
 
   @override
   String get addParagraph => 'Ajouter un paragraphe';
@@ -269,18 +269,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Readme Creator est un outil puissant pour générer des fichiers README professionnels pour vos projets. Toutes les fonctionnalités fonctionnent sur ordinateur, mobile et web.';
+      'La suite SaaS ultime pour la documentation Markdown professionnelle. Vitesse et précision.';
 
   @override
-  String get enterGeminiKey =>
-      'Entrez votre clé API Gemini pour activer les fonctionnalités IA réelles.';
+  String get enterGeminiKey => 'Entrez la clé Gemini pour les fonctions IA.';
 
   @override
-  String get githubIntegration => 'Intégration GitHub';
+  String get githubIntegration => 'Synchro GitHub';
 
   @override
-  String get enterGithubToken =>
-      'Optionnel : Entrez le jeton GitHub pour des limites de taux plus élevées lors du scan des dépôts.';
+  String get enterGithubToken => 'Optionnel : Jeton GitHub pour scan avancé.';
 
   @override
   String get localFolder => 'Dossier local';
@@ -289,91 +287,122 @@ class AppLocalizationsFr extends AppLocalizations {
   String get githubRepo => 'Dépôt GitHub';
 
   @override
-  String get scanLocalFolder =>
-      'Scanner un dossier de projet local pour générer un README.';
+  String get scanLocalFolder => 'Scanner un dossier pour documenter.';
 
   @override
-  String get scanGithubRepo => 'Scanner un dépôt GitHub public.';
+  String get scanGithubRepo => 'Générer depuis un dépôt public.';
 
   @override
-  String get fetchingRepo => 'Récupération des données du dépôt...';
+  String get fetchingRepo => 'Synchronisation...';
 
   @override
-  String get analyzingAI => 'Analyse avec l\'IA...';
+  String get analyzingAI => 'Analyse IA en cours...';
 
   @override
-  String get readmeGenerated => 'README généré avec succès !';
+  String get readmeGenerated => 'README créé avec succès !';
 
   @override
-  String get projectImported => 'Projet importé avec succès';
+  String get projectImported => 'Importation réussie';
 
   @override
-  String get contentFetched =>
-      'Contenu récupéré ! Passez à l\'onglet \"Texte / Fichier\" pour vérifier.';
+  String get contentFetched => 'Contenu prêt pour révision.';
 
   @override
-  String get fetchFailed => 'Échec de la récupération';
+  String get fetchFailed => 'Échec de synchro';
 
   @override
-  String get generateExtraFiles => 'Générer des fichiers supplémentaires';
+  String get generateExtraFiles => 'Fichiers projet supp.';
 
   @override
-  String get publishToGithub => 'Publier sur GitHub';
+  String get publishToGithub => 'Pousser sur GitHub';
 
   @override
-  String get contributionGuidelinesBuilder =>
-      'Générateur de directives de contribution';
+  String get contributionGuidelinesBuilder => 'Guide de communauté';
 
   @override
-  String get contributionGuidelinesDesc =>
-      'Générer des fichiers communautaires standard pour votre projet.';
+  String get contributionGuidelinesDesc => 'Directives open-source standard.';
 
   @override
-  String get contributingMdDesc =>
-      'Directives sur la façon de contribuer au projet.';
+  String get contributingMdDesc => 'Guide de contribution.';
 
   @override
   String get generate => 'Générer';
 
   @override
-  String get codeOfConductDesc =>
-      'Code de conduite du Pacte des contributeurs.';
+  String get codeOfConductDesc => 'Code de conduite.';
 
   @override
-  String get githubTokenMissing =>
-      'Le jeton GitHub est manquant. Veuillez le définir dans les paramètres IA.';
+  String get githubTokenMissing => 'Jeton GitHub requis.';
 
   @override
-  String get owner => 'Propriétaire (Nom d\'utilisateur/Org)';
+  String get owner => 'Propriétaire';
 
   @override
   String get repoName => 'Nom du dépôt';
 
   @override
-  String get branchName => 'Nom de la nouvelle branche';
+  String get branchName => 'Branche';
 
   @override
-  String get commitMessage => 'Message de commit';
+  String get commitMessage => 'Message';
 
   @override
-  String get publishDialogDesc =>
-      'Cela créera une nouvelle branche et une demande de tirage (Pull Request).';
+  String get publishDialogDesc => 'Créer branche et PR instantanément.';
 
   @override
-  String get ownerRepoRequired => 'Le propriétaire et le dépôt sont requis';
+  String get ownerRepoRequired => 'Identité requise';
 
   @override
-  String get prCreated => 'Demande de tirage créée avec succès.';
+  String get prCreated => 'PR envoyée !';
 
   @override
   String get viewPrs => 'Voir les PR';
 
   @override
-  String get copiedToClipboard => 'Copié dans le presse-papiers';
+  String get copiedToClipboard => 'Copié !';
 
   @override
   String get download => 'Télécharger';
 
   @override
   String get copy => 'Copier';
+
+  @override
+  String get proActive => 'PRO ACTIF';
+
+  @override
+  String get freePlan => 'PLAN GRATUIT';
+
+  @override
+  String get upgradeToPro => 'Passer à la version Pro';
+
+  @override
+  String get becomeSponsor => 'Devenir sponsor';
+
+  @override
+  String get claimReward => 'Réclamer récompense';
+
+  @override
+  String get supportAndFeedback => 'Support & Feedback';
+
+  @override
+  String get adminDashboard => 'Tableau de bord';
+
+  @override
+  String get totalUsers => 'Utilisateurs totaux';
+
+  @override
+  String get proMembers => 'Membres Pro';
+
+  @override
+  String get feedbackTitle => 'Feedback utilisateur';
+
+  @override
+  String get viewAttachment => 'Voir pièce jointe';
+
+  @override
+  String get dragAndDropHint => 'Glisser-déposer ici';
+
+  @override
+  String get ctrlPasteHint => 'Ctrl+V pour coller l\'image';
 }

@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'Readme 创建器';
+  String get appTitle => 'Markdown Studio Pro';
 
   @override
   String get saveToLibrary => '保存到库';
@@ -39,13 +39,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aiSettings => 'AI 设置';
 
   @override
-  String get generateFromCodebase => '从代码库生成 (AI)';
+  String get generateFromCodebase => '扫描代码库 (AI)';
 
   @override
-  String get showTour => '显示导览';
+  String get showTour => '显示教程';
 
   @override
-  String get keyboardShortcuts => '键盘快捷键';
+  String get keyboardShortcuts => '快捷键';
 
   @override
   String get aboutDeveloper => '关于开发者';
@@ -54,7 +54,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get aboutApp => '关于应用';
 
   @override
-  String get changeLanguage => '更改语言';
+  String get changeLanguage => '语言';
 
   @override
   String get settings => '设置';
@@ -81,10 +81,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get description => '描述';
 
   @override
-  String get tags => '标签 (逗号分隔)';
+  String get tags => '标签';
 
   @override
-  String get projectSaved => '项目已保存到库';
+  String get projectSaved => '项目保存成功';
 
   @override
   String get error => '错误';
@@ -96,34 +96,34 @@ class AppLocalizationsZh extends AppLocalizations {
   String get delete => '删除';
 
   @override
-  String get restore => '恢复';
+  String get restore => '还原';
 
   @override
   String get confirmClearWorkspace => '清空工作区？';
 
   @override
-  String get confirmClearWorkspaceContent => '这将移除所有元素。此操作无法撤销（除非您有快照）。';
+  String get confirmClearWorkspaceContent => '这将删除所有元素。此操作无法撤销。';
 
   @override
-  String get pickProjectFolder => '选择项目文件夹';
+  String get pickProjectFolder => '选择文件夹';
 
   @override
-  String get repoUrl => '仓库 URL';
+  String get repoUrl => '代码库 URL';
 
   @override
-  String get scanAndGenerate => '扫描并生成';
+  String get scanAndGenerate => '分析并生成';
 
   @override
   String get geminiApiKey => 'Gemini API 密钥';
 
   @override
-  String get githubToken => 'GitHub 令牌 (可选)';
+  String get githubToken => 'GitHub 令牌';
 
   @override
-  String get getApiKey => '从 Google AI Studio 获取 API 密钥';
+  String get getApiKey => '从 Google 获取密钥';
 
   @override
-  String get generateToken => '生成个人访问令牌';
+  String get generateToken => '生成 GitHub 令牌';
 
   @override
   String get elements => '元素';
@@ -132,19 +132,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get words => '字数';
 
   @override
-  String get healthy => '健康';
+  String get healthy => '最佳';
 
   @override
-  String get errors => '错误';
+  String get errors => '严重问题';
 
   @override
-  String get warnings => '警告';
+  String get warnings => '改进建议';
 
   @override
   String get focusMode => '专注模式';
 
   @override
-  String get autoSaved => '已自动保存';
+  String get autoSaved => '更改已保存';
 
   @override
   String get projectSettings => '项目设置';
@@ -156,28 +156,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get license => '许可证';
 
   @override
-  String get contributing => '贡献';
+  String get contributing => '贡献指南';
 
   @override
-  String get colors => '颜色';
+  String get colors => '品牌颜色';
 
   @override
   String get formatting => '格式化';
 
   @override
-  String get primaryColor => '主色';
+  String get primaryColor => '主色调';
 
   @override
-  String get secondaryColor => '次色';
+  String get secondaryColor => '次色调';
 
   @override
   String get exportHtml => '导出 HTML';
 
   @override
-  String get listBulletStyle => '列表符号样式';
+  String get listBulletStyle => '列表样式';
 
   @override
-  String get sectionSpacing => '段落间距 (换行符)';
+  String get sectionSpacing => '分段间距';
 
   @override
   String get templates => '模板';
@@ -186,28 +186,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get load => '加载';
 
   @override
-  String get viewOnGithub => '在 GitHub 上查看';
+  String get viewOnGithub => 'GitHub';
 
   @override
   String get version => '版本';
 
   @override
-  String get rightsReserved => '版权所有。';
+  String get rightsReserved => '保留所有权利。';
 
   @override
   String get systemDefault => '系统默认';
 
   @override
-  String get settingsSaved => '设置已保存！';
+  String get settingsSaved => '设置已更新！';
 
   @override
   String get commonShortcuts => '常用快捷键';
 
   @override
-  String get elementShortcuts => '元素快捷键';
+  String get elementShortcuts => '编辑器快捷键';
 
   @override
-  String get newProject => '新���项目';
+  String get newProject => '新建项目';
 
   @override
   String get openProject => '打开项目';
@@ -219,7 +219,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get exportProject => '导出项目';
 
   @override
-  String get print => '打印';
+  String get print => '打印 PDF';
 
   @override
   String get undo => '撤销';
@@ -228,19 +228,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get redo => '重做';
 
   @override
-  String get showPreview => '显示预览';
+  String get showPreview => '实时预览';
 
   @override
   String get toggleGrid => '切换网格';
 
   @override
-  String get toggleTheme => '切换主题';
+  String get toggleTheme => '外观设置';
 
   @override
-  String get openSettings => '打开设置';
+  String get openSettings => '首选项';
 
   @override
-  String get help => '帮助';
+  String get help => '帮助与支持';
 
   @override
   String get addHeading => '添加标题';
@@ -267,102 +267,140 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addLink => '添加链接';
 
   @override
-  String get aboutDescription =>
-      'Readme Creator 是一个强大的工具，用于为您的项目生成专业的 README 文件。所有功能均可在桌面、移动设备和 Web 上运行。';
+  String get aboutDescription => '专业的 Markdown 文档生成 SaaS 套件。专为速度、精准和高效而生。';
 
   @override
-  String get enterGeminiKey => '输入您的 Gemini API 密钥以启用真正的 AI 功能。';
+  String get enterGeminiKey => '输入 Gemini API 密钥以解锁 AI 功能。';
 
   @override
-  String get githubIntegration => 'GitHub 集成';
+  String get githubIntegration => 'GitHub 同步';
 
   @override
-  String get enterGithubToken => '可选：输入 GitHub 令牌以在扫描仓库时获得更高的速率限制。';
+  String get enterGithubToken => '可选：输入 GitHub 令牌以获得更高扫描限额。';
 
   @override
-  String get localFolder => '本地文件夹';
+  String get localFolder => '本地目录';
 
   @override
   String get githubRepo => 'GitHub 仓库';
 
   @override
-  String get scanLocalFolder => '扫描本地项目文件夹以生成 README。';
+  String get scanLocalFolder => '扫描文件夹生成文档。';
 
   @override
-  String get scanGithubRepo => '扫描公共 GitHub 仓库。';
+  String get scanGithubRepo => '从公共 GitHub 仓库生成文档。';
 
   @override
-  String get fetchingRepo => '正在获取仓库数据...';
+  String get fetchingRepo => '正在同步仓库...';
 
   @override
-  String get analyzingAI => '正在使用 AI 分析...';
+  String get analyzingAI => 'AI 引擎正在分析...';
 
   @override
   String get readmeGenerated => 'README 生成成功！';
 
   @override
-  String get projectImported => '项目导入成功';
+  String get projectImported => '导入成功';
 
   @override
-  String get contentFetched => '内容已获取！切换到“文本/文件”选项卡进行查看。';
+  String get contentFetched => '内容已准备就绪。';
 
   @override
-  String get fetchFailed => '获取失败';
+  String get fetchFailed => '同步失败';
 
   @override
-  String get generateExtraFiles => '生成额外文件';
+  String get generateExtraFiles => '额外项目文件';
 
   @override
-  String get publishToGithub => '发布到 GitHub';
+  String get publishToGithub => '推送到 GitHub';
 
   @override
-  String get contributionGuidelinesBuilder => '贡献指南生成器';
+  String get contributionGuidelinesBuilder => '社区构建器';
 
   @override
-  String get contributionGuidelinesDesc => '为您的项目生成标准社区文件。';
+  String get contributionGuidelinesDesc => '标准开源指南。';
 
   @override
-  String get contributingMdDesc => '关于如何为项目做出贡献的指南。';
+  String get contributingMdDesc => '贡献流程指南。';
 
   @override
   String get generate => '生成';
 
   @override
-  String get codeOfConductDesc => '贡献者公约行为准则。';
+  String get codeOfConductDesc => '行为准则。';
 
   @override
-  String get githubTokenMissing => '缺少 GitHub 令牌。请在 AI 设置中设置。';
+  String get githubTokenMissing => '需要 GitHub 令牌。';
 
   @override
-  String get owner => '所有者 (用户名/组织)';
+  String get owner => '所有者';
 
   @override
   String get repoName => '仓库名称';
 
   @override
-  String get branchName => '新分支名称';
+  String get branchName => '分支名称';
 
   @override
   String get commitMessage => '提交信息';
 
   @override
-  String get publishDialogDesc => '这将创建一个新分支和拉取请求 (Pull Request)。';
+  String get publishDialogDesc => '立即创建新分支和 PR。';
 
   @override
-  String get ownerRepoRequired => '所有者和仓库是必需的';
+  String get ownerRepoRequired => '需要身份验证';
 
   @override
-  String get prCreated => '拉取请求创建成功。';
+  String get prCreated => '拉取请求已发送！';
 
   @override
   String get viewPrs => '查看 PR';
 
   @override
-  String get copiedToClipboard => '已复制到剪贴板';
+  String get copiedToClipboard => '已复制！';
 
   @override
   String get download => '下载';
 
   @override
   String get copy => '复制';
+
+  @override
+  String get proActive => '专业版已激活';
+
+  @override
+  String get freePlan => '免费版';
+
+  @override
+  String get upgradeToPro => '升级到专业版';
+
+  @override
+  String get becomeSponsor => '成为赞助者';
+
+  @override
+  String get claimReward => '领取奖励';
+
+  @override
+  String get supportAndFeedback => '支持与反馈';
+
+  @override
+  String get adminDashboard => '管理后台';
+
+  @override
+  String get totalUsers => '总用户数';
+
+  @override
+  String get proMembers => '专业版会员';
+
+  @override
+  String get feedbackTitle => '用户反馈';
+
+  @override
+  String get viewAttachment => '查看附件';
+
+  @override
+  String get dragAndDropHint => '拖放文件到此处';
+
+  @override
+  String get ctrlPasteHint => 'Ctrl+V 粘贴图片';
 }

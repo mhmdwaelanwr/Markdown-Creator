@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Markdown Creator'**
+  /// **'Markdown Creator Pro'**
   String get appTitle;
 
   /// No description provided for @saveToLibrary.
@@ -177,7 +177,7 @@ abstract class AppLocalizations {
   /// No description provided for @generateFromCodebase.
   ///
   /// In en, this message translates to:
-  /// **'Generate from Codebase (AI)'**
+  /// **'Scan Codebase (AI)'**
   String get generateFromCodebase;
 
   /// No description provided for @showTour.
@@ -189,7 +189,7 @@ abstract class AppLocalizations {
   /// No description provided for @keyboardShortcuts.
   ///
   /// In en, this message translates to:
-  /// **'Keyboard Shortcuts'**
+  /// **'Shortcuts'**
   String get keyboardShortcuts;
 
   /// No description provided for @aboutDeveloper.
@@ -207,7 +207,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Change Language'**
+  /// **'Language'**
   String get changeLanguage;
 
   /// No description provided for @settings.
@@ -261,13 +261,13 @@ abstract class AppLocalizations {
   /// No description provided for @tags.
   ///
   /// In en, this message translates to:
-  /// **'Tags (comma separated)'**
+  /// **'Tags'**
   String get tags;
 
   /// No description provided for @projectSaved.
   ///
   /// In en, this message translates to:
-  /// **'Project saved to library'**
+  /// **'Project saved successfully'**
   String get projectSaved;
 
   /// No description provided for @error.
@@ -303,13 +303,13 @@ abstract class AppLocalizations {
   /// No description provided for @confirmClearWorkspaceContent.
   ///
   /// In en, this message translates to:
-  /// **'This will remove all elements. This action cannot be undone (unless you have a snapshot).'**
+  /// **'This will remove all elements. This action cannot be undone.'**
   String get confirmClearWorkspaceContent;
 
   /// No description provided for @pickProjectFolder.
   ///
   /// In en, this message translates to:
-  /// **'Pick Project Folder'**
+  /// **'Select Folder'**
   String get pickProjectFolder;
 
   /// No description provided for @repoUrl.
@@ -321,7 +321,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanAndGenerate.
   ///
   /// In en, this message translates to:
-  /// **'Scan & Generate'**
+  /// **'Analyze & Generate'**
   String get scanAndGenerate;
 
   /// No description provided for @geminiApiKey.
@@ -333,19 +333,19 @@ abstract class AppLocalizations {
   /// No description provided for @githubToken.
   ///
   /// In en, this message translates to:
-  /// **'GitHub Token (Optional)'**
+  /// **'GitHub Token'**
   String get githubToken;
 
   /// No description provided for @getApiKey.
   ///
   /// In en, this message translates to:
-  /// **'Get your API key from Google AI Studio'**
+  /// **'Get API key from Google'**
   String get getApiKey;
 
   /// No description provided for @generateToken.
   ///
   /// In en, this message translates to:
-  /// **'Generate a Personal Access Token'**
+  /// **'Generate GitHub Token'**
   String get generateToken;
 
   /// No description provided for @elements.
@@ -363,31 +363,31 @@ abstract class AppLocalizations {
   /// No description provided for @healthy.
   ///
   /// In en, this message translates to:
-  /// **'Healthy'**
+  /// **'Optimal'**
   String get healthy;
 
   /// No description provided for @errors.
   ///
   /// In en, this message translates to:
-  /// **'Errors'**
+  /// **'Critical Issues'**
   String get errors;
 
   /// No description provided for @warnings.
   ///
   /// In en, this message translates to:
-  /// **'Warnings'**
+  /// **'Improvements'**
   String get warnings;
 
   /// No description provided for @focusMode.
   ///
   /// In en, this message translates to:
-  /// **'FOCUS MODE'**
+  /// **'Focus Mode'**
   String get focusMode;
 
   /// No description provided for @autoSaved.
   ///
   /// In en, this message translates to:
-  /// **'Auto-saved'**
+  /// **'Changes Saved'**
   String get autoSaved;
 
   /// No description provided for @projectSettings.
@@ -417,7 +417,7 @@ abstract class AppLocalizations {
   /// No description provided for @colors.
   ///
   /// In en, this message translates to:
-  /// **'Colors'**
+  /// **'Branding Colors'**
   String get colors;
 
   /// No description provided for @formatting.
@@ -447,13 +447,13 @@ abstract class AppLocalizations {
   /// No description provided for @listBulletStyle.
   ///
   /// In en, this message translates to:
-  /// **'List Bullet Style'**
+  /// **'Bullet Style'**
   String get listBulletStyle;
 
   /// No description provided for @sectionSpacing.
   ///
   /// In en, this message translates to:
-  /// **'Section Spacing (Newlines)'**
+  /// **'Section Spacing'**
   String get sectionSpacing;
 
   /// No description provided for @templates.
@@ -471,7 +471,7 @@ abstract class AppLocalizations {
   /// No description provided for @viewOnGithub.
   ///
   /// In en, this message translates to:
-  /// **'View on GitHub'**
+  /// **'GitHub'**
   String get viewOnGithub;
 
   /// No description provided for @version.
@@ -495,19 +495,19 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSaved.
   ///
   /// In en, this message translates to:
-  /// **'Settings saved!'**
+  /// **'Settings updated!'**
   String get settingsSaved;
 
   /// No description provided for @commonShortcuts.
   ///
   /// In en, this message translates to:
-  /// **'Common Shortcuts'**
+  /// **'General Shortcuts'**
   String get commonShortcuts;
 
   /// No description provided for @elementShortcuts.
   ///
   /// In en, this message translates to:
-  /// **'Element Shortcuts'**
+  /// **'Editor Shortcuts'**
   String get elementShortcuts;
 
   /// No description provided for @newProject.
@@ -537,7 +537,7 @@ abstract class AppLocalizations {
   /// No description provided for @print.
   ///
   /// In en, this message translates to:
-  /// **'Print'**
+  /// **'Print PDF'**
   String get print;
 
   /// No description provided for @undo.
@@ -555,7 +555,7 @@ abstract class AppLocalizations {
   /// No description provided for @showPreview.
   ///
   /// In en, this message translates to:
-  /// **'Show Preview'**
+  /// **'Live Preview'**
   String get showPreview;
 
   /// No description provided for @toggleGrid.
@@ -567,19 +567,19 @@ abstract class AppLocalizations {
   /// No description provided for @toggleTheme.
   ///
   /// In en, this message translates to:
-  /// **'Toggle Theme'**
+  /// **'Appearance'**
   String get toggleTheme;
 
   /// No description provided for @openSettings.
   ///
   /// In en, this message translates to:
-  /// **'Open Settings'**
+  /// **'Preferences'**
   String get openSettings;
 
   /// No description provided for @help.
   ///
   /// In en, this message translates to:
-  /// **'Help'**
+  /// **'Support'**
   String get help;
 
   /// No description provided for @addHeading.
@@ -633,115 +633,115 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'Markdown Creator is a powerful tool for generating professional Markdown documentation for your projects. All features work across desktop, mobile and web.'**
+  /// **'The ultimate SaaS suite for professional Markdown documentation. Built for speed, precision, and efficiency.'**
   String get aboutDescription;
 
   /// No description provided for @enterGeminiKey.
   ///
   /// In en, this message translates to:
-  /// **'Enter your Gemini API Key to enable real AI features.'**
+  /// **'Enter Gemini API Key to unlock AI features.'**
   String get enterGeminiKey;
 
   /// No description provided for @githubIntegration.
   ///
   /// In en, this message translates to:
-  /// **'GitHub Integration'**
+  /// **'GitHub Sync'**
   String get githubIntegration;
 
   /// No description provided for @enterGithubToken.
   ///
   /// In en, this message translates to:
-  /// **'Optional: Enter GitHub Token for higher rate limits when scanning repos.'**
+  /// **'Optional: GitHub Token for enhanced repository scanning.'**
   String get enterGithubToken;
 
   /// No description provided for @localFolder.
   ///
   /// In en, this message translates to:
-  /// **'Local Folder'**
+  /// **'Local Directory'**
   String get localFolder;
 
   /// No description provided for @githubRepo.
   ///
   /// In en, this message translates to:
-  /// **'GitHub Repo'**
+  /// **'GitHub Repository'**
   String get githubRepo;
 
   /// No description provided for @scanLocalFolder.
   ///
   /// In en, this message translates to:
-  /// **'Scan a local project folder to generate a README.'**
+  /// **'Scan a folder to build documentation.'**
   String get scanLocalFolder;
 
   /// No description provided for @scanGithubRepo.
   ///
   /// In en, this message translates to:
-  /// **'Scan a public GitHub repository.'**
+  /// **'Generate docs from a public GitHub repo.'**
   String get scanGithubRepo;
 
   /// No description provided for @fetchingRepo.
   ///
   /// In en, this message translates to:
-  /// **'Fetching repository data...'**
+  /// **'Syncing repository...'**
   String get fetchingRepo;
 
   /// No description provided for @analyzingAI.
   ///
   /// In en, this message translates to:
-  /// **'Analyzing with AI...'**
+  /// **'AI Engine Analyzing...'**
   String get analyzingAI;
 
   /// No description provided for @readmeGenerated.
   ///
   /// In en, this message translates to:
-  /// **'README generated successfully!'**
+  /// **'README crafted successfully!'**
   String get readmeGenerated;
 
   /// No description provided for @projectImported.
   ///
   /// In en, this message translates to:
-  /// **'Project imported successfully'**
+  /// **'Import successful'**
   String get projectImported;
 
   /// No description provided for @contentFetched.
   ///
   /// In en, this message translates to:
-  /// **'Content fetched! Switch to \"Text / File\" tab to review.'**
+  /// **'Content ready for review.'**
   String get contentFetched;
 
   /// No description provided for @fetchFailed.
   ///
   /// In en, this message translates to:
-  /// **'Fetch Failed'**
+  /// **'Sync Failed'**
   String get fetchFailed;
 
   /// No description provided for @generateExtraFiles.
   ///
   /// In en, this message translates to:
-  /// **'Generate Extra Files'**
+  /// **'Extra Project Files'**
   String get generateExtraFiles;
 
   /// No description provided for @publishToGithub.
   ///
   /// In en, this message translates to:
-  /// **'Publish to GitHub'**
+  /// **'Push to GitHub'**
   String get publishToGithub;
 
   /// No description provided for @contributionGuidelinesBuilder.
   ///
   /// In en, this message translates to:
-  /// **'Contribution Guidelines Builder'**
+  /// **'Community Builder'**
   String get contributionGuidelinesBuilder;
 
   /// No description provided for @contributionGuidelinesDesc.
   ///
   /// In en, this message translates to:
-  /// **'Generate standard community files for your project.'**
+  /// **'Standard open-source guidelines.'**
   String get contributionGuidelinesDesc;
 
   /// No description provided for @contributingMdDesc.
   ///
   /// In en, this message translates to:
-  /// **'Guidelines for how to contribute to the project.'**
+  /// **'Contribution workflow guide.'**
   String get contributingMdDesc;
 
   /// No description provided for @generate.
@@ -753,67 +753,67 @@ abstract class AppLocalizations {
   /// No description provided for @codeOfConductDesc.
   ///
   /// In en, this message translates to:
-  /// **'Contributor Covenant Code of Conduct.'**
+  /// **'Code of Conduct policy.'**
   String get codeOfConductDesc;
 
   /// No description provided for @githubTokenMissing.
   ///
   /// In en, this message translates to:
-  /// **'GitHub Token is missing. Please set it in AI Settings.'**
+  /// **'GitHub Token required.'**
   String get githubTokenMissing;
 
   /// No description provided for @owner.
   ///
   /// In en, this message translates to:
-  /// **'Owner (Username/Org)'**
+  /// **'Owner'**
   String get owner;
 
   /// No description provided for @repoName.
   ///
   /// In en, this message translates to:
-  /// **'Repository Name'**
+  /// **'Repo Name'**
   String get repoName;
 
   /// No description provided for @branchName.
   ///
   /// In en, this message translates to:
-  /// **'New Branch Name'**
+  /// **'Branch Name'**
   String get branchName;
 
   /// No description provided for @commitMessage.
   ///
   /// In en, this message translates to:
-  /// **'Commit Message'**
+  /// **'Message'**
   String get commitMessage;
 
   /// No description provided for @publishDialogDesc.
   ///
   /// In en, this message translates to:
-  /// **'This will create a new branch and a Pull Request.'**
+  /// **'Create a new branch and PR instantly.'**
   String get publishDialogDesc;
 
   /// No description provided for @ownerRepoRequired.
   ///
   /// In en, this message translates to:
-  /// **'Owner and Repo are required'**
+  /// **'Identity required'**
   String get ownerRepoRequired;
 
   /// No description provided for @prCreated.
   ///
   /// In en, this message translates to:
-  /// **'Pull Request created successfully.'**
+  /// **'Pull Request Sent!'**
   String get prCreated;
 
   /// No description provided for @viewPrs.
   ///
   /// In en, this message translates to:
-  /// **'View PRs'**
+  /// **'Open PRs'**
   String get viewPrs;
 
   /// No description provided for @copiedToClipboard.
   ///
   /// In en, this message translates to:
-  /// **'Copied to clipboard'**
+  /// **'Copied!'**
   String get copiedToClipboard;
 
   /// No description provided for @download.
@@ -827,6 +827,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy'**
   String get copy;
+
+  /// No description provided for @proActive.
+  ///
+  /// In en, this message translates to:
+  /// **'PRO ACTIVE'**
+  String get proActive;
+
+  /// No description provided for @freePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'FREE PLAN'**
+  String get freePlan;
+
+  /// No description provided for @upgradeToPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro'**
+  String get upgradeToPro;
+
+  /// No description provided for @becomeSponsor.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Sponsor'**
+  String get becomeSponsor;
+
+  /// No description provided for @claimReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim Reward'**
+  String get claimReward;
+
+  /// No description provided for @supportAndFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & Feedback'**
+  String get supportAndFeedback;
+
+  /// No description provided for @adminDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard'**
+  String get adminDashboard;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Users'**
+  String get totalUsers;
+
+  /// No description provided for @proMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Members'**
+  String get proMembers;
+
+  /// No description provided for @feedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Feedback'**
+  String get feedbackTitle;
+
+  /// No description provided for @viewAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'View Attachment'**
+  String get viewAttachment;
+
+  /// No description provided for @dragAndDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag & Drop files here'**
+  String get dragAndDropHint;
+
+  /// No description provided for @ctrlPasteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ctrl+V to paste image'**
+  String get ctrlPasteHint;
 }
 
 class _AppLocalizationsDelegate

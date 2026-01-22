@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'Создатель Readme';
+  String get appTitle => 'Markdown Studio Pro';
 
   @override
   String get saveToLibrary => 'Сохранить в библиотеку';
@@ -18,13 +18,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get localSnapshots => 'Локальные снимки';
 
   @override
-  String get clearWorkspace => 'Очистить рабочую область';
+  String get clearWorkspace => 'Очистить рабочее пространство';
 
   @override
   String get importMarkdown => 'Импорт Markdown';
 
   @override
-  String get socialPreviewDesigner => 'Дизайнер превью для соцсетей';
+  String get socialPreviewDesigner => 'Дизайнер соц-превью';
 
   @override
   String get githubActionsGenerator => 'Генератор GitHub Actions';
@@ -39,7 +39,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiSettings => 'Настройки ИИ';
 
   @override
-  String get generateFromCodebase => 'Генерация из кода (ИИ)';
+  String get generateFromCodebase => 'Сканировать код (ИИ)';
 
   @override
   String get showTour => 'Показать тур';
@@ -54,7 +54,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aboutApp => 'О приложении';
 
   @override
-  String get changeLanguage => 'Изменить язык';
+  String get changeLanguage => 'Язык';
 
   @override
   String get settings => 'Настройки';
@@ -75,16 +75,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get export => 'Экспорт';
 
   @override
-  String get projectName => 'Название проекта';
+  String get projectName => 'Имя проекта';
 
   @override
   String get description => 'Описание';
 
   @override
-  String get tags => 'Теги (через запятую)';
+  String get tags => 'Теги';
 
   @override
-  String get projectSaved => 'Проект сохранен в библиотеку';
+  String get projectSaved => 'Проект успешно сохранен';
 
   @override
   String get error => 'Ошибка';
@@ -99,32 +99,32 @@ class AppLocalizationsRu extends AppLocalizations {
   String get restore => 'Восстановить';
 
   @override
-  String get confirmClearWorkspace => 'Очистить рабочую область?';
+  String get confirmClearWorkspace => 'Очистить рабочее место?';
 
   @override
   String get confirmClearWorkspaceContent =>
-      'Это удалит все элементы. Это действие нельзя отменить (если у вас нет снимка).';
+      'Это удалит все элементы. Действие необратимо.';
 
   @override
-  String get pickProjectFolder => 'Выбрать папку проекта';
+  String get pickProjectFolder => 'Выбрать папку';
 
   @override
   String get repoUrl => 'URL репозитория';
 
   @override
-  String get scanAndGenerate => 'Сканировать и генерировать';
+  String get scanAndGenerate => 'Анализ и генерация';
 
   @override
-  String get geminiApiKey => 'API ключ Gemini';
+  String get geminiApiKey => 'Ключ API Gemini';
 
   @override
-  String get githubToken => 'Токен GitHub (опционально)';
+  String get githubToken => 'Токен GitHub';
 
   @override
-  String get getApiKey => 'Получите API ключ в Google AI Studio';
+  String get getApiKey => 'Получить ключ в Google';
 
   @override
-  String get generateToken => 'Сгенерировать персональный токен доступа';
+  String get generateToken => 'Создать токен GitHub';
 
   @override
   String get elements => 'Элементы';
@@ -133,19 +133,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get words => 'Слова';
 
   @override
-  String get healthy => 'Здоровый';
+  String get healthy => 'Оптимально';
 
   @override
-  String get errors => 'Ошибки';
+  String get errors => 'Критические ошибки';
 
   @override
-  String get warnings => 'Предупреждения';
+  String get warnings => 'Улучшения';
 
   @override
-  String get focusMode => 'РЕЖИМ ФОКУСИРОВКИ';
+  String get focusMode => 'Режим фокуса';
 
   @override
-  String get autoSaved => 'Автосохранение';
+  String get autoSaved => 'Изменения сохранены';
 
   @override
   String get projectSettings => 'Настройки проекта';
@@ -157,10 +157,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get license => 'Лицензия';
 
   @override
-  String get contributing => 'Вклад';
+  String get contributing => 'Участие';
 
   @override
-  String get colors => 'Цвета';
+  String get colors => 'Цвета бренда';
 
   @override
   String get formatting => 'Форматирование';
@@ -172,13 +172,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get secondaryColor => 'Вторичный цвет';
 
   @override
-  String get exportHtml => 'Экспорт HTML';
+  String get exportHtml => 'Экспорт в HTML';
 
   @override
-  String get listBulletStyle => 'Стиль маркеров списка';
+  String get listBulletStyle => 'Стиль списка';
 
   @override
-  String get sectionSpacing => 'Интервал между разделами (новые строки)';
+  String get sectionSpacing => 'Интервал разделов';
 
   @override
   String get templates => 'Шаблоны';
@@ -187,7 +187,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get load => 'Загрузить';
 
   @override
-  String get viewOnGithub => 'Посмотреть на GitHub';
+  String get viewOnGithub => 'GitHub';
 
   @override
   String get version => 'Версия';
@@ -196,16 +196,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get rightsReserved => 'Все права защищены.';
 
   @override
-  String get systemDefault => 'Системный по умолчанию';
+  String get systemDefault => 'Системный';
 
   @override
-  String get settingsSaved => 'Настройки сохранены!';
+  String get settingsSaved => 'Настройки обновлены!';
 
   @override
-  String get commonShortcuts => 'Общие сочетания клавиш';
+  String get commonShortcuts => 'Общие команды';
 
   @override
-  String get elementShortcuts => 'Сочетания клавиш элементов';
+  String get elementShortcuts => 'Команды редактора';
 
   @override
   String get newProject => 'Новый проект';
@@ -220,7 +220,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get exportProject => 'Экспорт проекта';
 
   @override
-  String get print => 'Печать';
+  String get print => 'Печать PDF';
 
   @override
   String get undo => 'Отменить';
@@ -229,31 +229,31 @@ class AppLocalizationsRu extends AppLocalizations {
   String get redo => 'Повторить';
 
   @override
-  String get showPreview => 'Показать превью';
+  String get showPreview => 'Предпросмотр';
 
   @override
-  String get toggleGrid => 'Переключить сетку';
+  String get toggleGrid => 'Сетка';
 
   @override
-  String get toggleTheme => 'Переключить тему';
+  String get toggleTheme => 'Внешний вид';
 
   @override
-  String get openSettings => 'Открыть настройки';
+  String get openSettings => 'Предпочтения';
 
   @override
-  String get help => 'Помощь';
+  String get help => 'Поддержка';
 
   @override
   String get addHeading => 'Добавить заголовок';
 
   @override
-  String get addSubheading => 'Добавить подзаголовок';
+  String get addSubheading => 'Подзаголовок';
 
   @override
   String get addParagraph => 'Добавить абзац';
 
   @override
-  String get addImage => 'Добавить изображение';
+  String get addImage => 'Добавить фото';
 
   @override
   String get addTable => 'Добавить таблицу';
@@ -269,18 +269,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutDescription =>
-      'Readme Creator - мощный инструмент для создания профессиональных файлов README для ваших проектов. Все функции работают на десктопе, мобильных устройствах и в вебе.';
+      'Лучший SaaS-набор для профессиональной документации Markdown. Скорость и точность.';
 
   @override
-  String get enterGeminiKey =>
-      'Введите ваш API ключ Gemini, чтобы включить настоящие функции ИИ.';
+  String get enterGeminiKey => 'Введите ключ Gemini для функций ИИ.';
 
   @override
-  String get githubIntegration => 'Интеграция с GitHub';
+  String get githubIntegration => 'Синхронизация GitHub';
 
   @override
   String get enterGithubToken =>
-      'Опционально: Введите токен GitHub для увеличения лимитов при сканировании репозиториев.';
+      'Опционально: токен для глубокого сканирования.';
 
   @override
   String get localFolder => 'Локальная папка';
@@ -289,89 +288,122 @@ class AppLocalizationsRu extends AppLocalizations {
   String get githubRepo => 'Репозиторий GitHub';
 
   @override
-  String get scanLocalFolder =>
-      'Сканировать локальную папку проекта для генерации README.';
+  String get scanLocalFolder => 'Сканировать папку для документации.';
 
   @override
-  String get scanGithubRepo => 'Сканировать публичный репозиторий GitHub.';
+  String get scanGithubRepo => 'Генерация из публичного репо.';
 
   @override
-  String get fetchingRepo => 'Получение данных репозитория...';
+  String get fetchingRepo => 'Синхронизация...';
 
   @override
-  String get analyzingAI => 'Анализ с помощью ИИ...';
+  String get analyzingAI => 'ИИ анализирует...';
 
   @override
-  String get readmeGenerated => 'README успешно сгенерирован!';
+  String get readmeGenerated => 'README успешно создан!';
 
   @override
-  String get projectImported => 'Проект успешно импортирован';
+  String get projectImported => 'Импорт завершен';
 
   @override
-  String get contentFetched =>
-      'Контент получен! Переключитесь на вкладку \"Текст / Файл\" для просмотра.';
+  String get contentFetched => 'Контент готов к просмотру.';
 
   @override
-  String get fetchFailed => 'Ошибка получения';
+  String get fetchFailed => 'Ошибка синхронизации';
 
   @override
-  String get generateExtraFiles => 'Генерировать дополнительные файлы';
+  String get generateExtraFiles => 'Доп. файлы проекта';
 
   @override
-  String get publishToGithub => 'Опубликовать на GitHub';
+  String get publishToGithub => 'Опубликовать в GitHub';
 
   @override
-  String get contributionGuidelinesBuilder =>
-      'Конструктор руководства по участию';
+  String get contributionGuidelinesBuilder => 'Сборка сообщества';
 
   @override
-  String get contributionGuidelinesDesc =>
-      'Генерация стандартных файлов сообщества для вашего проекта.';
+  String get contributionGuidelinesDesc => 'Стандартные правила Open Source.';
 
   @override
-  String get contributingMdDesc =>
-      'Руководство по тому, как внести вклад в проект.';
+  String get contributingMdDesc => 'Руководство по участию.';
 
   @override
-  String get generate => 'Генерировать';
+  String get generate => 'Создать';
 
   @override
-  String get codeOfConductDesc => 'Кодекс поведения участников.';
+  String get codeOfConductDesc => 'Кодекс поведения.';
 
   @override
-  String get githubTokenMissing =>
-      'Токен GitHub отсутствует. Пожалуйста, установите его в настройках ИИ.';
+  String get githubTokenMissing => 'Требуется токен GitHub.';
 
   @override
-  String get owner => 'Владелец (Имя пользователя/Организация)';
+  String get owner => 'Владелец';
 
   @override
-  String get repoName => 'Название репозитория';
+  String get repoName => 'Имя репо';
 
   @override
-  String get branchName => 'Название новой ветки';
+  String get branchName => 'Ветка';
 
   @override
-  String get commitMessage => 'Сообщение коммита';
+  String get commitMessage => 'Сообщение';
 
   @override
-  String get publishDialogDesc => 'Это создаст новую ветку и Pull Request.';
+  String get publishDialogDesc => 'Создать ветку и PR мгновенно.';
 
   @override
-  String get ownerRepoRequired => 'Владелец и репозиторий обязательны';
+  String get ownerRepoRequired => 'Требуется ID';
 
   @override
-  String get prCreated => 'Pull Request успешно создан.';
+  String get prCreated => 'PR отправлен!';
 
   @override
-  String get viewPrs => 'Посмотреть PR';
+  String get viewPrs => 'Смотреть PR';
 
   @override
-  String get copiedToClipboard => 'Скопировано в буфер обмена';
+  String get copiedToClipboard => 'Скопировано!';
 
   @override
   String get download => 'Скачать';
 
   @override
   String get copy => 'Копировать';
+
+  @override
+  String get proActive => 'PRO АККАУНТ АКТИВЕН';
+
+  @override
+  String get freePlan => 'БЕСПЛАТНЫЙ ТАРИФ';
+
+  @override
+  String get upgradeToPro => 'Обновить до Pro';
+
+  @override
+  String get becomeSponsor => 'Стать спонсором';
+
+  @override
+  String get claimReward => 'Получить награду';
+
+  @override
+  String get supportAndFeedback => 'Поддержка и отзывы';
+
+  @override
+  String get adminDashboard => 'Панель управления';
+
+  @override
+  String get totalUsers => 'Всего пользователей';
+
+  @override
+  String get proMembers => 'Участники Pro';
+
+  @override
+  String get feedbackTitle => 'Отзывы пользователей';
+
+  @override
+  String get viewAttachment => 'Посмотреть вложение';
+
+  @override
+  String get dragAndDropHint => 'Перетащите файлы сюда';
+
+  @override
+  String get ctrlPasteHint => 'Ctrl+V для вставки фото';
 }

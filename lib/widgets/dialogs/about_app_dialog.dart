@@ -28,7 +28,7 @@ class AboutAppDialog extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Readme Creator is an advanced development utility designed to simplify the process of creating high-quality documentation. Built with a focus on speed, aesthetics, and developer experience.',
+                'Markdown Creator is an advanced development utility designed to simplify the process of creating high-quality documentation. Built with a focus on speed, aesthetics, and developer experience.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 14,
@@ -61,7 +61,7 @@ class AboutAppDialog extends StatelessWidget {
               title: 'Source Code & Contributions',
               subtitle: 'Open Source on GitHub',
               trailing: 'Explore',
-              onTap: () => _launchUrl('https://github.com/mhmdwaelanwr/Readme-Creator'),
+              onTap: () => _launchUrl('https://github.com/mhmdwaelanwr/Markdown-Creator'),
             ),
             _buildInfoCard(
               context,
@@ -72,7 +72,7 @@ class AboutAppDialog extends StatelessWidget {
               onTap: () {
                 showLicensePage(
                   context: context,
-                  applicationName: 'Readme Creator',
+                  applicationName: 'Markdown Creator',
                   applicationVersion: '1.0.0',
                   applicationIcon: const Padding(
                     padding: EdgeInsets.all(12.0),
@@ -92,7 +92,7 @@ class AboutAppDialog extends StatelessWidget {
           child: Text('Dismiss', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
         ),
         FilledButton.icon(
-          onPressed: () => _launchUrl('https://github.com/mhmdwaelanwr/Readme-Creator/stargazers'),
+          onPressed: () => _launchUrl('https://github.com/mhmdwaelanwr/Markdown-Creator/stargazers'),
           icon: const Icon(Icons.star_rounded, size: 18),
           label: const Text('Support with a Star'),
           style: FilledButton.styleFrom(
@@ -132,7 +132,7 @@ class AboutAppDialog extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Readme Creator',
+            'Markdown Creator',
             style: GoogleFonts.poppins(
               fontSize: 32,
               fontWeight: FontWeight.w800,

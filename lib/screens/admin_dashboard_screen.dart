@@ -32,6 +32,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   // System Config Controllers
   final _announcementController = TextEditingController();
   final _minVersionController = TextEditingController();
+  
+  // Remote Assets Controllers
+  final _headerIconController = TextEditingController();
+  final _headerTextController = TextEditingController();
+  final _dialogTitleController = TextEditingController();
+  final _dialogContentController = TextEditingController();
+  final _dialogIconController = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +57,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     _notifActionController.dispose();
     _announcementController.dispose();
     _minVersionController.dispose();
+    _headerIconController.dispose();
+    _headerTextController.dispose();
+    _dialogTitleController.dispose();
+    _dialogContentController.dispose();
+    _dialogIconController.dispose();
     super.dispose();
   }
 
@@ -223,66 +235,84 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             children: [
               Text('Global Application Control', style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text('Modify app behavior in real-time for all users.', style: const TextStyle(color: Colors.grey)),
+              Text('Modify app behavior and remote assets in real-time.', style: const TextStyle(color: Colors.grey)),
               const SizedBox(height: 32),
               
               _buildConfigSection(
-                title: 'Service Status',
+                title: 'Service Status & AI',
                 icon: Icons.power_settings_new_rounded,
                 children: [
                   _buildToggleTile(
                     'Maintenance Mode', 
-                    'Stops all user interactions and shows maintenance screen.',
+                    'Stops all user interactions globally.',
                     config['maintenanceMode'] ?? false,
                     (v) => _updateConfig('maintenanceMode', v),
                   ),
                   const Divider(),
                   _buildToggleTile(
                     'Allow AI Generation', 
-                    'Enable/Disable Gemini AI features globally.',
+                    'Enable/Disable Gemini AI features.',
                     config['aiEnabled'] ?? true,
                     (v) => _updateConfig('aiEnabled', v),
-                  ),
-                  const Divider(),
-                  _buildToggleTile(
-                    'Enable Public Templates', 
-                    'Control visibility of public gallery.',
-                    config['templatesVisible'] ?? true,
-                    (v) => _updateConfig('templatesVisible', v),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               _buildConfigSection(
-                title: 'Broadcast Announcement',
-                icon: Icons.campaign_rounded,
+                title: 'Remote Branding (Holidays/Events)',
+                icon: Icons.palette_outlined,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        TextField(
-                          controller: _announcementController..text = config['announcementText'] ?? '',
-                          decoration: InputDecoration(
-                            hintText: 'Display a banner message to all users...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
+                        _buildInlineField('Header Icon URL', _headerIconController..text = config['remoteHeaderIcon'] ?? '', 'https://...'),
+                        const SizedBox(height: 12),
+                        _buildInlineField('Header Text Override', _headerTextController..text = config['remoteHeaderText'] ?? '', 'e.g., Happy New Year!'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _updateConfigMap({
+                            'remoteHeaderIcon': _headerIconController.text,
+                            'remoteHeaderText': _headerTextController.text,
+                          }),
+                          child: const Text('Update Branding Assets'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              _buildConfigSection(
+                title: 'Global Event Dialog',
+                icon: Icons.auto_awesome_rounded,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        _buildToggleTile(
+                          'Show Event Dialog', 
+                          'Displays a custom popup to all users upon opening.',
+                          config['showEventDialog'] ?? false,
+                          (v) => _updateConfig('showEventDialog', v),
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Text('Show Banner: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                            Switch(
-                              value: config['showAnnouncement'] ?? false, 
-                              onChanged: (v) => _updateConfig('showAnnouncement', v),
-                            ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: () => _updateConfig('announcementText', _announcementController.text),
-                              child: const Text('Update Banner'),
-                            ),
-                          ],
+                        _buildInlineField('Dialog Icon (URL)', _dialogIconController..text = config['eventDialogIcon'] ?? '', 'Icon URL...'),
+                        const SizedBox(height: 8),
+                        _buildInlineField('Dialog Title', _dialogTitleController..text = config['eventDialogTitle'] ?? '', 'Event Title...'),
+                        const SizedBox(height: 8),
+                        _buildInlineField('Dialog Content', _dialogContentController..text = config['eventDialogContent'] ?? '', 'Message for users...', maxLines: 3),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _updateConfigMap({
+                            'eventDialogIcon': _dialogIconController.text,
+                            'eventDialogTitle': _dialogTitleController.text,
+                            'eventDialogContent': _dialogContentController.text,
+                          }),
+                          child: const Text('Save Dialog Settings'),
                         ),
                       ],
                     ),
@@ -292,7 +322,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               const SizedBox(height: 24),
               
               _buildConfigSection(
-                title: 'Version Management',
+                title: 'Version & Maintenance',
                 icon: Icons.system_update_rounded,
                 children: [
                   Padding(
@@ -319,6 +349,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ),
         );
       },
+    );
+  }
+
+  Widget _buildInlineField(String label, TextEditingController controller, String hint, {int maxLines = 1}) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        isDense: true,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 
@@ -355,6 +398,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   Future<void> _updateConfig(String key, dynamic value) async {
     await _firestoreService.updateAppConfig({key: value});
     if (mounted) ToastHelper.show(context, 'System setting updated!');
+  }
+
+  Future<void> _updateConfigMap(Map<String, dynamic> data) async {
+    await _firestoreService.updateAppConfig(data);
+    if (mounted) ToastHelper.show(context, 'Remote assets updated!');
   }
 
   Widget _buildNotificationsTab(bool isDark) {

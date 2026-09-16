@@ -3,24 +3,59 @@ dist/
 build/
 coverage/
 
+# Local environment / secrets
 .env
 .env.*
 !.env.example
 
+# Logs
 *.log
 server-*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
+# Editors / OS
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
 
+# React Native / Android
 android/.gradle/
 android/local.properties
 android/app/build/
-ios/Pods/
-ios/build/
-
+android/build/
 *.jks
 *.keystore
+
+# iOS
+ios/Pods/
+ios/build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
 *.p12
+*.pfx
 *.mobileprovision
+
+# Web / tooling caches
+.cache/
+.parcel-cache/
+.webpack-cache/
+
+# Local visual-debug captures from archived development sessions
+/clip-title.png
+/dnd-screenshot.png
+/dnd-screenshot-2.png
+/headful.png
+/page-full.png
+/post-fix-render.png
+/render-after-design.png
+/render-after-fix.png
+/render-after-pro-features.png
+/render-check.png
+/root-only.png
+/ui-debug.png
+/wait-10s.png
+/white-screen-debug.png

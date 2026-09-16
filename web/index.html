@@ -1,0 +1,99 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#6366F1" />
+    <meta name="color-scheme" content="dark light" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'64'%20height%3D'64'%20viewBox%3D'0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'g'%20x1%3D'0'%20y1%3D'0'%20x2%3D'1'%20y2%3D'1'%3E%3Cstop%20stop-color%3D'%236366F1'%2F%3E%3Cstop%20offset%3D'1'%20stop-color%3D'%23A855F7'%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D'64'%20height%3D'64'%20rx%3D'16'%20fill%3D'url(%23g)'%2F%3E%3Cpath%20d%3D'M18%2044V20h8l6%2010%206-10h8v24h-7V31l-7%2012-7-12v13h-7z'%20fill%3D'white'%2F%3E%3C%2Fsvg%3E"
+    />
+    <title>Markdown Creator Pro</title>
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+      }
+      #root {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      body {
+        margin: 0;
+        background: #f1f5f9;
+        color: #0f172a;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          "Apple Color Emoji",
+          "Segoe UI Emoji";
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #020617;
+          color: #f1f5f9;
+        }
+      }
+      .app-loading {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        opacity: 0.9;
+      }
+      .app-loading__spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid rgba(99, 102, 241, 0.22);
+        border-top-color: #6366f1;
+        border-radius: 999px;
+        animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .app-loading__title {
+        font-weight: 800;
+        letter-spacing: 0.3px;
+      }
+      .app-loading__subtitle {
+        font-size: 12px;
+        opacity: 0.7;
+        margin-top: 2px;
+      }
+      .app-noscript {
+        padding: 18px;
+        color: #0f172a;
+      }
+      @media (prefers-color-scheme: dark) {
+        .app-noscript {
+          color: #f1f5f9;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="app-loading">
+        <div class="app-loading__spinner" aria-hidden="true"></div>
+        <div>
+          <div class="app-loading__title">MD Studio</div>
+          <div class="app-loading__subtitle">Loading…</div>
+        </div>
+      </div>
+    </div>
+    <noscript>
+      <div class="app-noscript">JavaScript is required to run this app.</div>
+    </noscript>
+  </body>
+</html>
